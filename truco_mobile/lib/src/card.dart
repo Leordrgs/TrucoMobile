@@ -5,8 +5,20 @@ class Card {
   
   Card({required this.suit, required this.value});
 
+  int get getValue => value;
+
+  set setValue(int value) {
+    this.value = value;
+  }
+
+  String get getSuit => suit;
+
+  set setSuit(String suit) {
+    this.suit = suit;
+  } 
+
   @override
   String toString() {
-    return '$value de $suit';
+    return '$getValue de $getSuit';
   }
 }

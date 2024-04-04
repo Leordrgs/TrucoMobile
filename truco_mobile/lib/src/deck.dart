@@ -4,6 +4,12 @@ import 'card.dart';
 class Deck {
   List<Card> cards = [];
 
+  List get getCards => cards;
+
+  set setCards(List<Card> cards) {
+    this.cards = cards;
+  }
+
   generateDeck() {
     List<String> suits = ['Ouros', 'Copas', 'Espadas', 'Paus'];
     List<int> values = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12];
