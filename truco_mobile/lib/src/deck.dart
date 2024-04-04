@@ -29,9 +29,4 @@ class Deck {
     return shuffledDeck;
   }
 
-  @override
-  String toString() {
-    return cards.toString();
-  }
-  
 }
