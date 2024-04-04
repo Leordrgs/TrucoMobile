@@ -1,7 +1,9 @@
+import '../Card/card.dart';
+import '../Card/card.dart';
 import 'dart:math';
-import 'card.dart';
 
 class Deck {
+
   List<Card> cards = [];
 
   List get getCards => cards;
@@ -35,4 +37,8 @@ class Deck {
     return shuffledDeck;
   }
 
+  @override
+  String toString() {
+    return '$getCards';
+  }
 }
