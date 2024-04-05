@@ -1,7 +1,9 @@
+import 'dart:math';
 import 'card_model.dart';
 
 class Deck {
   late List<Card> cards;
+  List<Card> discardedCards = [];
 
   Deck() {
     cards = _generateCards();
@@ -32,8 +34,38 @@ class Deck {
     }
 
     List<Card> dealtCards = cards.sublist(0, count);
+    discardedCards.addAll(dealtCards);
     cards.removeRange(0, count);
 
     return dealtCards;
   }
+
+  Card generateManilha() {
+    // Virar uma carta aleatória do baralho
+    Card manilha = cards[Random().nextInt(cards.length)];
+
+    // Determinar a próxima carta na sequência como a manilha
+    int nextValue = (manilha.value + 1) % 10; // 10 é o valor máximo do rank no baralho de truco
+    String nextSuit = manilha.suit;
+
+    // Encontrar a próxima carta na sequência
+    for (var card in cards) {
+      if (card.value == nextValue && card.suit == nextSuit) {
+        manilha = card;
+        break;
+      }
+    }
+    return manilha;
+  } 
+
+  void resetDeck() {
+    cards.addAll(discardedCards);
+    discardedCards.clear();
+    _shuffle();
+  }
+
+  int remainingCardsCount() {
+    return cards.length;
+  }
+
 }

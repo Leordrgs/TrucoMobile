@@ -35,6 +35,11 @@ class Team {
     return points;
   }
 
+  // Método para redefinir os pontos do time para zero
+  void resetPoints() {
+    points = 0;
+  }
+
 }
 
 

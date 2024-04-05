@@ -14,7 +14,8 @@ class Table {
   int currentRoundWinner = -1; // 0 para Team 1, 1 para Team 2, -1 para empate
   int currentTurn = 0; // 0 para Team 1, 1 para Team 2
   TrucoStatus trucoStatus = TrucoStatus.NOT_REQUESTED;
-  
+  Card? manilha;  // Manilha do jogo
+
 
   Table() {
     deck = Deck();
@@ -29,6 +30,10 @@ class Table {
     currentHand = player1;
     currentFoot = player3;
     currentRoundCards = [];
+
+    distributeCards();
+    generateManilha();  // Virar a manilha após distribuir as cartas
+    printPlayersCards();
   }
 
   void nextTurn() {
@@ -46,6 +51,9 @@ class Table {
   void playCard(Card card) {
     if (currentHand!.hand.contains(card)) {
       currentHand!.playCard(card, this);  // Passando a instância atual de Table como argumento
+      currentRoundCards.add(card);
+      currentHand!.hand.remove(card);
+      nextTurn();
     }
   }
 
@@ -68,6 +76,7 @@ class Table {
     trucoStatus = TrucoStatus.NOT_REQUESTED;
 
     distributeCards();
+    generateManilha();  // Virar a manilha após distribuir as cartas
     printPlayersCards();
 
     if (currentHand == team1.player1) {
@@ -100,6 +109,16 @@ class Table {
   team2.player2.receiveCard(team2Cards[2]);
 }
 
+void generateManilha() {
+  Card manilha = deck.generateManilha();
+  
+  print('Manilha do jogo: $manilha');
+
+  // Atualizar as regras do jogo para considerar a manilha como a carta mais alta
+  // Você pode armazenar a manilha em uma variável de classe e usá-la ao comparar as cartas durante o jogo
+}
+
+
 
   void printPlayersCards() {
     print('Cartas da Dupla 1 - Jogador 1:');
@@ -125,21 +144,29 @@ class Table {
 
   void requestTruco() {
     if (trucoStatus == TrucoStatus.NOT_REQUESTED) {
-      trucoStatus = TrucoStatus.REQUESTED;
+      trucoStatus = TrucoStatus.REQUESTED_3_POINTS;
       // Notificando os jogadores de que o truco foi solicitado
       team1.notifyPlayers("Truco foi solicitado!");
       team2.notifyPlayers("Truco foi solicitado!");
-    } else if (trucoStatus == TrucoStatus.REQUESTED) {
+      
+    } else if (trucoStatus == TrucoStatus.REQUESTED_3_POINTS) {
       trucoStatus = TrucoStatus.REQUESTED_6_POINTS;
       // Notificando os jogadores de que o truco vale 6 pontos
       team1.notifyPlayers("Truco vale agora 6 pontos!");
       team2.notifyPlayers("Truco vale agora 6 pontos!");
+
     } else if (trucoStatus == TrucoStatus.REQUESTED_6_POINTS) {
       trucoStatus = TrucoStatus.REQUESTED_9_POINTS;
       // Notificando os jogadores de que o truco vale 9 pontos
       team1.notifyPlayers("Truco vale agora 9 pontos!");
       team2.notifyPlayers("Truco vale agora 9 pontos!");
+    } else if (trucoStatus == TrucoStatus.REQUESTED_9_POINTS) {
+      trucoStatus = TrucoStatus.REQUESTED_12_POINTS;
+      // Notificando os jogadores de que o truco vale 12 pontos
+      team1.notifyPlayers("Truco vale agora 12 pontos!");
+      team2.notifyPlayers("Truco vale agora 12 pontos!");
     }
+    
   }
 
   void respondToTruco(bool accept) {
@@ -154,6 +181,34 @@ class Table {
       team1.notifyPlayers("Truco foi recusado!");
       team2.notifyPlayers("Truco foi recusado!");
     }
+  }
+
+  void awardPointsToWinner() {
+    int winnerIndex = determineRoundWinner();
+    
+    if (winnerIndex != -1) {
+      if (currentRoundWinner == 0) {
+        team1.addPoints(trucoStatus.pointsAwarded());
+      } else if (currentRoundWinner == 1) {
+        team2.addPoints(trucoStatus.pointsAwarded());
+      }
+    }
+  }
+
+  void checkGameWinner() {
+    if (team1.getPoints() >= 12) {
+      print("Dupla vencedora: ${team1.name}");
+      resetGame();
+    } else if (team2.getPoints() >= 12) {
+      print("Dupla vencedora: ${team2.name}");
+      resetGame();
+    }
+  }
+
+  void resetGame() {
+    team1.resetPoints();
+    team2.resetPoints();
+    startNewRound();
   }
 
   void showScore() {
