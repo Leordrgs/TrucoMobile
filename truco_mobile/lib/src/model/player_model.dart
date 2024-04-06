@@ -45,4 +45,16 @@ class Player {
   void notify(String message) {
     print("$name: $message");
   }
+
+  Player.fromJson(Map<String, dynamic> json) 
+  : name = json['name'],
+    hand = (json['hand'] as List).map((e) => Card.fromJson(e)).toList();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'hand': hand.map((card) => card.toJson()).toList(),
+    };
+  }
+
 }

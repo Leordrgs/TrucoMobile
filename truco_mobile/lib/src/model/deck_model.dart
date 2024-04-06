@@ -68,4 +68,15 @@ class Deck {
     return cards.length;
   }
 
+  Deck.fromJson(Map<String, dynamic> json) {
+    cards = (json['cards'] as List).map((e) => Card.fromJson(e)).toList();
+    discardedCards = (json['discardedCards'] as List).map((e) => Card.fromJson(e)).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'cards': cards.map((card) => card.toJson()).toList(),
+      'discardedCards': discardedCards.map((card) => card.toJson()).toList(),
+    };
+  }
 }

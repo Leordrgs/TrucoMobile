@@ -40,6 +40,21 @@ class Team {
     points = 0;
   }
 
+  // Método para desserializar um mapa em uma instância de Team
+  Team.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        player1 = Player.fromJson(json['player1']),
+        player2 = Player.fromJson(json['player2']),
+        points = json['points'];
+
+  // Método para serializar uma instância de Team em um mapa
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'player1': player1.toJson(),
+        'player2': player2.toJson(),
+        'points': points,
+      };
+
 }
 
 

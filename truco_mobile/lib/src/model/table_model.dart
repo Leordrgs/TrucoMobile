@@ -223,4 +223,32 @@ void generateManilha() {
     }
     return false;
   }
+
+  Table.fromJson(Map<String, dynamic> json) {
+    deck = Deck.fromJson(json['deck'] ?? {});
+    team1 = Team.fromJson(json['team1'] ?? {});
+    team2 = Team.fromJson(json['team2'] ?? {});
+    currentRoundCards = (json['currentRoundCards'] as List).map((e) => Card.fromJson(e)).toList();
+    currentRoundWinner = json['currentRoundWinner'] ?? -1;
+    currentTurn = json['currentTurn'] ?? 0;
+    trucoStatus = TrucoStatus.values[json['trucoStatus'] ?? 0];
+    manilha = json['manilha'] != null ? Card.fromJson(json['manilha']) : null;
+    // Adicione outros atributos da classe Table, se existirem.
+  }
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'deck': deck.toJson(),
+      'team1': team1.toJson(),
+      'team2': team2.toJson(),
+      'currentRoundCards': currentRoundCards.map((card) => card.toJson()).toList(),
+      'currentRoundWinner': currentRoundWinner,
+      'currentTurn': currentTurn,
+      'trucoStatus': trucoStatus.index,
+      'manilha': manilha?.toJson(),
+      // Adicione outros atributos da classe Table, se existirem.
+    };
+  }
+
 }
