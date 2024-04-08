@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart' hide Card, Table;
 import 'package:flutter/material.dart' hide Table;
 import '../model/card_model.dart' as game_model;
 import 'card_widget.dart';
 import 'score_widget.dart';
 import 'action_buttons.dart';
-import '../model/table_model.dart';// Importe a classe Table aqui
+import '../model/table_model.dart'; // Importe a classe Table aqui
 
 class GameScreen extends StatelessWidget {
   final Table table; // Adicione esta linha para receber a mesa como parâmetro
 
-  GameScreen({required this.table}); // Adicione este construtor
+  const GameScreen(
+      {super.key, required this.table}); // Adicione este construtor
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class GameScreen extends StatelessWidget {
     List<game_model.Card> player4Cards = table.team2.player2.showHand();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Truco Game')),
+      appBar: AppBar(title: const Text('Truco Game')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -27,11 +27,47 @@ class GameScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              CardWidget(card: player1Cards[0]),
-              CardWidget(card: player2Cards[0]),
-              CardWidget(card: player3Cards[0]),
-              CardWidget(card: player4Cards[0]),
+              // Jogador 1
+              Column(
+                children: [
+                  const Text("Player 1"), // Nome do jogador
+                  ...player1Cards.map((card) => CardWidget(card: card)).toList(),
+                ],
+              ),
+              // Jogador 2
+              Column(
+                children: [
+                  const Text("Player 2"), // Nome do jogador
+                  ...player2Cards.map((card) => CardWidget(card: card)).toList(),
+                ],
+              ),
+              // Jogador 3
+              Column(
+                children: [
+                  const Text("Player 3"), // Nome do jogador
+                  ...player3Cards.map((card) => CardWidget(card: card)).toList(),
+                ],
+              ),
+              // Jogador 4
+              Column(
+                children: [
+                  const Text("Player 4"), // Nome do jogador
+                  ...player4Cards.map((card) => CardWidget(card: card)).toList(),
+                ],
+              ),
             ],
+          ),
+          // Texto "Manilha" com a cor e o valor da carta atual
+          Row(            
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (table.manilha != null)
+                //const SizedBox(width: 20), //Espaçamento
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),                
+                  child: Text("Manilha: ${table.manilha!.rank} de ${table.manilha!.suit}"),                          
+                ),
+            ],            
           ),
           // Widget que mostra o placar
           ScoreWidget(
