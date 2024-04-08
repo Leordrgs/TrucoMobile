@@ -13,6 +13,10 @@ class Player {
     hand.add(card);
   }
 
+  void removeCard(Card card) {
+    hand.remove(card);
+  }
+
   void playCard(Card card, Table table) {
     if (hand.contains(card)) {
       hand.remove(card);
@@ -25,7 +29,7 @@ class Player {
     if (manilha == null) {
       return 0;
     }
-    
+
     if (card.suit == manilha.suit) {
       if (card.rank == '4' && manilha.rank == '7') {
         return 1;
@@ -33,7 +37,7 @@ class Player {
         return -1;
       }
     }
-    
+
     return card.compareValue(manilha);
   }
 
@@ -46,9 +50,9 @@ class Player {
     print("$name: $message");
   }
 
-  Player.fromJson(Map<String, dynamic> json) 
-  : name = json['name'],
-    hand = (json['hand'] as List).map((e) => Card.fromJson(e)).toList();
+  Player.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        hand = (json['hand'] as List).map((e) => Card.fromJson(e)).toList();
 
   Map<String, dynamic> toJson() {
     return {
@@ -57,4 +61,7 @@ class Player {
     };
   }
 
+  void reset() {
+    hand.clear();
+  }
 }

@@ -4,7 +4,7 @@ import '../model/card_model.dart' as game_model;
 import 'card_widget.dart';
 import 'score_widget.dart';
 import 'action_buttons.dart';
-import '../model/table_model.dart'; // Importe a classe Table aqui
+import '../model/table_model.dart';// Importe a classe Table aqui
 
 class GameScreen extends StatelessWidget {
   final Table table; // Adicione esta linha para receber a mesa como parâmetro
@@ -47,6 +47,9 @@ class GameScreen extends StatelessWidget {
             onRequestTruco: () {
               // Adicione a lógica para solicitar truco aqui
               table.requestTruco();
+            },
+            onStartNewRound: (Table) {
+              table.startNewRound();
             },
           ),
         ],

@@ -3,10 +3,12 @@ import 'package:truco_mobile/src/model/table_model.dart';
 import 'package:truco_mobile/src/view/game_screen.dart';  // Importe o seu GameScreen aqui
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     Table mesa = Table();

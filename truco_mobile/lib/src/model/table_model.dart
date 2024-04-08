@@ -14,8 +14,7 @@ class Table {
   int currentRoundWinner = -1; // 0 para Team 1, 1 para Team 2, -1 para empate
   int currentTurn = 0; // 0 para Team 1, 1 para Team 2
   TrucoStatus trucoStatus = TrucoStatus.NOT_REQUESTED;
-  Card? manilha;  // Manilha do jogo
-
+  Card? manilha; // Manilha do jogo
 
   Table() {
     deck = Deck();
@@ -31,9 +30,9 @@ class Table {
     currentFoot = player3;
     currentRoundCards = [];
 
-    distributeCards();
-    generateManilha();  // Virar a manilha após distribuir as cartas
+    /*distributeCards();
     printPlayersCards();
+    generateManilha(); // Virar a manilha após distribuir as cartas*/
   }
 
   void nextTurn() {
@@ -50,7 +49,8 @@ class Table {
 
   void playCard(Card card) {
     if (currentHand!.hand.contains(card)) {
-      currentHand!.playCard(card, this);  // Passando a instância atual de Table como argumento
+      currentHand!.playCard(
+          card, this); // Passando a instância atual de Table como argumento
       currentRoundCards.add(card);
       currentHand!.hand.remove(card);
       nextTurn();
@@ -75,9 +75,10 @@ class Table {
     currentRoundCards.clear();
     trucoStatus = TrucoStatus.NOT_REQUESTED;
 
+    resetRound();
     distributeCards();
-    generateManilha();  // Virar a manilha após distribuir as cartas
     printPlayersCards();
+    generateManilha(); // Virar a manilha após distribuir as cartas
 
     if (currentHand == team1.player1) {
       currentHand = team1.player2;
@@ -89,45 +90,46 @@ class Table {
   }
 
   void distributeCards() {
-  List<Card> team1Cards = deck.dealCards(3);  // Distribui 3 cartas
-  List<Card> team2Cards = deck.dealCards(3);  // Distribui 3 cartas
+    List<Card> player1Cards = deck.dealCards(3); // Distribui 3 cartas
+    List<Card> player2Cards = deck.dealCards(3); // Distribui 3 cartas
+    List<Card> player3Cards = deck.dealCards(3); // Distribui 3 cartas
+    List<Card> player4Cards = deck.dealCards(3); // Distribui 3 cartas
 
-  team1.player1.receiveCard(team1Cards[0]);
-  team1.player1.receiveCard(team1Cards[1]);
-  team1.player1.receiveCard(team1Cards[2]);
+    team1.player1.receiveCard(player1Cards[0]);
+    team1.player1.receiveCard(player1Cards[1]);
+    team1.player1.receiveCard(player1Cards[2]);
 
-  team1.player2.receiveCard(team1Cards[0]);
-  team1.player2.receiveCard(team1Cards[1]);
-  team1.player2.receiveCard(team1Cards[2]);
+    team1.player2.receiveCard(player2Cards[0]);
+    team1.player2.receiveCard(player2Cards[1]);
+    team1.player2.receiveCard(player2Cards[2]);
 
-  team2.player1.receiveCard(team2Cards[0]);
-  team2.player1.receiveCard(team2Cards[1]);
-  team2.player1.receiveCard(team2Cards[2]);
+    team2.player1.receiveCard(player3Cards[0]);
+    team2.player1.receiveCard(player3Cards[1]);
+    team2.player1.receiveCard(player3Cards[2]);
 
-  team2.player2.receiveCard(team2Cards[0]);
-  team2.player2.receiveCard(team2Cards[1]);
-  team2.player2.receiveCard(team2Cards[2]);
-}
+    team2.player2.receiveCard(player4Cards[0]);
+    team2.player2.receiveCard(player4Cards[1]);
+    team2.player2.receiveCard(player4Cards[2]);
+  }
 
-void generateManilha() {
-  Card manilha = deck.generateManilha();
-  
-  print('Manilha do jogo: $manilha');
+  void resetRound() {
+    
+    team1.player1.hand.clear();
+    team1.player2.hand.clear();
+    team2.player1.hand.clear();
+    team2.player2.hand.clear();
 
-  // Atualizar as regras do jogo para considerar a manilha como a carta mais alta
-  // Você pode armazenar a manilha em uma variável de classe e usá-la ao comparar as cartas durante o jogo
-}
-
-
+    deck.resetDeck();
+  }
 
   void printPlayersCards() {
     print('Cartas da Dupla 1 - Jogador 1:');
-    for (var card in team1.player1.showHand()) {
+    for (var card in team1.player1.hand) {
       print(card);
     }
 
     print('\nCartas da Dupla 1 - Jogador 2:');
-    for (var card in team1.player2.showHand()) {
+    for (var card in team1.player2.hand) {
       print(card);
     }
 
@@ -142,19 +144,26 @@ void generateManilha() {
     }
   }
 
+  void generateManilha() {
+    Card manilha = deck.generateManilha();
+
+    print('Manilha do jogo: $manilha');
+
+    // Atualizar as regras do jogo para considerar a manilha como a carta mais alta
+    // Você pode armazenar a manilha em uma variável de classe e usá-la ao comparar as cartas durante o jogo
+  }
+
   void requestTruco() {
     if (trucoStatus == TrucoStatus.NOT_REQUESTED) {
       trucoStatus = TrucoStatus.REQUESTED_3_POINTS;
       // Notificando os jogadores de que o truco foi solicitado
       team1.notifyPlayers("Truco foi solicitado!");
       team2.notifyPlayers("Truco foi solicitado!");
-      
     } else if (trucoStatus == TrucoStatus.REQUESTED_3_POINTS) {
       trucoStatus = TrucoStatus.REQUESTED_6_POINTS;
       // Notificando os jogadores de que o truco vale 6 pontos
       team1.notifyPlayers("Truco vale agora 6 pontos!");
       team2.notifyPlayers("Truco vale agora 6 pontos!");
-
     } else if (trucoStatus == TrucoStatus.REQUESTED_6_POINTS) {
       trucoStatus = TrucoStatus.REQUESTED_9_POINTS;
       // Notificando os jogadores de que o truco vale 9 pontos
@@ -166,7 +175,6 @@ void generateManilha() {
       team1.notifyPlayers("Truco vale agora 12 pontos!");
       team2.notifyPlayers("Truco vale agora 12 pontos!");
     }
-    
   }
 
   void respondToTruco(bool accept) {
@@ -185,12 +193,14 @@ void generateManilha() {
 
   void awardPointsToWinner() {
     int winnerIndex = determineRoundWinner();
-    
+
     if (winnerIndex != -1) {
-      if (currentRoundWinner == 0) {
+      if (winnerIndex == 0) {
         team1.addPoints(trucoStatus.pointsAwarded());
-      } else if (currentRoundWinner == 1) {
+        currentRoundWinner = 0;
+      } else if (winnerIndex == 1) {
         team2.addPoints(trucoStatus.pointsAwarded());
+        currentRoundWinner = 1;
       }
     }
   }
@@ -213,12 +223,13 @@ void generateManilha() {
 
   void showScore() {
     print('\nPlacar:');
-    print('${team1.name}: ${team1.getPoints()} pontos');  // Usando getPoints()
-    print('\n${team2.name}: ${team2.getPoints()} pontos');  // Usando getPoints()
+    print('${team1.name}: ${team1.getPoints()} pontos'); // Usando getPoints()
+    print('\n${team2.name}: ${team2.getPoints()} pontos'); // Usando getPoints()
   }
 
   bool checkVictory() {
-    if (team1.getPoints() >= 12 || team2.getPoints() >= 12) {  // Usando getPoints()
+    if (team1.getPoints() >= 12 || team2.getPoints() >= 12) {
+      // Usando getPoints()
       return true;
     }
     return false;
@@ -228,7 +239,9 @@ void generateManilha() {
     deck = Deck.fromJson(json['deck'] ?? {});
     team1 = Team.fromJson(json['team1'] ?? {});
     team2 = Team.fromJson(json['team2'] ?? {});
-    currentRoundCards = (json['currentRoundCards'] as List).map((e) => Card.fromJson(e)).toList();
+    currentRoundCards = (json['currentRoundCards'] as List)
+        .map((e) => Card.fromJson(e))
+        .toList();
     currentRoundWinner = json['currentRoundWinner'] ?? -1;
     currentTurn = json['currentTurn'] ?? 0;
     trucoStatus = TrucoStatus.values[json['trucoStatus'] ?? 0];
@@ -236,13 +249,13 @@ void generateManilha() {
     // Adicione outros atributos da classe Table, se existirem.
   }
 
-
   Map<String, dynamic> toJson() {
     return {
       'deck': deck.toJson(),
       'team1': team1.toJson(),
       'team2': team2.toJson(),
-      'currentRoundCards': currentRoundCards.map((card) => card.toJson()).toList(),
+      'currentRoundCards':
+          currentRoundCards.map((card) => card.toJson()).toList(),
       'currentRoundWinner': currentRoundWinner,
       'currentTurn': currentTurn,
       'trucoStatus': trucoStatus.index,
@@ -250,5 +263,4 @@ void generateManilha() {
       // Adicione outros atributos da classe Table, se existirem.
     };
   }
-
 }

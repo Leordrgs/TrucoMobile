@@ -547,7 +547,7 @@ List shuffleCards(List deck, int numbersOfCards) {
   var shuffledDeck = [];
   var randomNumber = Random();
 
-  while (deck.length > 0) {
+  while (deck.isNotEmpty) {
 
     var index = randomNumber.nextInt(deck.length);
 

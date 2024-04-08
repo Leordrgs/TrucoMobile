@@ -45,7 +45,8 @@ class Deck {
     Card manilha = cards[Random().nextInt(cards.length)];
 
     // Determinar a próxima carta na sequência como a manilha
-    int nextValue = (manilha.value + 1) % 10; // 10 é o valor máximo do rank no baralho de truco
+    int nextValue = (manilha.value + 1) %
+        10; // 10 é o valor máximo do rank no baralho de truco
     String nextSuit = manilha.suit;
 
     // Encontrar a próxima carta na sequência
@@ -56,11 +57,12 @@ class Deck {
       }
     }
     return manilha;
-  } 
+  }
 
   void resetDeck() {
     cards.addAll(discardedCards);
     discardedCards.clear();
+    _generateCards();
     _shuffle();
   }
 
@@ -70,7 +72,8 @@ class Deck {
 
   Deck.fromJson(Map<String, dynamic> json) {
     cards = (json['cards'] as List).map((e) => Card.fromJson(e)).toList();
-    discardedCards = (json['discardedCards'] as List).map((e) => Card.fromJson(e)).toList();
+    discardedCards =
+        (json['discardedCards'] as List).map((e) => Card.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {

@@ -55,6 +55,10 @@ class Team {
         'points': points,
       };
 
+  void reset() {
+    player1.reset();
+    player2.reset();
+    resetPoints();
+  }
 }
-
 
