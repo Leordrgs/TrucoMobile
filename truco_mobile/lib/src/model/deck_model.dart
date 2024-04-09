@@ -13,15 +13,11 @@ class Deck {
   List<Card> _generateCards() {
     List<String> ranks = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3'];
     List<String> suits = ['Ouros', 'Espadas', 'Copas', 'Paus'];
-    List<Card> generatedCards = [];
 
-    for (var suit in suits) {
-      for (var i = 0; i < ranks.length; i++) {
-        generatedCards.add(Card(rank: ranks[i], suit: suit, value: i + 1));
-      }
-    }
-
-    return generatedCards;
+    return suits
+        .expand((rank) => ranks.map((suit) =>
+            Card(rank: suit, suit: rank, value: ranks.indexOf(suit) + 1)))
+        .toList();
   }
 
   void _shuffle() {
@@ -29,8 +25,14 @@ class Deck {
   }
 
   List<Card> dealCards(int count) {
+    int maxCards = 3;
+
     if (count > cards.length) {
       throw Exception('Not enough cards in the deck');
+    }
+
+    if(count > maxCards) {
+      throw Exception('Cannot deal $count cards! The maximum is $maxCards');
     }
 
     List<Card> dealtCards = cards.sublist(0, count);
@@ -41,15 +43,10 @@ class Deck {
   }
 
   Card generateManilha() {
-    // Virar uma carta aleatória do baralho
     Card manilha = cards[Random().nextInt(cards.length)];
-
-    // Determinar a próxima carta na sequência como a manilha
-    int nextValue = (manilha.value + 1) %
-        10; // 10 é o valor máximo do rank no baralho de truco
+    int nextValue = (manilha.value + 1) % 10;
     String nextSuit = manilha.suit;
 
-    // Encontrar a próxima carta na sequência
     for (var card in cards) {
       if (card.value == nextValue && card.suit == nextSuit) {
         manilha = card;
