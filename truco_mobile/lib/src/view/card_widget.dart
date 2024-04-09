@@ -25,3 +25,18 @@ class CardWidget extends StatelessWidget {
     );
   }
 }
+
+class SelectableCardWidget extends StatelessWidget {
+  final Card card;
+  final VoidCallback onTap;
+
+  SelectableCardWidget({required this.card, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: CardWidget(card: card),
+    );
+  }
+}

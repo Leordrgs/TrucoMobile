@@ -11,15 +11,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Table mesa = Table();
-    mesa.startNewRound();
+    Table table = Table();
+    table.startNewRound();
 
     // Exibindo o placar
-    mesa.showScore();
+    table.showScore();
 
     // Verificando a vitória
-    if (mesa.checkVictory()) {
-      print('Jogo finalizado! Equipe vencedora: ${mesa.currentRoundWinner == 0 ? mesa.team1.name : mesa.team2.name}');
+    if (table.checkVictory()) {
+      print('Jogo finalizado! Equipe vencedora: ${table.currentRoundWinner == 0 ? table.team1.name : table.team2.name}');
     }
 
     return MaterialApp(
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: GameScreen(table: mesa),  // Passando a mesa para o GameScreen
+      home: GameScreen(table: table),  // Passando a mesa para o GameScreen
     );
   }
 }

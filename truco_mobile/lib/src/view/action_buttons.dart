@@ -1,18 +1,25 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Table;
+import 'package:flutter/material.dart' as flutter;
+
+import '../model/table_model.dart' as game_model;
+import '../model/card_model.dart' as game_model;
+import '../model/table_model.dart';
 
 class ActionButtons extends StatelessWidget {
-  final void Function(Card)
+  final Function(game_model.Card)
       onPlayCard; // Especificando o tipo da função para onPlayCard
-  final void Function()
+  final Function()
       onRequestTruco; // Especificando o tipo da função para onRequestTruco
-  final void Function(Table)
+  final Function(game_model.Table)
       onStartNewRound; // Especificando o tipo da função para onStartNewRound
-  
+  final game_model.Table table;
 
-  const ActionButtons({super.key, 
+  const ActionButtons({
+    super.key,
     required this.onPlayCard,
     required this.onRequestTruco,
     required this.onStartNewRound,
+    required this.table,
   });
 
   @override
@@ -22,9 +29,14 @@ class ActionButtons extends StatelessWidget {
       children: [
         ElevatedButton(
           onPressed: () {
-            // Alguma lógica para jogar a carta
-            // Vamos apenas chamar a função callback por enquanto
-            onPlayCard(const Card()); // Passando uma carta fictícia como exemplo
+            // Selecionar a carta do jogador atual para jogar
+            if (table.currentHand != null &&
+                table.currentHand!.hand.isNotEmpty) {
+              game_model.Card selectedCard = table.currentHand!.hand
+                  .first; // Exemplo: seleciona a primeira carta da mão do jogador
+              onPlayCard(
+                  selectedCard); // Passando a carta selecionada para a classe Table
+            }
           },
           child: const Text('Play Card'),
         ),
@@ -40,7 +52,7 @@ class ActionButtons extends StatelessWidget {
           onPressed: () {
             // Alguma lógica para iniciar a partida para teste do emulador
             // Vamos apenas chamar a função callback por enquanto
-            onStartNewRound(Table());            
+            onStartNewRound(table);
           },
           child: const Text('Iniciar Partida'),
         ),

@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart' hide Table;
+import 'package:flutter/material.dart' hide Table, Card;
 import '../model/card_model.dart' as game_model;
 import 'card_widget.dart';
 import 'score_widget.dart';
 import 'action_buttons.dart';
-import '../model/table_model.dart'; // Importe a classe Table aqui
+import '../model/table_model.dart' as game_model; // Importe a classe Table aqui
 
 class GameScreen extends StatelessWidget {
-  final Table table; // Adicione esta linha para receber a mesa como parâmetro
+  final game_model.Table table;
+
+  /*const GameScreen({Key? key, required this.table}) : super(key: key); // Correção do construtor*/
 
   const GameScreen(
       {super.key, required this.table}); // Adicione este construtor
@@ -30,44 +32,58 @@ class GameScreen extends StatelessWidget {
               // Jogador 1
               Column(
                 children: [
-                  const Text("Player 1"), // Nome do jogador
-                  ...player1Cards.map((card) => CardWidget(card: card)).toList(),
+                  const Text("Player 1"),
+                  ...player1Cards
+                      .map((card) => SelectableCardWidget(
+                            card: card,
+                            onTap: () {
+                              table.selectedCard = card;
+                              table.currentHand = table.team1.player1; // Definindo o jogador atual para teste
+                            },
+                          ))
+                      .toList(),
                 ],
               ),
               // Jogador 2
               Column(
                 children: [
-                  const Text("Player 2"), // Nome do jogador
-                  ...player2Cards.map((card) => CardWidget(card: card)).toList(),
+                  const Text("Player 2"),
+                  ...player2Cards
+                      .map((card) => CardWidget(card: card))
+                      .toList(),
                 ],
               ),
               // Jogador 3
               Column(
                 children: [
-                  const Text("Player 3"), // Nome do jogador
-                  ...player3Cards.map((card) => CardWidget(card: card)).toList(),
+                  const Text("Player 3"),
+                  ...player3Cards
+                      .map((card) => CardWidget(card: card))
+                      .toList(),
                 ],
               ),
               // Jogador 4
               Column(
                 children: [
-                  const Text("Player 4"), // Nome do jogador
-                  ...player4Cards.map((card) => CardWidget(card: card)).toList(),
+                  const Text("Player 4"),
+                  ...player4Cards
+                      .map((card) => CardWidget(card: card))
+                      .toList(),
                 ],
               ),
             ],
           ),
           // Texto "Manilha" com a cor e o valor da carta atual
-          Row(            
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (table.manilha != null)
-                //const SizedBox(width: 20), //Espaçamento
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 100),                
-                  child: Text("Manilha: ${table.manilha!.rank} de ${table.manilha!.suit}"),                          
+                  padding: const EdgeInsets.symmetric(vertical: 100),
+                  child: Text(
+                      "Manilha: ${table.manilha!.rank} de ${table.manilha!.suit}"),
                 ),
-            ],            
+            ],
           ),
           // Widget que mostra o placar
           ScoreWidget(
@@ -76,17 +92,19 @@ class GameScreen extends StatelessWidget {
           ),
           // Widget com os botões de ação
           ActionButtons(
-            onPlayCard: (Card card) {
-              // Adicione a lógica para jogar a carta aqui
-              table.playCard(card as game_model.Card);
+            onPlayCard: (game_model.Card card) {
+              if (table.selectedCard != null) {
+                table.playCard(table.currentHand!, table.selectedCard!);
+                //table.selectedCard = null;
+              }
             },
             onRequestTruco: () {
-              // Adicione a lógica para solicitar truco aqui
               table.requestTruco();
             },
-            onStartNewRound: (Table) {
+            onStartNewRound: (game_model.Table table) {
               table.startNewRound();
             },
+            table: table,
           ),
         ],
       ),

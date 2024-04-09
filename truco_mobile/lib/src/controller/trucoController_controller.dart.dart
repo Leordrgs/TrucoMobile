@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide Table, Card;
+import '../model/player_model.dart';
 import '../model/table_model.dart'; /*as gameTable; // Usando um prefixo para evitar conflitos*/
 import '../model/card_model.dart';
 import '../service/api_service.dart';
@@ -25,8 +26,8 @@ class TrucoController with ChangeNotifier {
     }
   }
 
-  void playCard(Card card) {
-    table.playCard(card);
+  void playCard(Player player, Card card) {
+    table.playCard(player, card);
   }
 
   void requestTruco() {

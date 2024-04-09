@@ -7,13 +7,23 @@ class Card {
 
   
 
-  int compareValue(Card other) {
-    if (value > other.value) {
+  int compareValue(Card other, Card manilha) {
+    int valueA = value;
+    int valueB = other.value;
+
+    if (this == manilha) {
+      valueA += 10; // Aumenta o valor da manilha em 10 para torná-la a carta mais alta
+    }
+
+    if (other == manilha) {
+      valueB += 10; // Aumenta o valor da manilha em 10 para torná-la a carta mais alta
+    }
+
+    if (valueA > valueB) {
       return 1;
-    } else if (value < other.value) {
+    } else if (valueA < valueB) {
       return -1;
     } else {
-      // Tratar caso de empate
       return 0;
     }
   }

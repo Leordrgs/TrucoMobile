@@ -45,13 +45,12 @@ class Deck {
     Card manilha = cards[Random().nextInt(cards.length)];
 
     // Determinar a próxima carta na sequência como a manilha
-    int nextValue = (manilha.value + 1) %
-        10; // 10 é o valor máximo do rank no baralho de truco
-    String nextSuit = manilha.suit;
-
+    int nextValue = (manilha.value + 1) % 10; // 10 é o valor máximo do rank no baralho de truco
+    /*String nextSuit = manilha.suit;*/ 
+    
     // Encontrar a próxima carta na sequência
     for (var card in cards) {
-      if (card.value == nextValue && card.suit == nextSuit) {
+      if (card.value == nextValue) {
         manilha = card;
         break;
       }

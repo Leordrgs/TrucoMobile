@@ -5,12 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Dart",
+            "type": "dart",
+            "request": "launch",
+            "program": "truco_mobile/lib/main.dart"
+        },
+        {
             "name": "Flutter",
+            "type": "dart",
+            "request": "launch",
+            "program": "truco_mobile/lib/main.dart"
+        },
+        {
+            "name": "Launch Program",
             "type": "dart",
             "request": "launch",
             "program": "truco_mobile/lib/main.dart",
             "flutterMode": "profile"
+            },
+        {
+            "name": "Attach to running Flutter process",
+            "type": "dart",
+            "request": "attach",            
         }
-
     ]
 }

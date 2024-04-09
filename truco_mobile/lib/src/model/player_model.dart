@@ -25,21 +25,6 @@ class Player {
     }
   }
 
-  int compareCardWithManilha(Card card, Card? manilha) {
-    if (manilha == null) {
-      return 0;
-    }
-
-    if (card.suit == manilha.suit) {
-      if (card.rank == '4' && manilha.rank == '7') {
-        return 1;
-      } else if (card.rank == '7' && manilha.rank == '4') {
-        return -1;
-      }
-    }
-
-    return card.compareValue(manilha);
-  }
 
   List<Card> showHand() {
     return List.from(
