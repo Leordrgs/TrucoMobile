@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart' hide Table;
-import 'package:flutter/material.dart' as flutter;
-
 import '../model/table_model.dart' as game_model;
 import '../model/card_model.dart' as game_model;
-import '../model/table_model.dart';
 
 class ActionButtons extends StatelessWidget {
   final Function(game_model.Card)

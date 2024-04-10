@@ -29,161 +29,7 @@ class Table {
 
     currentHand = player1;
     currentFoot = player3;
-    currentRoundCards = [];
-
-    /*distributeCards();
-    printPlayersCards();
-    generateManilha(); // Virar a manilha após distribuir as cartas*/
-  }
-
-  /*void nextTurn() {
-    if (currentTurn == 0) {
-      currentTurn = 1;
-      currentHand = team2.player1;
-      currentFoot = team1.player1;
-    } else {
-      currentTurn = 0;
-      currentHand = team1.player1;
-      currentFoot = team2.player1;
-    }
-  }*/
-
-  /*void nextTurn() {
-  int winnerIndex = determineRoundWinner();
-    if (winnerIndex != -1) {
-      currentRoundWinner = winnerIndex;
-      awardPointsToWinner();
-      startNewRound(); // Inicie uma nova rodada após determinar o vencedor do turno
-    }
-  }*/
-
-  void nextTurn() {
-    int winnerIndex = determineRoundWinner();
-    if (winnerIndex != -1) {
-        currentRoundWinner = winnerIndex;
-        awardPointsToWinner();
-        startNewRound(); // Inicie uma nova rodada após determinar o vencedor do turno
-    } else {
-        // Alternar entre os jogadores
-        if (currentTurn == 0) {
-            currentTurn = 1;
-            currentHand = team2.player1;
-            currentFoot = team1.player1;
-        } else {
-            currentTurn = 0;
-            currentHand = team1.player1;
-            currentFoot = team2.player1;
-        }
-    }
-}
-
-
-  /*void playCard(Card card) {
-    if (currentHand!.hand.contains(card)) {
-      currentHand!.playCard(
-          card, this); // Passando a instância atual de Table como argumento
-      currentRoundCards.add(card);
-      currentHand!.hand.remove(card);
-      nextTurn();
-    }
-  }*/
-
-  /*void playCard(Player player, Card card) {
-    if (currentHand == player && currentTurn == 0 && selectedCard == card) {
-      player.playCard(card, this); // Chamar o método playCard do jogador
-      currentRoundCards.add(card);
-      selectedCard = null; // Limpar a carta selecionada após jogar
-      nextTurn();
-    } else if (currentFoot == player && currentTurn == 1 && selectedCard == card) {
-      player.playCard(card, this); // Chamar o método playCard do jogador
-      currentRoundCards.add(card);
-      selectedCard = null; // Limpar a carta selecionada após jogar
-      nextTurn();
-    }
-  
-    int winnerIndex = determineRoundWinner();
-    if (winnerIndex != -1) {
-      currentRoundWinner = winnerIndex;
-      awardPointsToWinner();
-      startNewRound(); // Inicie uma nova rodada após determinar o vencedor do turno
-    }
-  }*/
-
-  /*void playCard(Player player, Card card) {
-    if (player.hand.contains(card) && selectedCard == card) {
-      player.playCard(card, this);
-      currentRoundCards.add(card);
-      selectedCard = null; // Limpar a carta selecionada após jogar
-      nextTurn();
-    }
-  }*/
-
-  void playCard(Player player, Card card) {
-    if (player.hand.contains(card)) {
-      selectedCard = card; // Atualiza a carta selecionada
-      player.playCard(card, this);
-      currentRoundCards.add(card);
-      selectedCard = null; // Limpa a carta selecionada após jogar
-      nextTurn();
-    }
-  }
-
-   
-
-  /*int determineRoundWinner() {
-    if (currentRoundCards.isEmpty) {
-      return -1; // Retorna -1 se não houver cartas na rodada atual
-    }
-
-    Card highestCard = currentRoundCards[0];
-    int winnerIndex = 0;
-
-    for (int i = 1; i < currentRoundCards.length; i++) {
-      if (currentRoundCards[i].compareValue(highestCard, manilha!) > 0) {
-        highestCard = currentRoundCards[i];
-        winnerIndex = i;
-      }
-    }
-
-    return winnerIndex;
-  }*/
-
-  int determineRoundWinner() {
-  if (currentRoundCards.isEmpty) {
-    return -1; // Retorna -1 se não houver cartas na rodada atual
-  }
-
-  Card highestCard = currentRoundCards[0];
-  int winnerIndex = 0;
-
-  for (int i = 1; i < currentRoundCards.length; i++) {
-    if (currentRoundCards[i].compareValue(highestCard, manilha!) > 0) {
-      highestCard = currentRoundCards[i];
-      winnerIndex = i;
-      }
-    }
-    return winnerIndex;
-  }
-
-  int determineMatchWinner() {
-    int team1Wins = 0;
-    int team2Wins = 0;
-
-    for (int i = 0; i < 3; i++) {
-      nextTurn();
-      int winnerIndex = determineRoundWinner();
-
-      if (winnerIndex == 0) {
-        team1Wins++;
-      } else if (winnerIndex == 1) {
-        team2Wins++;
-      }
-
-      if (team1Wins == 2) return 0; // Team 1 venceu
-      if (team2Wins == 2) return 1; // Team 2 venceu
-    }
-
-    return -1; // Empate
+    currentRoundCards = [];    
   }
 
   void startNewRound() {
@@ -202,6 +48,15 @@ class Table {
       currentHand = team2.player2;
       currentFoot = team1.player1;
     }
+  }
+
+  void resetRound() {
+    team1.player1.hand.clear();
+    team1.player2.hand.clear();
+    team2.player1.hand.clear();
+    team2.player2.hand.clear();
+    
+    deck.resetDeck();    
   }
 
   void distributeCards() {
@@ -225,17 +80,7 @@ class Table {
     team2.player2.receiveCard(player4Cards[0]);
     team2.player2.receiveCard(player4Cards[1]);
     team2.player2.receiveCard(player4Cards[2]);
-  }
-
-  void resetRound() {
-    
-    team1.player1.hand.clear();
-    team1.player2.hand.clear();
-    team2.player1.hand.clear();
-    team2.player2.hand.clear();
-
-    deck.resetDeck();    
-  }
+  }  
 
   void printPlayersCards() {
     print('Cartas da Dupla 1 - Jogador 1:');
@@ -264,6 +109,66 @@ class Table {
 
     print('Manilha do jogo: $manilha');    
   }
+
+  void playCard(Player player, Card card) {
+    if (player.hand.contains(card)) {
+      selectedCard = card; // Atualiza a carta selecionada
+      player.playCard(card, this);
+      currentRoundCards.add(card);
+      selectedCard = null; // Limpa a carta selecionada após jogar
+      nextTurn();
+    }
+  }
+
+  int determineRoundWinner() {
+  if (currentRoundCards.isEmpty) {
+    return -1; // Retorna -1 se não houver cartas na rodada atual
+  }
+
+  Card highestCard = currentRoundCards[0];
+  int winnerIndex = 0;
+
+  for (int i = 1; i < currentRoundCards.length; i++) {
+    if (currentRoundCards[i].compareValue(highestCard, manilha!) > 0) {
+      highestCard = currentRoundCards[i];
+      winnerIndex = i;
+      }
+    }
+    return winnerIndex;
+  }
+
+  void nextTurn() {
+    int winnerIndex = determineRoundWinner();
+    if (winnerIndex != -1) {
+      currentRoundWinner = winnerIndex;
+      awardPointsToWinner();
+      startNewRound(); // Inicie uma nova rodada após determinar o vencedor do turno
+    } else {
+      // Alternar entre os jogadores
+      if (currentTurn == 0) {
+          currentTurn = 1;
+          currentHand = team2.player1;
+          currentFoot = team1.player1;
+      } else {
+          currentTurn = 0;
+          currentHand = team1.player1;
+          currentFoot = team2.player1;
+      }
+    }
+  }
+
+  void awardPointsToWinner() {
+    int winnerIndex = determineMatchWinner();
+    if (winnerIndex != -1) {
+      if (winnerIndex == 0) {
+        team1.addPoints(trucoStatus.pointsAwarded());
+        currentRoundWinner = 0;
+      } else if (winnerIndex == 1) {
+        team2.addPoints(trucoStatus.pointsAwarded());
+        currentRoundWinner = 1;
+      }
+    }
+  } 
 
   void requestTruco() {
     if (trucoStatus == TrucoStatus.NOT_REQUESTED) {
@@ -301,22 +206,7 @@ class Table {
       team1.notifyPlayers("Truco foi recusado!");
       team2.notifyPlayers("Truco foi recusado!");
     }
-  }  
-
-  void awardPointsToWinner() {
-    int winnerIndex = determineMatchWinner();
-
-    if (winnerIndex != -1) {
-      if (winnerIndex == 0) {
-        team1.addPoints(trucoStatus.pointsAwarded());
-        currentRoundWinner = 0;
-      } else if (winnerIndex == 1) {
-        team2.addPoints(trucoStatus.pointsAwarded());
-        currentRoundWinner = 1;
-      }
-    }
   }
-
 
   void checkGameWinner() {
     if (team1.getPoints() >= 12) {
@@ -326,6 +216,27 @@ class Table {
       print("Dupla vencedora: ${team2.name}");
       resetGame();
     }
+  }
+
+  int determineMatchWinner() {
+    int team1Wins = 0;
+    int team2Wins = 0;
+
+    for (int i = 0; i < 3; i++) {
+      nextTurn();
+      int winnerIndex = determineRoundWinner();
+
+      if (winnerIndex == 0) {
+        team1Wins++;
+      } else if (winnerIndex == 1) {
+        team2Wins++;
+      }
+
+      if (team1Wins == 2) return 0; // Team 1 venceu
+      if (team2Wins == 2) return 1; // Team 2 venceu
+    }
+
+    return -1; // Empate
   }
 
   void resetGame() {

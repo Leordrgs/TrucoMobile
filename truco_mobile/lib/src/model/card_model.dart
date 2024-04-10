@@ -3,9 +3,7 @@ class Card {
   final String suit;
   final int value;
 
-  Card({required this.rank, required this.suit, required this.value});
-
-  
+  Card({required this.rank, required this.suit, required this.value});  
 
   int compareValue(Card other, Card manilha) {
     int valueA = value;
@@ -27,7 +25,6 @@ class Card {
       return 0;
     }
   }
-
 
   @override
   String toString() {

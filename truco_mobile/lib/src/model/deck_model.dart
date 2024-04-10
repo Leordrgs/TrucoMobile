@@ -12,7 +12,7 @@ class Deck {
 
   List<Card> _generateCards() {
     List<String> ranks = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3'];
-    List<String> suits = ['Ouros', 'Espadas', 'Copas', 'Paus'];
+    List<String> suits = ['Paus', 'Copas', 'Espadas', 'Ouros'];
     List<Card> generatedCards = [];
 
     for (var suit in suits) {
