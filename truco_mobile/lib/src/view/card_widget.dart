@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart' hide Card;
-import '../model/card_model.dart'; // Importe o modelo da carta
+import 'package:flutter/material.dart';
+import '../model/card_model.dart' as game_model; // Importe o modelo da carta
 
 class CardWidget extends StatelessWidget {
-  final Card card;
+  final game_model.Card card;
 
   CardWidget({required this.card});
 
@@ -27,10 +27,10 @@ class CardWidget extends StatelessWidget {
 }
 
 class SelectableCardWidget extends StatelessWidget {
-  final Card card;
+  final game_model.Card card;
   final VoidCallback onTap;
 
-  SelectableCardWidget({required this.card, required this.onTap});
+  SelectableCardWidget({required this.card, required this.onTap, required ValueKey<game_model.Card> key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,24 +1,26 @@
-import 'package:flutter/material.dart' hide Table, Card;
+import 'package:flutter/material.dart';
 import '../model/card_model.dart' as game_model;
 import 'card_widget.dart';
 import 'score_widget.dart';
 import 'action_buttons.dart';
 import '../model/table_model.dart' as game_model; // Importe a classe Table aqui
 
-class GameScreen extends StatelessWidget {
+class GameScreen extends StatefulWidget {
   final game_model.Table table;
 
-  /*const GameScreen({Key? key, required this.table}) : super(key: key); // Correção do construtor*/
-
-  const GameScreen(
-      {super.key, required this.table}); // Adicione este construtor
+  GameScreen({Key? key, required this.table}) : super(key: key);
 
   @override
+  _GameScreenState createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  @override
   Widget build(BuildContext context) {
-    List<game_model.Card> player1Cards = table.team1.player1.showHand();
-    List<game_model.Card> player2Cards = table.team1.player2.showHand();
-    List<game_model.Card> player3Cards = table.team2.player1.showHand();
-    List<game_model.Card> player4Cards = table.team2.player2.showHand();
+    List<game_model.Card> player1Cards = widget.table.team1.player1.showHand();
+    List<game_model.Card> player2Cards = widget.table.team1.player2.showHand();
+    List<game_model.Card> player3Cards = widget.table.team2.player1.showHand();
+    List<game_model.Card> player4Cards = widget.table.team2.player2.showHand();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Truco Game')),
@@ -36,9 +38,12 @@ class GameScreen extends StatelessWidget {
                   ...player1Cards
                       .map((card) => SelectableCardWidget(
                             card: card,
+                            key: ValueKey(card), // Adicionando a chave
                             onTap: () {
-                              table.selectedCard = card;
-                              table.currentHand = table.team1.player1; // Definindo o jogador atual para teste
+                              setState(() {
+                                widget.table.selectedCard = card;
+                                widget.table.currentHand = widget.table.team1.player1;
+                              });
                             },
                           ))
                       .toList(),
@@ -77,34 +82,39 @@ class GameScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (table.manilha != null)
+              if (widget.table.manilha != null)
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 100),
                   child: Text(
-                      "Manilha: ${table.manilha!.rank} de ${table.manilha!.suit}"),
+                      "Manilha: ${widget.table.manilha!.rank} de ${widget.table.manilha!.suit}"),
                 ),
             ],
           ),
           // Widget que mostra o placar
           ScoreWidget(
-            team1Points: table.team1.getPoints(),
-            team2Points: table.team2.getPoints(),
+            team1Points: widget.table.team1.getPoints(),
+            team2Points: widget.table.team2.getPoints(),
           ),
           // Widget com os botões de ação
           ActionButtons(
             onPlayCard: (game_model.Card card) {
-              if (table.selectedCard != null) {
-                table.playCard(table.currentHand!, table.selectedCard!);
-                //table.selectedCard = null;
+              if (widget.table.selectedCard != null) {
+                setState(() {
+                  widget.table.playCard(widget.table.currentHand!, widget.table.selectedCard!);
+                });
               }
             },
             onRequestTruco: () {
-              table.requestTruco();
+              setState(() {
+                widget.table.requestTruco();
+              });
             },
             onStartNewRound: (game_model.Table table) {
-              table.startNewRound();
+              setState(() {
+                table.startNewRound();
+              });
             },
-            table: table,
+            table: widget.table,
           ),
         ],
       ),

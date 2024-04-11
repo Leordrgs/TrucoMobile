@@ -1,24 +1,26 @@
-import 'package:flutter/material.dart' hide Table;
+import 'package:flutter/material.dart';
 import '../model/table_model.dart' as game_model;
 import '../model/card_model.dart' as game_model;
 
-class ActionButtons extends StatelessWidget {
-  final Function(game_model.Card)
-      onPlayCard; // Especificando o tipo da função para onPlayCard
-  final Function()
-      onRequestTruco; // Especificando o tipo da função para onRequestTruco
-  final Function(game_model.Table)
-      onStartNewRound; // Especificando o tipo da função para onStartNewRound
+class ActionButtons extends StatefulWidget {
+  final Function(game_model.Card) onPlayCard;
+  final Function() onRequestTruco;
+  final Function(game_model.Table) onStartNewRound;
   final game_model.Table table;
 
   const ActionButtons({
-    super.key,
+    Key? key,
     required this.onPlayCard,
     required this.onRequestTruco,
     required this.onStartNewRound,
     required this.table,
-  });
+  }) : super(key: key);
 
+  @override
+  _ActionButtonsState createState() => _ActionButtonsState();
+}
+
+class _ActionButtonsState extends State<ActionButtons> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -26,30 +28,24 @@ class ActionButtons extends StatelessWidget {
       children: [
         ElevatedButton(
           onPressed: () {
-            // Selecionar a carta do jogador atual para jogar
-            if (table.currentHand != null &&
-                table.currentHand!.hand.isNotEmpty) {
-              game_model.Card selectedCard = table.currentHand!.hand
-                  .first; // Exemplo: seleciona a primeira carta da mão do jogador
-              onPlayCard(
-                  selectedCard); // Passando a carta selecionada para a classe Table
+            if (widget.table.currentHand != null &&
+                widget.table.currentHand!.hand.isNotEmpty) {
+              game_model.Card selectedCard =
+                  widget.table.currentHand!.hand.first;
+              widget.onPlayCard(selectedCard);
             }
           },
           child: const Text('Play Card'),
         ),
         ElevatedButton(
           onPressed: () {
-            // Alguma lógica para solicitar truco
-            // Vamos apenas chamar a função callback por enquanto
-            onRequestTruco();
+            widget.onRequestTruco();
           },
           child: const Text('Request Truco'),
         ),
         ElevatedButton(
           onPressed: () {
-            // Alguma lógica para iniciar a partida para teste do emulador
-            // Vamos apenas chamar a função callback por enquanto
-            onStartNewRound(table);
+            widget.onStartNewRound(widget.table);
           },
           child: const Text('Iniciar Partida'),
         ),

@@ -20,7 +20,21 @@ extension TrucoStatusExtension on TrucoStatus {
       case TrucoStatus.REQUESTED_12_POINTS:
         return 12;
       default:
-        return 0;
+        return 1;
+    }
+  }
+
+  int previousPointsAwarded() {
+    switch (this) {
+      case TrucoStatus.REQUESTED_6_POINTS:
+        return 3;
+      case TrucoStatus.REQUESTED_9_POINTS:
+        return 6;
+      case TrucoStatus.REQUESTED_12_POINTS:
+        return 9;
+      default:
+        return 1;
     }
   }
 }
+

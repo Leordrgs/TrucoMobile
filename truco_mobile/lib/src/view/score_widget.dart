@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' hide Card;
+import 'package:flutter/material.dart';
 
 class ScoreWidget extends StatelessWidget {
   final int team1Points;
