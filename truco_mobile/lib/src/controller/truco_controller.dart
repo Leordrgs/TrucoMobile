@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart' hide Table, Card;
-import '../model/table_model.dart'; /*as gameTable; // Usando um prefixo para evitar conflitos*/
+import '../model/table_model.dart';
 import '../model/card_model.dart';
 import '../service/api_service.dart';
 
 class TrucoController with ChangeNotifier {
-  late Table table; // Usando o prefixo que definimos acima
+  late Table table;
   final ApiService apiService;
 
   TrucoController({required this.apiService}) {
@@ -14,13 +14,12 @@ class TrucoController with ChangeNotifier {
   Future<void> initializeGame() async {
     try {
       final initialGameData =
-          await apiService.fetchData('initialGameDataEndpoint');
-      // Convertendo os dados da API para um objeto Table
+      await apiService.fetchData('initialGameDataEndpoint');
       table = Table.fromJson(initialGameData);
       notifyListeners();
     } catch (e) {
       print('Erro ao inicializar o jogo a partir da API: $e');
-      table = Table(); // Inicializa com uma mesa vazia em caso de erro
+      table = Table();
       notifyListeners();
     }
   }
