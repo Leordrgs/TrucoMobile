@@ -1,5 +1,5 @@
 import 'table_model.dart';
-import 'card_model.dart'; // Importe o modelo da carta aqui se ainda não o fez
+import 'card_model.dart';
 
 class Player {
   late final String name;

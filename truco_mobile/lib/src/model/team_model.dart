@@ -5,7 +5,7 @@ class Team {
   late final String name;
   late final Player player1;
   late final Player player2;
-  int points = 0;  // Adicionando o campo points
+  int points = 0;  // Adicionando o campo points com valor inicialmente zerado
 
   Team({required this.name, required this.player1, required this.player2});
 
@@ -39,6 +39,13 @@ class Team {
   void resetPoints() {
     points = 0;
   }
+  
+  // Método para resetar os pontos dos jogadores de cada equipe
+  void reset() {
+    player1.reset();
+    player2.reset();
+    resetPoints();
+  }
 
   // Método para desserializar um mapa em uma instância de Team
   Team.fromJson(Map<String, dynamic> json)
@@ -53,12 +60,6 @@ class Team {
         'player1': player1.toJson(),
         'player2': player2.toJson(),
         'points': points,
-      };
-
-  void reset() {
-    player1.reset();
-    player2.reset();
-    resetPoints();
-  }
+      };  
 }
 

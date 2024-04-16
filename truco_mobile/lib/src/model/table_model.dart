@@ -15,7 +15,7 @@ class Table {
   int currentTurn = 0; // 0 para Team 1, 1 para Team 2
   TrucoStatus trucoStatus = TrucoStatus.NOT_REQUESTED;
   Card? manilha; // Manilha do jogo
-  Card? selectedCard; // Adicione esta linha
+  Card? selectedCard; 
 
   Table() {
     deck = Deck();
@@ -42,9 +42,9 @@ class Table {
     currentRoundCards.clear();
     //trucoStatus = TrucoStatus.NOT_REQUESTED;
 
-    resetRound();
-    distributeCards();
-    printPlayersCards();
+    resetRound(); // Reseta a rodada atual
+    distributeCards(); // Distribuir as cartas do jogo
+    printPlayersCards(); // Imprime no console as cartas dos jogadores
     generateManilha(); // Virar a manilha após distribuir as cartas
     resetTrucoStatus();  // Resetar o status do truco
     rotatePlayers();

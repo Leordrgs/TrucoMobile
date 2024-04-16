@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../model/card_model.dart' as game_model;
 import 'card_widget.dart';
 import 'score_widget.dart';
 import 'action_buttons.dart';
-import '../model/table_model.dart' as game_model; // Importe a classe Table aqui
+import '../model/table_model.dart' as game_model;
+import '../model/card_model.dart' as game_model;
 
 class GameScreen extends StatefulWidget {
   final game_model.Table table;
