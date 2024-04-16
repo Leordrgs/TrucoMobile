@@ -58,34 +58,44 @@ class Table {
   }
 
   int determineRoundWinner() {
-    Card highestCard = currentRoundCards[0];
-    int winner = -1;
+    if (currentRoundCards.isEmpty) {
+      // Se não houver cartas na rodada, não há vencedor
+      return -1;
+    }
 
+    Card highestCard = currentRoundCards[0];
+    int winnerIndex = 0;
+
+    // Percorre as cartas da rodada para encontrar a mais alta
     for (int i = 1; i < currentRoundCards.length; i++) {
-      if (currentRoundCards[i].compareValue(highestCard) > 0) {
-        highestCard = currentRoundCards[i];
-        winner = i;
+      final currentCard = currentRoundCards[i];
+      if (currentHand!.compareCardWithManilha(currentCard, manilha) > 0) {
+        highestCard = currentCard;
+        winnerIndex = i;
       }
     }
 
-    return winner;
+    return winnerIndex;
   }
 
   void startNewRound() {
-    currentRoundCards.clear();
-    trucoStatus = TrucoStatus.NOT_REQUESTED;
+    Table() {
+      deck = Deck();
+      Player player1 = Player(name: 'Player 1');
+      Player player2 = Player(name: 'Player 2');
+      Player player3 = Player(name: 'Player 3');
+      Player player4 = Player(name: 'Player 4');
 
-    resetRound();
-    distributeCards();
-    printPlayersCards();
-    generateManilha(); // Virar a manilha após distribuir as cartas
+      team1 = Team(name: 'Team 1', player1: player1, player2: player2);
+      team2 = Team(name: 'Team 2', player1: player3, player2: player4);
 
-    if (currentHand == team1.player1) {
-      currentHand = team1.player2;
-      currentFoot = team2.player1;
-    } else {
-      currentHand = team2.player2;
-      currentFoot = team1.player1;
+      currentHand = player1;
+      currentFoot = player3;
+      currentRoundCards = [];
+
+      distributeCards();
+      printPlayersCards();
+      generateManilha(); // Virar a manilha após distribuir as cartas
     }
   }
 
@@ -113,7 +123,6 @@ class Table {
   }
 
   void resetRound() {
-    
     team1.player1.hand.clear();
     team1.player2.hand.clear();
     team2.player1.hand.clear();
