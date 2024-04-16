@@ -9,12 +9,9 @@ class ApiService {
     final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
 
     if (response.statusCode == 200) {
-      // Se você espera um JSON, pode decodificá-lo aqui
       return response.body;
     } else {
       throw Exception('Falha ao carregar dados da API');
     }
   }
-
-  // Outros métodos para post, put, delete, etc., conforme necessário
 }

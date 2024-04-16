@@ -15,12 +15,12 @@ class TrucoController with ChangeNotifier {
     try {
       final initialGameData =
           await apiService.fetchData('initialGameDataEndpoint');
-      // Convertendo os dados da API para um objeto Table
+
       table = Table.fromJson(initialGameData);
       notifyListeners();
     } catch (e) {
       print('Erro ao inicializar o jogo a partir da API: $e');
-      table = Table(); // Inicializa com uma mesa vazia em caso de erro
+      table = Table();
       notifyListeners();
     }
   }

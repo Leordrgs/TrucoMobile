@@ -95,7 +95,7 @@ class Table {
 
       distributeCards();
       printPlayersCards();
-      generateManilha(); // Virar a manilha após distribuir as cartas
+      generateManilha();
     }
   }
 
@@ -155,32 +155,28 @@ class Table {
 
   void generateManilha() {
     Card manilha = deck.generateManilha();
-
     print('Manilha do jogo: $manilha');
-
-    // Atualizar as regras do jogo para considerar a manilha como a carta mais alta
-    // Você pode armazenar a manilha em uma variável de classe e usá-la ao comparar as cartas durante o jogo
   }
 
   void requestTruco() {
     if (trucoStatus == TrucoStatus.NOT_REQUESTED) {
       trucoStatus = TrucoStatus.REQUESTED_3_POINTS;
-      // Notificando os jogadores de que o truco foi solicitado
+
       team1.notifyPlayers("Truco foi solicitado!");
       team2.notifyPlayers("Truco foi solicitado!");
     } else if (trucoStatus == TrucoStatus.REQUESTED_3_POINTS) {
       trucoStatus = TrucoStatus.REQUESTED_6_POINTS;
-      // Notificando os jogadores de que o truco vale 6 pontos
+
       team1.notifyPlayers("Truco vale agora 6 pontos!");
       team2.notifyPlayers("Truco vale agora 6 pontos!");
     } else if (trucoStatus == TrucoStatus.REQUESTED_6_POINTS) {
       trucoStatus = TrucoStatus.REQUESTED_9_POINTS;
-      // Notificando os jogadores de que o truco vale 9 pontos
+
       team1.notifyPlayers("Truco vale agora 9 pontos!");
       team2.notifyPlayers("Truco vale agora 9 pontos!");
     } else if (trucoStatus == TrucoStatus.REQUESTED_9_POINTS) {
       trucoStatus = TrucoStatus.REQUESTED_12_POINTS;
-      // Notificando os jogadores de que o truco vale 12 pontos
+
       team1.notifyPlayers("Truco vale agora 12 pontos!");
       team2.notifyPlayers("Truco vale agora 12 pontos!");
     }
@@ -189,12 +185,12 @@ class Table {
   void respondToTruco(bool accept) {
     if (accept) {
       trucoStatus = TrucoStatus.ACCEPTED;
-      // Notificando os jogadores de que o truco foi aceito
+
       team1.notifyPlayers("Truco foi aceito!");
       team2.notifyPlayers("Truco foi aceito!");
     } else {
       trucoStatus = TrucoStatus.REFUSED;
-      // Notificando os jogadores de que o truco foi recusado
+
       team1.notifyPlayers("Truco foi recusado!");
       team2.notifyPlayers("Truco foi recusado!");
     }
@@ -238,7 +234,6 @@ class Table {
 
   bool checkVictory() {
     if (team1.getPoints() >= 12 || team2.getPoints() >= 12) {
-      // Usando getPoints()
       return true;
     }
     return false;
@@ -255,7 +250,6 @@ class Table {
     currentTurn = json['currentTurn'] ?? 0;
     trucoStatus = TrucoStatus.values[json['trucoStatus'] ?? 0];
     manilha = json['manilha'] != null ? Card.fromJson(json['manilha']) : null;
-    // Adicione outros atributos da classe Table, se existirem.
   }
 
   Map<String, dynamic> toJson() {
@@ -269,7 +263,6 @@ class Table {
       'currentTurn': currentTurn,
       'trucoStatus': trucoStatus.index,
       'manilha': manilha?.toJson(),
-      // Adicione outros atributos da classe Table, se existirem.
     };
   }
 }

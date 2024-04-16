@@ -39,7 +39,6 @@ void main() {
       expect(table.currentRoundCards, isEmpty);
       expect(table.trucoStatus, equals(TrucoStatus.NOT_REQUESTED));
 
-      // As mãos dos jogadores devem ser reiniciadas
       expect(table.team1.player1.hand, isEmpty);
       expect(table.team1.player2.hand, isEmpty);
       expect(table.team2.player1.hand, isEmpty);
@@ -47,19 +46,14 @@ void main() {
     });
 
     test('should correctly determine the round winner', () {
-      // Mockando cartas para as rodadas
       final card1 = Card(rank: 'A', suit: 'Hearts', value: 14);
       final card2 = Card(rank: '7', suit: 'Spades', value: 7);
       final card3 = Card(rank: '4', suit: 'Diamonds', value: 4);
       final card4 = Card(rank: 'J', suit: 'Clubs', value: 11);
 
-      // Simulando uma rodada com algumas cartas
       table.currentRoundCards.addAll([card1, card2, card3, card4]);
 
-      // O vencedor esperado seria o jogador 1 da team1 (índice 0)
       expect(table.determineRoundWinner(), equals(0));
     });
-
-    // Adicione mais testes conforme necessário para cobrir outras funcionalidades da classe Table
   });
 }

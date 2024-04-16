@@ -30,20 +30,15 @@ class Player {
       return 0;
     }
 
-    // Primeiro, comparamos os naipes
     final suitComparison = card.suit.compareTo(manilha.suit);
     if (suitComparison != 0) {
-      // Se os naipes forem diferentes, retornamos o resultado da comparação dos naipes
       return suitComparison;
     }
-
-    // Se os naipes forem iguais, comparamos os valores das cartas
     return card.value.compareTo(manilha.value);
   }
 
   List<Card> showHand() {
-    return List.from(
-        hand); // Retorna uma cópia da mão para evitar modificação externa
+    return List.from(hand);
   }
 
   void notify(String message) {

@@ -11,7 +11,7 @@ void main() {
   setUp(() {
     player = Player(name: 'Player');
     card = Card(rank: 'A', suit: 'Hearts', value: 14);
-    table = Table(); // Criamos uma instância simples da classe Table
+    table = Table();
   });
 
   group('Player', () {
@@ -32,7 +32,7 @@ void main() {
 
     test('should play a card', () {
       player.receiveCard(card);
-      player.playCard(card, table); // Agora passamos a instância de Table
+      player.playCard(card, table);
       expect(player.hand, isNot(contains(card)));
     });
 
@@ -48,17 +48,13 @@ void main() {
       expect(player.compareCardWithManilha(differentValueCard, manilha),
           isNot(equals(0)));
 
-      // Carta com naipe diferente da manilha (esperado resultado diferente de 0)
       final differentSuitCard = Card(rank: '7', suit: 'Hearts', value: 7);
       expect(player.compareCardWithManilha(differentSuitCard, manilha),
           isNot(equals(0)));
 
-      // Carta com naipe e valor diferentes da manilha (esperado resultado diferente de 0)
       final differentCard = Card(rank: 'A', suit: 'Hearts', value: 14);
       expect(player.compareCardWithManilha(differentCard, manilha),
           isNot(equals(0)));
     });
-
-    // Adicione mais testes conforme necessário para cobrir outras funcionalidades da classe Player
   });
 }
