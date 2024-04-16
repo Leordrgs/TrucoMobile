@@ -30,15 +30,15 @@ class Player {
       return 0;
     }
 
-    if (card.suit == manilha.suit) {
-      if (card.rank == '4' && manilha.rank == '7') {
-        return 1;
-      } else if (card.rank == '7' && manilha.rank == '4') {
-        return -1;
-      }
+    // Primeiro, comparamos os naipes
+    final suitComparison = card.suit.compareTo(manilha.suit);
+    if (suitComparison != 0) {
+      // Se os naipes forem diferentes, retornamos o resultado da comparação dos naipes
+      return suitComparison;
     }
 
-    return card.compareValue(manilha);
+    // Se os naipes forem iguais, comparamos os valores das cartas
+    return card.value.compareTo(manilha.value);
   }
 
   List<Card> showHand() {
