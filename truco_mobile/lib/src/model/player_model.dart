@@ -1,5 +1,5 @@
 import 'table_model.dart';
-import 'card_model.dart'; // Importe o modelo da carta aqui se ainda não o fez
+import 'card_model.dart';
 
 class Player {
   late final String name;
@@ -42,8 +42,7 @@ class Player {
   }
 
   List<Card> showHand() {
-    return List.from(
-        hand); // Retorna uma cópia da mão para evitar modificação externa
+    return List.from(hand);
   }
 
   void notify(String message) {
