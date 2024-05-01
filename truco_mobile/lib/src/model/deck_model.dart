@@ -31,7 +31,7 @@ class Deck {
       throw Exception('Not enough cards in the deck');
     }
 
-    if(count > maxCards) {
+    if (count > maxCards) {
       throw Exception('Cannot deal $count cards! The maximum is $maxCards');
     }
 
@@ -42,18 +42,37 @@ class Deck {
     return dealtCards;
   }
 
-  Card generateManilha() {
-    Card manilha = cards[Random().nextInt(cards.length)];
+  int adjustCardValue(Card card) {
+    switch (card.suit) {
+      case 'Ouros':
+        return card.value += 11;
+      case 'Espadas':
+        return card.value += 12;
+      case 'Copas':
+        return card.value += 13;
+      case 'Paus':
+        return card.value += 14;
+      default:
+        return card.value;
+    }
+  }
+
+  List<Card> generateManilha(Card manilha) {
     int nextValue = (manilha.value + 1) % 10;
-    String nextSuit = manilha.suit;
+    List<Card> manilhas = [];
 
     for (var card in cards) {
-      if (card.value == nextValue && card.suit == nextSuit) {
-        manilha = card;
-        break;
+      if (card.value == nextValue) {
+        card.value = adjustCardValue(card);
+        manilhas.add(card);
       }
     }
-    return manilha;
+
+    return manilhas;
+  }
+
+  Card getRandomCard() {
+    return cards[Random().nextInt(cards.length)];
   }
 
   void resetDeck() {
