@@ -35,5 +35,18 @@ void main() {
     test('should not deal more than 3 cards', () {
       expect(() => deck.dealCards(4), throwsA(isA<Exception>())); 
     }),
+
+    test('generateManilha should return correct manilhas', () {
+
+    var deck = Deck(); 
+    var manilha = Card(suit: 'Ouros',  rank: '6', value: 3); 
+    var result = deck.generateManilha(manilha);
+
+    expect(result.length, 4); 
+    for (var card in result) {
+      expect(card.value, greaterThan(3));
+    }
+    }),
+
   });
 }

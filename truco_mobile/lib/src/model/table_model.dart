@@ -154,7 +154,8 @@ class Table {
   }
 
   void generateManilha() {
-    Card manilha = deck.generateManilha();
+    Card randomCard = deck.getRandomCard();
+    Object manilha = deck.generateManilha(randomCard);
 
     print('Manilha do jogo: $manilha');
 
