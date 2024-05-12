@@ -11,7 +11,7 @@ void main() {
   setUp(() {
     player = Player(name: 'Player');
     card = Card(rank: 'A', suit: 'Hearts', value: 14);
-    table = Table(); // Criamos uma instância simples da classe Table
+    table = Table([Player(name: 'Player 1'), Player(name: 'Player 2'), Player(name: 'Player 3'), Player(name: 'Player 4')]); // Criamos uma instância simples da classe Table
   });
 
   group('Player', () {

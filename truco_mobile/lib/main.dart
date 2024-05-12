@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide Table;
+import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/model/table_model.dart';
 import 'package:truco_mobile/src/view/game_screen.dart';  // Importe o seu GameScreen aqui
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Table mesa = Table();
+    Table mesa = Table([Player(name: 'Player 1'), Player(name: 'Player 2'), Player(name: 'Player 3'), Player(name: 'Player 4')]);
     mesa.startNewRound();
 
     // Exibindo o placar
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
 
     // Verificando a vitória
     if (mesa.checkVictory()) {
-      print('Jogo finalizado! Equipe vencedora: ${mesa.currentRoundWinner == 0 ? mesa.team1.name : mesa.team2.name}');
+      print('Jogo finalizado! Equipe vencedora: ${mesa.currentRoundWinner == 0 ? mesa.teams[0].name : mesa.teams[1].name}');
     }
 
     return MaterialApp(

@@ -3,28 +3,34 @@ import 'player_model.dart';
 
 class Team {
   late final String name;
-  late final Player player1;
-  late final Player player2;
+  List<Player> players;
   int points = 0;
 
-  Team({required this.name, required this.player1, required this.player2});
+  Team({required this.name, required List<Player> players})
+      : this.players = players {
+    if (players.length < 1 && players.length > 2) {
+      throw Exception('A team must have 1 to 2 players');
+    }
+  }
 
   bool hasCardInHand(Card card) {
-    return player1.hand.contains(card) || player2.hand.contains(card);
+    return players.any((player) => player.getCards().contains(card));
   }
 
   List<Card> showTeamHand() {
     List<Card> teamHand = [];
 
-    teamHand.addAll(player1.showHand());
-    teamHand.addAll(player2.showHand());
+    for (var player in players) {
+      teamHand.addAll(player.getCards());
+    }
 
     return teamHand;
   }
 
   void notifyPlayers(String message) {
-    player1.notify(message);
-    player2.notify(message);
+    for (var player in players) {
+      player.notify(message);
+    }
   }
 
   void addPoints(int amount) {
@@ -41,21 +47,23 @@ class Team {
 
   Team.fromJson(Map<String, dynamic> json)
       : name = json['name'],
-        player1 = Player.fromJson(json['player1']),
-        player2 = Player.fromJson(json['player2']),
-        points = json['points'];
+        points = json['points'],
+        players = (json['players'] as List<dynamic>?)
+                ?.map((playerJson) =>
+                    Player.fromJson(playerJson as Map<String, dynamic>))
+                .toList() ?? [];
 
   Map<String, dynamic> toJson() => {
         'name': name,
-        'player1': player1.toJson(),
-        'player2': player2.toJson(),
+        'players': players.map((player) => player.toJson()).toList(),
         'points': points,
       };
 
   void reset() {
-    player1.reset();
-    player2.reset();
+    for (var player in players) {
+      player.resetHand();
+    }
+
     resetPoints();
   }
 }
-

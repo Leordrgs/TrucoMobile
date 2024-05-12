@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:truco_mobile/src/model/card_model.dart';
+import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/model/table_model.dart';
 import 'package:truco_mobile/src/model/trucoStatus_model.dart';
 
@@ -8,13 +9,13 @@ void main() {
     late Table table;
 
     setUp(() {
-      table = Table();
+      table = Table([Player(name: 'Player 1'), Player(name: 'Player 2'), Player(name: 'Player 3'), Player(name: 'Player 4')]);
     });
 
     test('should initialize with default values', () {
       expect(table.deck, isNotNull);
-      expect(table.team1, isNotNull);
-      expect(table.team2, isNotNull);
+      expect(table.teams[0], isNotNull);
+      expect(table.teams[1], isNotNull);
       expect(table.currentHand, isNotNull);
       expect(table.currentFoot, isNotNull);
       expect(table.currentRoundCards, isEmpty);
@@ -27,10 +28,10 @@ void main() {
     test('should distribute cards to players', () {
       table.distributeCards();
 
-      expect(table.team1.player1.hand.length, equals(3));
-      expect(table.team1.player2.hand.length, equals(3));
-      expect(table.team2.player1.hand.length, equals(3));
-      expect(table.team2.player2.hand.length, equals(3));
+      expect(table.teams[0].players[0].hand.length, equals(3));
+      expect(table.teams[0].players[1].hand.length, equals(3));
+      expect(table.teams[1].players[0].hand.length, equals(3));
+      expect(table.teams[1].players[1].hand.length, equals(3));
     });
 
     test('should start a new round correctly', () {
@@ -40,10 +41,10 @@ void main() {
       expect(table.trucoStatus, equals(TrucoStatus.NOT_REQUESTED));
 
       // As mãos dos jogadores devem ser reiniciadas
-      expect(table.team1.player1.hand, isEmpty);
-      expect(table.team1.player2.hand, isEmpty);
-      expect(table.team2.player1.hand, isEmpty);
-      expect(table.team2.player2.hand, isEmpty);
+      expect(table.teams[0].players[0].hand, isEmpty);
+      expect(table.teams[0].players[1].hand, isEmpty);
+      expect(table.teams[1].players[0].hand, isEmpty);
+      expect(table.teams[1].players[1].hand, isEmpty);
     });
 
     test('should correctly determine the round winner', () {

@@ -9,6 +9,10 @@ class Player {
     hand = [];
   }
 
+  List<Card> getCards() {
+    return hand;
+  }
+
   void receiveCard(Card card) {
     hand.add(card);
   }
@@ -19,10 +23,13 @@ class Player {
 
   void playCard(Card card, Table table) {
     if (hand.contains(card)) {
-      hand.remove(card);
-      table.currentRoundCards.add(card);
-      table.nextTurn();
+      removeCard(card);
+      table.addCardToRound(card);
     }
+  }
+
+  List<Card> getHand() {
+    return hand;
   }
 
   int compareCardWithManilha(Card card, Card? manilha) {
@@ -60,7 +67,7 @@ class Player {
     };
   }
 
-  void reset() {
+  void resetHand() {
     hand.clear();
   }
 }
