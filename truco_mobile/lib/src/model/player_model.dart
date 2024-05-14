@@ -9,10 +9,6 @@ class Player {
     hand = [];
   }
 
-  List<Card> getCards() {
-    return hand;
-  }
-
   void receiveCard(Card card) {
     hand.add(card);
   }

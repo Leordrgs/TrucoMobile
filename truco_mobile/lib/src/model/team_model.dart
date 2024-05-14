@@ -14,14 +14,14 @@ class Team {
   }
 
   bool hasCardInHand(Card card) {
-    return players.any((player) => player.getCards().contains(card));
+    return players.any((player) => player.getHand().contains(card));
   }
 
   List<Card> showTeamHand() {
     List<Card> teamHand = [];
 
     for (var player in players) {
-      teamHand.addAll(player.getCards());
+      teamHand.addAll(player.getHand());
     }
 
     return teamHand;
