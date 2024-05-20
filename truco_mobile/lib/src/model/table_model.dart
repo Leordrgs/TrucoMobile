@@ -10,10 +10,8 @@ class Table {
   late Player? currentHand; // -> mão atual, jogador que começa a rodada
   late Player? currentFoot; // -> pé, jogador que joga por último na rodada
   late List<Card> currentRoundCards;
-  int currentRoundWinner =
-      -1; // index do time vencedor da rodada, -1 para empate
-  int currentTurn =
-      0; // index do time que está jogando, 0 para time 1 e 1 para time 2
+  int currentRoundWinner = -1; // index do time vencedor da rodada, -1 para empate
+  int currentTurn = 0; // index do time que está jogando, 0 para time 1 e 1 para time 2
   Card? manilha; // Manilha do jogo
   TrucoStatus trucoStatus = TrucoStatus.NOT_REQUESTED;
 
