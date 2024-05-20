@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
-import 'package:truco_mobile/src/model/card_model.dart';
-import 'package:truco_mobile/src/model/player_model.dart';
-import 'package:truco_mobile/src/model/table_model.dart';
+import 'package:truco_mobile/src/model/Card/card_model.dart';
+import 'package:truco_mobile/src/model/Player/player_model.dart';
+import 'package:truco_mobile/src/model/Table/table_model.dart';
 import 'package:truco_mobile/src/model/trucoStatus_model.dart';
 
 void main() {

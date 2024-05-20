@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart' hide Table;
-import '../model/card_model.dart' as game_model;
+import '../model/Card/card_model.dart' as game_model;
 import 'card_widget.dart';
 import 'score_widget.dart';
 import 'action_buttons.dart';
-import '../model/table_model.dart'; // Importe a classe Table aqui
+import '../model/Table/table_model.dart'; // Importe a classe Table aqui
 
 class GameScreen extends StatelessWidget {
   final Table table; // Adicione esta linha para receber a mesa como parâmetro

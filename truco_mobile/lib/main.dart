@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' hide Table;
-import 'package:truco_mobile/src/model/player_model.dart';
-import 'package:truco_mobile/src/model/table_model.dart';
+import 'package:truco_mobile/src/model/Player/player_model.dart';
+import 'package:truco_mobile/src/model/Table/table_model.dart';
 import 'package:truco_mobile/src/view/game_screen.dart';  // Importe o seu GameScreen aqui
 
 void main() {
