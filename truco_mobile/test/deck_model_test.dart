@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import '../lib/src/model/deck_model.dart';
-import '../lib/src/model/card_model.dart';
+import '../lib/src/model/Deck/deck_model.dart';
+import '../lib/src/model/Card/card_model.dart';
 
 void main() {
     late Deck deck;

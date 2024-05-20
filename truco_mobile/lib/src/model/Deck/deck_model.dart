@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'card_model.dart';
+import '../Card/card_model.dart';
 import 'package:truco_mobile/src/policies/deck_policies.dart';
 
 class Deck {

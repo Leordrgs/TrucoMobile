@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import '../lib/src/model/card_model.dart';
+import '../lib/src/model/Card/card_model.dart';
 
 void main() {
   group('Card', () => {

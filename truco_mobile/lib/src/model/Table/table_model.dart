@@ -1,8 +1,8 @@
-import 'deck_model.dart';
-import 'trucoStatus_model.dart';
-import 'player_model.dart';
-import 'team_model.dart';
-import 'card_model.dart';
+import '../Deck/deck_model.dart';
+import '../trucoStatus_model.dart';
+import '../Player/player_model.dart';
+import '../Team/team_model.dart';
+import '../Card/card_model.dart';
 
 class Table {
   late final Deck deck;

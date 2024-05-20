@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' hide Table, Card;
-import 'package:truco_mobile/src/model/player_model.dart';
-import '../model/table_model.dart';
-import '../model/card_model.dart';
+import 'package:truco_mobile/src/model/Player/player_model.dart';
+import '../model/Table/table_model.dart';
+import '../model/Card/card_model.dart';
 import '../service/api_service.dart';
 
 class TrucoController with ChangeNotifier {

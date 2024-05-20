@@ -1,9 +1,9 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:test/test.dart';
-import 'package:truco_mobile/src/model/team_model.dart';
-import 'package:truco_mobile/src/model/player_model.dart';
-import 'package:truco_mobile/src/model/deck_model.dart';
+import 'package:truco_mobile/src/model/Team/team_model.dart';
+import 'package:truco_mobile/src/model/Player/player_model.dart';
+import 'package:truco_mobile/src/model/Deck/deck_model.dart';
 
 void main() {
   late Team team;
