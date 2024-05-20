@@ -3,21 +3,21 @@ import 'card_model.dart';
 
 class Player {
   late final String name;
-  late List<Card> hand;
+  late List<CardModel> hand;
 
   Player({required this.name}) {
     hand = [];
   }
 
-  void receiveCard(Card card) {
+  void receiveCard(CardModel card) {
     hand.add(card);
   }
 
-  void removeCard(Card card) {
+  void removeCard(CardModel card) {
     hand.remove(card);
   }
 
-  void playCard(Card card, Table table) {
+  void playCard(CardModel card, Table table) {
     if (hand.contains(card)) {
       hand.remove(card);
       table.currentRoundCards.add(card);
@@ -25,7 +25,7 @@ class Player {
     }
   }
 
-  int compareCardWithManilha(Card card, Card? manilha) {
+  int compareCardWithManilha(CardModel card, CardModel? manilha) {
     if (manilha == null) {
       return 0;
     }
@@ -41,7 +41,7 @@ class Player {
     return card.value.compareTo(manilha.value);
   }
 
-  List<Card> showHand() {
+  List<CardModel> showHand() {
     return List.from(hand);
   }
 
@@ -51,7 +51,7 @@ class Player {
 
   Player.fromJson(Map<String, dynamic> json)
       : name = json['name'],
-        hand = (json['hand'] as List).map((e) => Card.fromJson(e)).toList();
+        hand = (json['hand'] as List).map((e) => CardModel.fromJson(e)).toList();
 
   Map<String, dynamic> toJson() {
     return {

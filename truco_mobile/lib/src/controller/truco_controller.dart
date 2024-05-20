@@ -24,7 +24,7 @@ class TrucoController with ChangeNotifier {
     }
   }
 
-  void playCard(Card card) {
+  void playCard(CardModel card) {
     table.playCard(card);
   }
 

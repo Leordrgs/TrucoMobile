@@ -19,14 +19,14 @@ void main() {
     }),
     
     test('should shuffle the cards', () {
-      List<Card> oldOrder = List.from(deck.cards);
+      List<CardModel> oldOrder = List.from(deck.cards);
       oldOrder.shuffle();
-      List<Card> newOrder = List.from(deck.cards);
+      List<CardModel> newOrder = List.from(deck.cards);
       expect(newOrder, isNot(equals(oldOrder)));
     }),
 
     test('should deal 3 cards', () {
-      List<Card> dealtCards = deck.dealCards(3);
+      List<CardModel> dealtCards = deck.dealCards(3);
       expect(dealtCards.length, 3);
       expect(deck.cards.length, 37);
       expect(deck.discardedCards.length, 3);
@@ -39,7 +39,7 @@ void main() {
     test('generateManilha should return correct manilhas', () {
 
     var deck = Deck(); 
-    var manilha = Card(suit: 'Ouros',  rank: '6', value: 3); 
+    var manilha = CardModel(suit: 'Ouros',  rank: '6', value: 3); 
     var result = deck.generateManilha(manilha);
 
     expect(result.length, 4); 

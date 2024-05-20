@@ -13,10 +13,10 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<game_model.Card> player1Cards = table.team1.player1.showHand();
-    List<game_model.Card> player2Cards = table.team1.player2.showHand();
-    List<game_model.Card> player3Cards = table.team2.player1.showHand();
-    List<game_model.Card> player4Cards = table.team2.player2.showHand();
+    List<game_model.CardModel> player1Cards = table.team1.player1.showHand();
+    List<game_model.CardModel> player2Cards = table.team1.player2.showHand();
+    List<game_model.CardModel> player3Cards = table.team2.player1.showHand();
+    List<game_model.CardModel> player4Cards = table.team2.player2.showHand();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Truco Game')),
@@ -78,7 +78,7 @@ class GameScreen extends StatelessWidget {
           ActionButtons(
             onPlayCard: (Card card) {
               // Adicione a lógica para jogar a carta aqui
-              table.playCard(card as game_model.Card);
+              table.playCard(card as game_model.CardModel);
             },
             onRequestTruco: () {
               // Adicione a lógica para solicitar truco aqui

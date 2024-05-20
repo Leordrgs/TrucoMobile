@@ -9,12 +9,12 @@ class Team {
 
   Team({required this.name, required this.player1, required this.player2});
 
-  bool hasCardInHand(Card card) {
+  bool hasCardInHand(CardModel card) {
     return player1.hand.contains(card) || player2.hand.contains(card);
   }
 
-  List<Card> showTeamHand() {
-    List<Card> teamHand = [];
+  List<CardModel> showTeamHand() {
+    List<CardModel> teamHand = [];
 
     teamHand.addAll(player1.showHand());
     teamHand.addAll(player2.showHand());

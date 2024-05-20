@@ -48,10 +48,10 @@ void main() {
 
     test('should correctly determine the round winner', () {
       // Mockando cartas para as rodadas
-      final card1 = Card(rank: 'A', suit: 'Hearts', value: 14);
-      final card2 = Card(rank: '7', suit: 'Spades', value: 7);
-      final card3 = Card(rank: '4', suit: 'Diamonds', value: 4);
-      final card4 = Card(rank: 'J', suit: 'Clubs', value: 11);
+      final card1 = CardModel(rank: 'A', suit: 'Hearts', value: 14);
+      final card2 = CardModel(rank: '7', suit: 'Spades', value: 7);
+      final card3 = CardModel(rank: '4', suit: 'Diamonds', value: 4);
+      final card4 = CardModel(rank: 'J', suit: 'Clubs', value: 11);
 
       // Simulando uma rodada com algumas cartas
       table.currentRoundCards.addAll([card1, card2, card3, card4]);

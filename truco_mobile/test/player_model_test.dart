@@ -5,12 +5,12 @@ import 'package:truco_mobile/src/model/card_model.dart';
 
 void main() {
   late Player player;
-  late Card card;
+  late CardModel card;
   late Table table;
 
   setUp(() {
     player = Player(name: 'Player');
-    card = Card(rank: 'A', suit: 'Hearts', value: 14);
+    card = CardModel(rank: 'A', suit: 'Hearts', value: 14);
     table = Table(); // Criamos uma instância simples da classe Table
   });
 
@@ -37,24 +37,24 @@ void main() {
     });
 
     test('should compare card with manilha correctly', () {
-      final manilha = Card(rank: '7', suit: 'Diamonds', value: 7);
+      final manilha = CardModel(rank: '7', suit: 'Diamonds', value: 7);
 
       // Carta com mesmo naipe e valor da manilha (esperado resultado 0)
-      final sameCard = Card(rank: '7', suit: 'Diamonds', value: 7);
+      final sameCard = CardModel(rank: '7', suit: 'Diamonds', value: 7);
       expect(player.compareCardWithManilha(sameCard, manilha), equals(0));
 
       // Carta com mesmo naipe e valor diferente da manilha (esperado resultado diferente de 0)
-      final differentValueCard = Card(rank: 'A', suit: 'Diamonds', value: 14);
+      final differentValueCard = CardModel(rank: 'A', suit: 'Diamonds', value: 14);
       expect(player.compareCardWithManilha(differentValueCard, manilha),
           isNot(equals(0)));
 
       // Carta com naipe diferente da manilha (esperado resultado diferente de 0)
-      final differentSuitCard = Card(rank: '7', suit: 'Hearts', value: 7);
+      final differentSuitCard = CardModel(rank: '7', suit: 'Hearts', value: 7);
       expect(player.compareCardWithManilha(differentSuitCard, manilha),
           isNot(equals(0)));
 
       // Carta com naipe e valor diferentes da manilha (esperado resultado diferente de 0)
-      final differentCard = Card(rank: 'A', suit: 'Hearts', value: 14);
+      final differentCard = CardModel(rank: 'A', suit: 'Hearts', value: 14);
       expect(player.compareCardWithManilha(differentCard, manilha),
           isNot(equals(0)));
     });

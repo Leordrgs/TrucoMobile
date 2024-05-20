@@ -2,7 +2,7 @@ import 'package:flutter/material.dart' hide Card;
 import '../model/card_model.dart'; // Importe o modelo da carta
 
 class CardWidget extends StatelessWidget {
-  final Card card;
+  final CardModel card;
 
   CardWidget({required this.card});
 

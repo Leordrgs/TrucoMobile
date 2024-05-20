@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart' hide Table;
 import 'package:truco_mobile/src/model/table_model.dart';
+import 'package:truco_mobile/src/view/Board/board_view.dart';
 import 'package:truco_mobile/src/view/game_screen.dart';  // Importe o seu GameScreen aqui
 
 void main() {
-  runApp(const MyApp());
+  runApp(BoardView());
 }
 
 class MyApp extends StatelessWidget {

@@ -1,11 +1,11 @@
-class Card {
+class CardModel {
   String rank;
   String suit;
   int value;
 
-  Card({required this.rank, required this.suit, required this.value});
+  CardModel({required this.rank, required this.suit, required this.value});
 
-  int compareValue(Card other) {
+  int compareValue(CardModel other) {
     return value.compareTo(other.value);
   }
 
@@ -14,7 +14,7 @@ class Card {
     return '$rank de $suit';
   }
 
-  Card.fromJson(Map<String, dynamic> json) : rank = json['rank'], suit = json['suit'], value = json['value'];
+  CardModel.fromJson(Map<String, dynamic> json) : rank = json['rank'], suit = json['suit'], value = json['value'];
 
   Map<String, dynamic> toJson() {
     return {

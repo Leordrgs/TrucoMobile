@@ -10,11 +10,11 @@ class Table {
   late final Team team2;
   late Player? currentHand;
   late Player? currentFoot;
-  late List<Card> currentRoundCards;
+  late List<CardModel> currentRoundCards;
   int currentRoundWinner = -1; // 0 para Team 1, 1 para Team 2, -1 para empate
   int currentTurn = 0; // 0 para Team 1, 1 para Team 2
   TrucoStatus trucoStatus = TrucoStatus.NOT_REQUESTED;
-  Card? manilha; // Manilha do jogo
+  CardModel? manilha; // Manilha do jogo
 
   Table() {
     deck = Deck();
@@ -47,7 +47,7 @@ class Table {
     }
   }
 
-  void playCard(Card card) {
+  void playCard(CardModel card) {
     if (currentHand!.hand.contains(card)) {
       currentHand!.playCard(
           card, this); // Passando a instância atual de Table como argumento
@@ -63,7 +63,7 @@ class Table {
       return -1;
     }
 
-    Card highestCard = currentRoundCards[0];
+    CardModel highestCard = currentRoundCards[0];
     int winnerIndex = 0;
 
     // Percorre as cartas da rodada para encontrar a mais alta
@@ -100,10 +100,10 @@ class Table {
   }
 
   void distributeCards() {
-    List<Card> player1Cards = deck.dealCards(3); // Distribui 3 cartas
-    List<Card> player2Cards = deck.dealCards(3); // Distribui 3 cartas
-    List<Card> player3Cards = deck.dealCards(3); // Distribui 3 cartas
-    List<Card> player4Cards = deck.dealCards(3); // Distribui 3 cartas
+    List<CardModel> player1Cards = deck.dealCards(3); // Distribui 3 cartas
+    List<CardModel> player2Cards = deck.dealCards(3); // Distribui 3 cartas
+    List<CardModel> player3Cards = deck.dealCards(3); // Distribui 3 cartas
+    List<CardModel> player4Cards = deck.dealCards(3); // Distribui 3 cartas
 
     team1.player1.receiveCard(player1Cards[0]);
     team1.player1.receiveCard(player1Cards[1]);
@@ -154,7 +154,7 @@ class Table {
   }
 
   void generateManilha() {
-    Card randomCard = deck.getRandomCard();
+    CardModel randomCard = deck.getRandomCard();
     Object manilha = deck.generateManilha(randomCard);
 
     print('Manilha do jogo: $manilha');
@@ -250,12 +250,12 @@ class Table {
     team1 = Team.fromJson(json['team1'] ?? {});
     team2 = Team.fromJson(json['team2'] ?? {});
     currentRoundCards = (json['currentRoundCards'] as List)
-        .map((e) => Card.fromJson(e))
+        .map((e) => CardModel.fromJson(e))
         .toList();
     currentRoundWinner = json['currentRoundWinner'] ?? -1;
     currentTurn = json['currentTurn'] ?? 0;
     trucoStatus = TrucoStatus.values[json['trucoStatus'] ?? 0];
-    manilha = json['manilha'] != null ? Card.fromJson(json['manilha']) : null;
+    manilha = json['manilha'] != null ? CardModel.fromJson(json['manilha']) : null;
     // Adicione outros atributos da classe Table, se existirem.
   }
 

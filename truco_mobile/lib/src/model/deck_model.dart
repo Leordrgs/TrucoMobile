@@ -2,21 +2,21 @@ import 'dart:math';
 import 'card_model.dart';
 
 class Deck {
-  late List<Card> cards;
-  List<Card> discardedCards = [];
+  late List<CardModel> cards;
+  List<CardModel> discardedCards = [];
 
   Deck() {
     cards = _generateCards();
     _shuffle();
   }
 
-  List<Card> _generateCards() {
+  List<CardModel> _generateCards() {
     List<String> ranks = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3'];
     List<String> suits = ['Ouros', 'Espadas', 'Copas', 'Paus'];
 
     return suits
         .expand((rank) => ranks.map((suit) =>
-            Card(rank: suit, suit: rank, value: ranks.indexOf(suit) + 1)))
+            CardModel(rank: suit, suit: rank, value: ranks.indexOf(suit) + 1)))
         .toList();
   }
 
@@ -24,7 +24,7 @@ class Deck {
     cards.shuffle();
   }
 
-  List<Card> dealCards(int count) {
+  List<CardModel> dealCards(int count) {
     int maxCards = 3;
 
     if (count > cards.length) {
@@ -35,14 +35,14 @@ class Deck {
       throw Exception('Cannot deal $count cards! The maximum is $maxCards');
     }
 
-    List<Card> dealtCards = cards.sublist(0, count);
+    List<CardModel> dealtCards = cards.sublist(0, count);
     discardedCards.addAll(dealtCards);
     cards.removeRange(0, count);
 
     return dealtCards;
   }
 
-  int adjustCardValue(Card card) {
+  int adjustCardValue(CardModel card) {
     switch (card.suit) {
       case 'Ouros':
         return card.value += 11;
@@ -57,9 +57,9 @@ class Deck {
     }
   }
 
-  List<Card> generateManilha(Card manilha) {
+  List<CardModel> generateManilha(CardModel manilha) {
     int nextValue = (manilha.value + 1) % 10;
-    List<Card> manilhas = [];
+    List<CardModel> manilhas = [];
 
     for (var card in cards) {
       if (card.value == nextValue) {
@@ -71,7 +71,7 @@ class Deck {
     return manilhas;
   }
 
-  Card getRandomCard() {
+  CardModel getRandomCard() {
     return cards[Random().nextInt(cards.length)];
   }
 
@@ -87,9 +87,9 @@ class Deck {
   }
 
   Deck.fromJson(Map<String, dynamic> json) {
-    cards = (json['cards'] as List).map((e) => Card.fromJson(e)).toList();
+    cards = (json['cards'] as List).map((e) => CardModel.fromJson(e)).toList();
     discardedCards =
-        (json['discardedCards'] as List).map((e) => Card.fromJson(e)).toList();
+        (json['discardedCards'] as List).map((e) => CardModel.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
