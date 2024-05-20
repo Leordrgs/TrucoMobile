@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart' hide Table;
-import 'package:truco_mobile/src/model/Player/player_model.dart';
-import 'package:truco_mobile/src/model/Table/table_model.dart';
-import 'package:truco_mobile/src/view/game_screen.dart';  // Importe o seu GameScreen aqui
+//import 'package:truco_mobile/src/model/Player/player_model.dart';
+//import 'package:truco_mobile/src/model/Table/table_model.dart';
+import 'package:truco_mobile/src/view/BoardView/table_board_view.dart';
+//import 'package:truco_mobile/src/view/game_screen.dart';  // Importe o seu GameScreen aqui
 
 void main() {
-  runApp(const MyApp());
+  runApp(const BoardView());
 }
 
-class MyApp extends StatelessWidget {
+/*class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
@@ -31,4 +32,4 @@ class MyApp extends StatelessWidget {
       home: GameScreen(table: mesa),  // Passando a mesa para o GameScreen
     );
   }
-}
+}*/
