@@ -1,11 +1,16 @@
-import 'package:flutter/material.dart' hide Table;
+import 'package:flutter/material.dart' hide Table, Card;
+
 //import 'package:truco_mobile/src/model/Player/player_model.dart';
 //import 'package:truco_mobile/src/model/Table/table_model.dart';
 import 'package:truco_mobile/src/view/BoardView/table_board_view.dart';
-//import 'package:truco_mobile/src/view/game_screen.dart';  // Importe o seu GameScreen aqui
+//import 'package:truco_mobile/src/view/game_screen.dart'; 
+import 'package:truco_mobile/src/model/Card/card_model.dart';
+import 'src/model/Deck/deck_model.dart';
 
 void main() {
-  runApp(const BoardView());
+  var sampleCards = Deck();
+
+  runApp(BoardView(cards: sampleCards.getCards()));
 }
 
 /*class MyApp extends StatelessWidget {

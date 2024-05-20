@@ -1,40 +1,31 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Card;
+import 'package:truco_mobile/src/config/general_config.dart';
+import 'package:truco_mobile/src/model/Card/card_model.dart';
+import 'package:truco_mobile/src/widget/TrucoCard/truco_card.dart';
 
 class BoardView extends StatelessWidget {
-  const BoardView({super.key});
+  final List<Card> cards;
 
-  Widget buildRowOfContainers() {
+  const BoardView({super.key, required this.cards});
+
+  Widget buildRowOfCards(int startIndex, bool showFace) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(3, (index) => buildContainer()),
+      children: List.generate(3, (index) => buildCard(cards[startIndex + index], showFace)),
     );
   }
 
-  Widget buildColumnRowOfContainers() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        buildColumnOfContainers(),
-        const Spacer(flex: 5),
-        buildColumnOfContainers(),
-      ],
-    );
-  }
-
-  Widget buildColumnOfContainers() {
+  Widget buildColumnOfCards(int startIndex, bool showFace) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(3, (index) => buildContainer()),
+      children: List.generate(3, (index) => buildCard(cards[startIndex + index], showFace)),
     );
   }
 
-  Widget buildContainer() {
-    return Container(
-      width: 60,
-      height: 60,
-      color: Colors.white,
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(5),
+  Widget buildCard(Card card, bool showFace) {
+    return TrucoCard(
+      cardModel: card,
+      showFace: showFace,
     );
   }
 
@@ -49,9 +40,16 @@ class BoardView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                buildRowOfContainers(),
-                buildColumnRowOfContainers(),
-                buildRowOfContainers(),
+                buildRowOfCards(0, false),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildColumnOfCards(3, false),
+                    const Spacer(flex: 5),
+                    buildColumnOfCards(6, false),
+                  ],
+                ),
+                buildRowOfCards(9, true),
               ],
             ),
           ),
