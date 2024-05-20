@@ -13,10 +13,10 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<game_model.Card> player1Cards = table.team1.player1.showHand();
-    List<game_model.Card> player2Cards = table.team1.player2.showHand();
-    List<game_model.Card> player3Cards = table.team2.player1.showHand();
-    List<game_model.Card> player4Cards = table.team2.player2.showHand();
+    List<game_model.Card> player1Cards = table.teams[0].players[0].showHand();
+    List<game_model.Card> player2Cards = table.teams[0].players[1].showHand();
+    List<game_model.Card> player3Cards = table.teams[1].players[0].showHand();
+    List<game_model.Card> player4Cards = table.teams[1].players[1].showHand();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Truco Game')),
@@ -71,8 +71,8 @@ class GameScreen extends StatelessWidget {
           ),
           // Widget que mostra o placar
           ScoreWidget(
-            team1Points: table.team1.getPoints(),
-            team2Points: table.team2.getPoints(),
+            team1Points: table.teams[0].getPoints(),
+            team2Points: table.teams[1].getPoints(),
           ),
           // Widget com os botões de ação
           ActionButtons(

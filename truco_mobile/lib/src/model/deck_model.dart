@@ -1,9 +1,11 @@
 import 'dart:math';
 import 'card_model.dart';
+import 'package:truco_mobile/src/policies/deck_policies.dart';
 
 class Deck {
   late List<Card> cards;
   List<Card> discardedCards = [];
+  DeckPolicies deckPolicies = DeckPolicies();
 
   Deck() {
     cards = _generateCards();
@@ -27,11 +29,11 @@ class Deck {
   List<Card> dealCards(int count) {
     int maxCards = 3;
 
-    if (count > cards.length) {
+    if (deckPolicies.isCountGreaterThanCardsLength(count, cards)) {
       throw Exception('Not enough cards in the deck');
     }
 
-    if (count > maxCards) {
+    if (deckPolicies.isCountGreaterThanMaxCards(count, maxCards)) {
       throw Exception('Cannot deal $count cards! The maximum is $maxCards');
     }
 
@@ -62,7 +64,7 @@ class Deck {
     List<Card> manilhas = [];
 
     for (var card in cards) {
-      if (card.value == nextValue) {
+      if (deckPolicies.isCardValueEqualToNextValue(card, nextValue)) {
         card.value = adjustCardValue(card);
         manilhas.add(card);
       }

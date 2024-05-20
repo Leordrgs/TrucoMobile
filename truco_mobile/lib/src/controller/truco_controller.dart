@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide Table, Card;
+import 'package:truco_mobile/src/model/player_model.dart';
 import '../model/table_model.dart';
 import '../model/card_model.dart';
 import '../service/api_service.dart';
@@ -19,7 +20,7 @@ class TrucoController with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Erro ao inicializar o jogo a partir da API: $e');
-      table = Table();
+      table = Table([Player(name: 'Player 1'), Player(name: 'Player 2'), Player(name: 'Player 3'), Player(name: 'Player 4')]);
       notifyListeners();
     }
   }

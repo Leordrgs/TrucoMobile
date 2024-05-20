@@ -6,49 +6,64 @@ import 'card_model.dart';
 
 class Table {
   late final Deck deck;
-  late final Team team1;
-  late final Team team2;
-  late Player? currentHand;
-  late Player? currentFoot;
+  late final List<Team> teams;
+  late Player? currentHand; // -> mão atual, jogador que começa a rodada
+  late Player? currentFoot; // -> pé, jogador que joga por último na rodada
   late List<Card> currentRoundCards;
-  int currentRoundWinner = -1; // 0 para Team 1, 1 para Team 2, -1 para empate
-  int currentTurn = 0; // 0 para Team 1, 1 para Team 2
-  TrucoStatus trucoStatus = TrucoStatus.NOT_REQUESTED;
+  int currentRoundWinner = -1; // index do time vencedor da rodada, -1 para empate
+  int currentTurn = 0; // index do time que está jogando, 0 para time 1 e 1 para time 2
   Card? manilha; // Manilha do jogo
+  TrucoStatus trucoStatus = TrucoStatus.NOT_REQUESTED;
 
-  Table() {
+  Table(List<Player> playerNames) {
+    
+    if (playerNames.length % 2 != 0) {
+
+      throw Exception('Number of players must be even');
+    }
+
     deck = Deck();
-    Player player1 = Player(name: 'Player 1');
-    Player player2 = Player(name: 'Player 2');
-    Player player3 = Player(name: 'Player 3');
-    Player player4 = Player(name: 'Player 4');
+    List<Player> players =
+        playerNames.map((name) => Player(name: '$name')).toList();
 
-    team1 = Team(name: 'Team 1', player1: player1, player2: player2);
-    team2 = Team(name: 'Team 2', player1: player3, player2: player4);
+    teams = List<Team>.generate(
+        playerNames.length ~/ 2,
+        (i) => Team(
+            name: 'Team ${i + 1}',
+            players: [players[i * 2], players[i * 2 + 1]]));
 
-    currentHand = player1;
-    currentFoot = player3;
+    currentHand = players[0];
+    currentFoot = players[players.length ~/ 2];
     currentRoundCards = [];
 
     /*distributeCards();
-    printPlayersCards();
-    generateManilha(); // Virar a manilha após distribuir as cartas*/
+  printPlayersCards();
+  generateManilha(); // Virar a manilha após distribuir as cartas*/
+  }
+
+  int getNumberOfTeams() {
+    return teams.length;
   }
 
   void nextTurn() {
-    if (currentTurn == 0) {
-      currentTurn = 1;
-      currentHand = team2.player1;
-      currentFoot = team1.player1;
-    } else {
-      currentTurn = 0;
-      currentHand = team1.player1;
-      currentFoot = team2.player1;
-    }
+    // Calculate the index of the next team
+    int nextTeamIndex = (currentTurn + 1) % getNumberOfTeams();
+
+    // Update the current turn to the next team
+    currentTurn = nextTeamIndex;
+
+    // The hand is always the first player of the current team
+    currentHand = teams[currentTurn].players[0];
+
+    // Calculate the index of the team after the current team
+    int followingTeamIndex = (currentTurn + 1) % getNumberOfTeams();
+
+    // The foot is always the first player of the following team
+    currentFoot = teams[followingTeamIndex].players[0];
   }
 
   void playCard(Card card) {
-    if (currentHand!.hand.contains(card)) {
+    if (currentHand!.getHand().contains(card)) {
       currentHand!.playCard(
           card, this); // Passando a instância atual de Table como argumento
       currentRoundCards.add(card);
@@ -79,76 +94,63 @@ class Table {
   }
 
   void startNewRound() {
-    Table() {
-      deck = Deck();
-      Player player1 = Player(name: 'Player 1');
-      Player player2 = Player(name: 'Player 2');
-      Player player3 = Player(name: 'Player 3');
-      Player player4 = Player(name: 'Player 4');
+    deck = Deck();
+    Player player1 = Player(name: 'Player 1');
+    Player player2 = Player(name: 'Player 2');
+    Player player3 = Player(name: 'Player 3');
+    Player player4 = Player(name: 'Player 4');
 
-      team1 = Team(name: 'Team 1', player1: player1, player2: player2);
-      team2 = Team(name: 'Team 2', player1: player3, player2: player4);
+    List<Team> teams = [
+      Team(name: 'Team 1', players: [player1, player2]),
+      Team(name: 'Team 2', players: [player3, player4])
+    ];
 
-      currentHand = player1;
-      currentFoot = player3;
-      currentRoundCards = [];
+    currentRoundCards = [];
 
-      distributeCards();
-      printPlayersCards();
-      generateManilha(); // Virar a manilha após distribuir as cartas
-    }
+    distributeCards();
+    printPlayersCards();
+    generateManilha(); // Virar a manilha após distribuir as cartas
   }
 
   void distributeCards() {
-    List<Card> player1Cards = deck.dealCards(3); // Distribui 3 cartas
-    List<Card> player2Cards = deck.dealCards(3); // Distribui 3 cartas
-    List<Card> player3Cards = deck.dealCards(3); // Distribui 3 cartas
-    List<Card> player4Cards = deck.dealCards(3); // Distribui 3 cartas
-
-    team1.player1.receiveCard(player1Cards[0]);
-    team1.player1.receiveCard(player1Cards[1]);
-    team1.player1.receiveCard(player1Cards[2]);
-
-    team1.player2.receiveCard(player2Cards[0]);
-    team1.player2.receiveCard(player2Cards[1]);
-    team1.player2.receiveCard(player2Cards[2]);
-
-    team2.player1.receiveCard(player3Cards[0]);
-    team2.player1.receiveCard(player3Cards[1]);
-    team2.player1.receiveCard(player3Cards[2]);
-
-    team2.player2.receiveCard(player4Cards[0]);
-    team2.player2.receiveCard(player4Cards[1]);
-    team2.player2.receiveCard(player4Cards[2]);
+    for (Team team in teams) {
+      for (Player player in team.players) {
+        List<Card> cards = deck.dealCards(3);
+        for (Card card in cards) {
+          player.receiveCard(card);
+        }
+      }
+    }
   }
 
   void resetRound() {
-    team1.player1.hand.clear();
-    team1.player2.hand.clear();
-    team2.player1.hand.clear();
-    team2.player2.hand.clear();
+    for (Team team in teams) {
+      for (Player player in team.players) {
+        player.hand.clear();
+      }
+    }
 
     deck.resetDeck();
   }
 
   void printPlayersCards() {
     print('Cartas da Dupla 1 - Jogador 1:');
-    for (var card in team1.player1.hand) {
+    for (var card in teams[0].players[0].showHand()) {
       print(card);
     }
 
     print('\nCartas da Dupla 1 - Jogador 2:');
-    for (var card in team1.player2.hand) {
+    for (var card in teams[0].players[1].showHand()) {
       print(card);
     }
 
     print('\nCartas da Dupla 2 - Jogador 1:');
-    for (var card in team2.player1.showHand()) {
+    for (var card in teams[1].players[0].showHand()) {
       print(card);
     }
 
     print('\nCartas da Dupla 2 - Jogador 2:');
-    for (var card in team2.player2.showHand()) {
+    for (var card in teams[1].players[1].showHand()) {
       print(card);
     }
   }
@@ -164,41 +166,46 @@ class Table {
   }
 
   void requestTruco() {
-    if (trucoStatus == TrucoStatus.NOT_REQUESTED) {
-      trucoStatus = TrucoStatus.REQUESTED_3_POINTS;
-      // Notificando os jogadores de que o truco foi solicitado
-      team1.notifyPlayers("Truco foi solicitado!");
-      team2.notifyPlayers("Truco foi solicitado!");
-    } else if (trucoStatus == TrucoStatus.REQUESTED_3_POINTS) {
-      trucoStatus = TrucoStatus.REQUESTED_6_POINTS;
-      // Notificando os jogadores de que o truco vale 6 pontos
-      team1.notifyPlayers("Truco vale agora 6 pontos!");
-      team2.notifyPlayers("Truco vale agora 6 pontos!");
-    } else if (trucoStatus == TrucoStatus.REQUESTED_6_POINTS) {
-      trucoStatus = TrucoStatus.REQUESTED_9_POINTS;
-      // Notificando os jogadores de que o truco vale 9 pontos
-      team1.notifyPlayers("Truco vale agora 9 pontos!");
-      team2.notifyPlayers("Truco vale agora 9 pontos!");
-    } else if (trucoStatus == TrucoStatus.REQUESTED_9_POINTS) {
-      trucoStatus = TrucoStatus.REQUESTED_12_POINTS;
-      // Notificando os jogadores de que o truco vale 12 pontos
-      team1.notifyPlayers("Truco vale agora 12 pontos!");
-      team2.notifyPlayers("Truco vale agora 12 pontos!");
+    Map<TrucoStatus, TrucoStatus> nextStatus = {
+      TrucoStatus.NOT_REQUESTED: TrucoStatus.REQUESTED_3_POINTS,
+      TrucoStatus.REQUESTED_3_POINTS: TrucoStatus.REQUESTED_6_POINTS,
+      TrucoStatus.REQUESTED_6_POINTS: TrucoStatus.REQUESTED_9_POINTS,
+      TrucoStatus.REQUESTED_9_POINTS: TrucoStatus.REQUESTED_12_POINTS,
+    };
+
+    Map<TrucoStatus, String> statusMessages = {
+      TrucoStatus.REQUESTED_3_POINTS: "Truco foi solicitado!",
+      TrucoStatus.REQUESTED_6_POINTS: "Truco vale agora 6 pontos!",
+      TrucoStatus.REQUESTED_9_POINTS: "Truco vale agora 9 pontos!",
+      TrucoStatus.REQUESTED_12_POINTS: "Truco vale agora 12 pontos!",
+    };
+
+    if (nextStatus.containsKey(trucoStatus)) {
+      trucoStatus = nextStatus[trucoStatus]!;
+      String? message = statusMessages[trucoStatus];
+      teams.forEach((team) {
+        team.notifyPlayers(message!);
+      });
     }
   }
 
   void respondToTruco(bool accept) {
-    if (accept) {
-      trucoStatus = TrucoStatus.ACCEPTED;
-      // Notificando os jogadores de que o truco foi aceito
-      team1.notifyPlayers("Truco foi aceito!");
-      team2.notifyPlayers("Truco foi aceito!");
-    } else {
-      trucoStatus = TrucoStatus.REFUSED;
-      // Notificando os jogadores de que o truco foi recusado
-      team1.notifyPlayers("Truco foi recusado!");
-      team2.notifyPlayers("Truco foi recusado!");
-    }
+    Map<bool, TrucoStatus> statusMap = {
+      true: TrucoStatus.ACCEPTED,
+      false: TrucoStatus.REFUSED,
+    };
+
+    Map<bool, String> messageMap = {
+      true: "Truco foi aceito!",
+      false: "Truco foi recusado!",
+    };
+
+    trucoStatus = statusMap[accept]!;
+    String? message = messageMap[accept];
+
+    teams.forEach((team) {
+      team.notifyPlayers(message!);
+    });
   }
 
   void awardPointsToWinner() {
@@ -206,39 +213,44 @@ class Table {
 
     if (winnerIndex != -1) {
       if (winnerIndex == 0) {
-        team1.addPoints(trucoStatus.pointsAwarded());
+        teams[0].addPoints(trucoStatus.pointsAwarded());
         currentRoundWinner = 0;
       } else if (winnerIndex == 1) {
-        team2.addPoints(trucoStatus.pointsAwarded());
+        teams[1].addPoints(trucoStatus.pointsAwarded());
         currentRoundWinner = 1;
       }
     }
   }
 
   void checkGameWinner() {
-    if (team1.getPoints() >= 12) {
-      print("Dupla vencedora: ${team1.name}");
+    if (teams[0].getPoints() >= 12) {
+      print("Dupla vencedora: ${teams[0].name}");
       resetGame();
-    } else if (team2.getPoints() >= 12) {
-      print("Dupla vencedora: ${team2.name}");
+    } else if (teams[1].getPoints() >= 12) {
+      print("Dupla vencedora: ${teams[1].name}");
       resetGame();
     }
   }
 
   void resetGame() {
-    team1.resetPoints();
-    team2.resetPoints();
+    teams[0].resetPoints();
+    teams[1].resetPoints();
     startNewRound();
   }
 
   void showScore() {
     print('\nPlacar:');
-    print('${team1.name}: ${team1.getPoints()} pontos'); // Usando getPoints()
-    print('\n${team2.name}: ${team2.getPoints()} pontos'); // Usando getPoints()
+    print('${teams[0].name}: ${teams[0].getPoints()} pontos'); // Usando getPoints()
+    print('\n${teams[1].name}: ${teams[1].getPoints()} pontos'); // Usando getPoints()
+  }
+
+  void addCardToRound(Card card) {
+    currentRoundCards.add(card);
+    nextTurn();
   }
 
   bool checkVictory() {
-    if (team1.getPoints() >= 12 || team2.getPoints() >= 12) {
+    if (teams[0].getPoints() >= 12 || teams[1].getPoints() >= 12) {
       // Usando getPoints()
       return true;
     }
@@ -247,8 +259,8 @@ class Table {
 
   Table.fromJson(Map<String, dynamic> json) {
     deck = Deck.fromJson(json['deck'] ?? {});
-    team1 = Team.fromJson(json['team1'] ?? {});
-    team2 = Team.fromJson(json['team2'] ?? {});
+    teams[0] = Team.fromJson(json['team1'] ?? {});
+    teams[1] = Team.fromJson(json['team2'] ?? {});
     currentRoundCards = (json['currentRoundCards'] as List)
         .map((e) => Card.fromJson(e))
         .toList();
@@ -262,8 +274,8 @@ class Table {
   Map<String, dynamic> toJson() {
     return {
       'deck': deck.toJson(),
-      'team1': team1.toJson(),
-      'team2': team2.toJson(),
+      'team1': teams[0].toJson(),
+      'team2': teams[1].toJson(),
       'currentRoundCards':
           currentRoundCards.map((card) => card.toJson()).toList(),
       'currentRoundWinner': currentRoundWinner,

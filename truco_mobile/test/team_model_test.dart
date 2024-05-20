@@ -14,9 +14,7 @@ void main() {
       () => {
             setUp(() => {
                   team = Team(
-                      name: 'Team 1',
-                      player1: Player(name: 'Player 1'),
-                      player2: Player(name: 'Player 2')),
+                      name: 'Team 1', players: [Player(name: 'Player 1'),Player(name: 'Player 2')]),
                   deck = Deck()
                 }),
             test('should initialize with 0 points', () {
