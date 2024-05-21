@@ -22,10 +22,10 @@ class BoardView extends StatelessWidget {
     );
   }
 
-  Widget buildCard(Card card, bool showFace) {
+  Widget buildCard(Card card, bool isHidden) {
     return TrucoCard(
       cardModel: card,
-      showFace: showFace,
+      isHidden: isHidden,
     );
   }
 

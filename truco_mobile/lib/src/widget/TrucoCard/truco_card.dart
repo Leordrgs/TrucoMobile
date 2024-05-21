@@ -4,7 +4,7 @@ import '../../model/Card/card_model.dart';
 
 class TrucoCard extends StatelessWidget {
   final Card cardModel;
-  final bool showFace;
+  final bool isHidden;
   final double width;
   final double height;
   final EdgeInsets margin;
@@ -13,7 +13,7 @@ class TrucoCard extends StatelessWidget {
   const TrucoCard({
     super.key,
     required this.cardModel,
-    this.showFace = true,
+    this.isHidden = true,
     this.width = 60,
     this.height = 90,
     this.margin = const EdgeInsets.all(10),
@@ -26,8 +26,8 @@ Widget build(BuildContext context) {
     width: width,
     height: height,
     decoration: BoxDecoration(
-      color: showFace ? Colors.white : null,
-      image: showFace ? null : DecorationImage(
+      color: isHidden ? Colors.white : null,
+      image: isHidden ? null : DecorationImage(
         image: NetworkImage(BACK_CARD),
         fit: BoxFit.fill,
       ),
@@ -40,7 +40,7 @@ Widget build(BuildContext context) {
     margin: margin,
     padding: padding,
     child: Center(
-      child: showFace ? Text('${cardModel.rank} de ${cardModel.suit}') : null,
+      child: isHidden ? Text('${cardModel.rank} de ${cardModel.suit}') : null,
     ),
   );
 }
