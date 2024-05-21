@@ -22,6 +22,10 @@ class Deck {
         .toList();
   }
 
+  List<Card> getCards() {
+    return cards;
+  }
+
   void _shuffle() {
     cards.shuffle();
   }
