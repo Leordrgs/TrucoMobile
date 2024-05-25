@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart' hide Table, Card;
-
+import 'package:truco_mobile/src/config/general_config.dart';
+import 'package:truco_mobile/src/model/Card/cardmodel.dart';
+import 'package:truco_mobile/src/service/api_service.dart';
 //import 'package:truco_mobile/src/model/Player/player_model.dart';
 //import 'package:truco_mobile/src/model/Table/table_model.dart';
 import 'package:truco_mobile/src/view/BoardView/table_board_view.dart';
 //import 'package:truco_mobile/src/view/game_screen.dart'; 
-import 'package:truco_mobile/src/model/Card/card_model.dart';
-import 'src/model/Deck/deck_model.dart';
 
-void main() {
-  var sampleCards = Deck();
-
-  runApp(BoardView(cards: sampleCards.getCards()));
+void main() async {
+  ApiService apiService = ApiService(baseUrl: DECK_API);
+  Map<String, dynamic> newDeck = await apiService.createNewDeck();
+  String deckId = newDeck['deck_id'];
+  var response = await apiService.drawCards(deckId, 12);
+  List<CardModel> cards = (response['cards'] as List).map((cardMap) => CardModel.fromMap(cardMap)).toList();
+  runApp(BoardView(cards: cards));
 }
 
 /*class MyApp extends StatelessWidget {

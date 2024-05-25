@@ -1,60 +1,142 @@
-import 'package:flutter/material.dart' hide Card;
-import 'package:truco_mobile/src/config/general_config.dart';
-import 'package:truco_mobile/src/model/Card/card_model.dart';
-import 'package:truco_mobile/src/model/Deck/deck_model.dart';
+import 'package:flutter/material.dart';
+import 'package:truco_mobile/src/model/Card/cardmodel.dart';
 import 'package:truco_mobile/src/widget/TrucoCard/truco_card.dart';
 
-class BoardView extends StatelessWidget {
-  final List<Card> cards;
+class BoardView extends StatefulWidget {
+  final List<CardModel> cards;
 
-  const BoardView({super.key, required this.cards});
+  const BoardView({Key? key, required this.cards}) : super(key: key);
 
-  Widget buildRowOfCards(int startIndex, bool showFace) {
+  @override
+  _BoardViewState createState() => _BoardViewState();
+}
+
+class _BoardViewState extends State<BoardView> {
+  CardModel? selectedCard;
+  bool showPlayPrompt = false;
+  bool cardPlayed = false;
+
+  void onCardTap(CardModel card) {
+    setState(() {
+      selectedCard = card;
+      showPlayPrompt = true;
+    });
+  }
+
+  void onCenterTap() {
+    if (showPlayPrompt && selectedCard != null) {
+      setState(() {
+        cardPlayed = true;
+        showPlayPrompt = false;
+        widget.cards.remove(selectedCard);
+      });
+    } else if (selectedCard != null) {
+      setState(() {
+        showPlayPrompt = false;
+      });
+    }
+  }
+
+  Widget buildCard(CardModel card, bool isHidden) {
+    return GestureDetector(
+      onTap: () => onCardTap(card),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+        child: TrucoCard(
+          cardModel: card,
+          isHidden: isHidden,
+        ),
+      ),
+    );
+  }
+
+  Widget buildRowOfCards(int startIndex, bool isHidden) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(3, (index) => buildCard(cards[startIndex + index], showFace)),
+      children: List.generate(
+        3,
+        (index) {
+          int cardIndex = startIndex + index;
+          if (cardIndex < widget.cards.length) {
+            return buildCard(widget.cards[cardIndex], isHidden);
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 
-  Widget buildColumnOfCards(int startIndex, bool showFace) {
+  Widget buildColumnOfCards(int startIndex, bool isHidden) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(3, (index) => buildCard(cards[startIndex + index], showFace)),
+      children: List.generate(
+        3,
+        (index) {
+          int cardIndex = startIndex + index;
+          if (cardIndex < widget.cards.length) {
+            return buildCard(widget.cards[cardIndex], isHidden);
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 
-  Widget buildCard(Card card, bool isHidden) {
-    var deck = Deck();
-    var randomCard = deck.getRandomCard();
+  Widget buildManilhaCard() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2.0), // Adjust spacing between cards
-      child: TrucoCard(
-        cardModel: randomCard,
-        isHidden: isHidden,
+      padding: EdgeInsets.only(top: 110.0),
+      child: Align(
+        alignment: Alignment.topRight,
+        child: Container(
+          margin: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(
+              1,
+              (index) => buildCard(widget.cards[index], false),
+            ),
+          ),
+        ),
       ),
     );
   }
 
-Widget buildManilhaCards() {
-  return Padding(
-    padding: EdgeInsets.only(top: 120.0), // Ajuste o valor conforme necessário
-    child: Align(
-      alignment: Alignment.topRight,
-      child: Container(
-        margin: const EdgeInsets.all(8.0),
-        padding: const EdgeInsets.symmetric(horizontal: 4.0), // Adjust inner padding
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min, // Adjust to fit cards tightly
-          children: List.generate(1, (index) => buildCard(cards[index], true)),
+  Widget buildPlayPrompt() {
+    return Center(
+      child: GestureDetector(
+        onTap: onCenterTap,
+        child: Container(
+          color: Colors.black.withOpacity(0.5),
+          padding: EdgeInsets.all(20.0),
+          child: Text(
+            'Clique aqui',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
+
+  Widget buildPlayedCard() {
+    return Center(
+      child: TrucoCard(
+        cardModel: selectedCard!,
+        isHidden: false,
+        width: 60,
+        height: 90,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,27 +144,32 @@ Widget buildManilhaCards() {
       home: Scaffold(
         backgroundColor: Color.fromRGBO(50, 168, 82, 1.0),
         body: SafeArea(
-          child: Stack( // Use Stack for positioning the Manilha cards
+          child: Stack(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    buildRowOfCards(0, false),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        buildColumnOfCards(3, false),
-                        const Spacer(flex: 5),
-                        buildColumnOfCards(6, false),
-                      ],
-                    ),
-                    buildRowOfCards(9, true),
-                  ],
+              GestureDetector(
+                onTap: onCenterTap,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      buildRowOfCards(0, true),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          buildColumnOfCards(3, true),
+                          const Spacer(flex: 5),
+                          buildColumnOfCards(6, true),
+                        ],
+                      ),
+                      buildRowOfCards(9, false),
+                    ],
+                  ),
                 ),
               ),
-              buildManilhaCards(), // Add Manilha cards to the Stack
+              buildManilhaCard(),
+              if (showPlayPrompt) buildPlayPrompt(),
+              if (cardPlayed && selectedCard != null) buildPlayedCard(),
             ],
           ),
         ),
