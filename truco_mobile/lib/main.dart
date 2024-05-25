@@ -5,17 +5,25 @@ import 'package:truco_mobile/src/service/api_service.dart';
 //import 'package:truco_mobile/src/model/Player/player_model.dart';
 //import 'package:truco_mobile/src/model/Table/table_model.dart';
 import 'package:truco_mobile/src/view/BoardView/table_board_view.dart';
+import 'package:truco_mobile/src/view/LoadingView/loading_view.dart';
+import 'package:truco_mobile/src/view/LoginView/login_view.dart';
+import 'package:truco_mobile/src/view/MainPage/main_page_view.dart';
+import 'package:truco_mobile/src/view/RegisterView/register_view.dart';
 //import 'package:truco_mobile/src/view/game_screen.dart'; 
 
 void main() async {
-  ApiService apiService = ApiService(baseUrl: DECK_API);
-  Map<String, dynamic> newDeck = await apiService.createNewDeck();
-  String deckId = newDeck['deck_id'];
-  var response = await apiService.drawCards(deckId, 12);
-  List<CardModel> cards = (response['cards'] as List).map((cardMap) => CardModel.fromMap(cardMap)).toList();
-  runApp(BoardView(cards: cards));
-}
+  // ApiService apiService = ApiService(baseUrl: DECK_API);
+  // Map<String, dynamic> newDeck = await apiService.createNewDeck();
+  // String deckId = newDeck['deck_id'];
+  // var response = await apiService.drawCards(deckId, 12);
+  // List<CardModel> cards = (response['cards'] as List).map((cardMap) => CardModel.fromMap(cardMap)).toList();
 
+  // runApp(BoardView(cards: cards));
+
+  runApp(MaterialApp(
+    home: MyLoadingPage(title: 'Carregando'),
+    ));
+}
 /*class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
