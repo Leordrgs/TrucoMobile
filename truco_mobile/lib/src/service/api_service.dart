@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -10,11 +11,47 @@ class ApiService {
 
     if (response.statusCode == 200) {
       // Se você espera um JSON, pode decodificá-lo aqui
-      return response.body;
+      return jsonDecode(response.body);
     } else {
       throw Exception('Falha ao carregar dados da API');
     }
   }
 
-  // Outros métodos para post, put, delete, etc., conforme necessário
+  Future<Map<String, dynamic>> createNewDeck() async {
+    var cards =
+        'AD,AS,AH,AC,2D,2S,2H,2C,3D,3S,3H,3C,4D,4S,4H,4C,5D,5S,5H,5C,6D,6S,6H,6C,7D,7S,7H,7C,QD,QS,QH,QC,JD,JS,JH,JC,KD,KS,KH,KC';
+    var response = await http
+        .get(Uri.parse('$baseUrl/deck/new/shuffle/?deck_count=1&cards=$cards'));
+    print('$baseUrl/deck/new/shuffle/?deck_count=1?cards=$cards');
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Falha ao criar novo deck');
+    }
+  }
+
+  Future<Map<String, dynamic>> drawCards(String deckId, int cardAmount) async {
+    var response = await http
+        .get(Uri.parse('$baseUrl/deck/$deckId/draw/?count=$cardAmount'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Falha ao desenhar cartas');
+    }
+  }
+
+  Future<Map<String, dynamic>> drawThreeCards(String deckId) async {
+    return await drawCards(deckId, 3);
+  }
+
+  Future<Map<String, dynamic>> shuffleDeck(String deckId) async {
+    var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/shuffle/'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Falha ao embaralhar o deck');
+    }
+  }
 }
