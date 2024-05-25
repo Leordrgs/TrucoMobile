@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart' hide Card;
 import 'package:truco_mobile/src/config/general_config.dart';
-import '../../model/Card/card_model.dart';
+import 'package:truco_mobile/src/model/Card/cardmodel.dart';
 
 class TrucoCard extends StatelessWidget {
-  final Card cardModel;
+  final CardModel cardModel;
   final bool isHidden;
   final double width;
   final double height;
   final EdgeInsets margin;
   final EdgeInsets padding;
-  
+
   const TrucoCard({
     super.key,
     required this.cardModel,
@@ -21,27 +21,27 @@ class TrucoCard extends StatelessWidget {
   });
 
   @override
-Widget build(BuildContext context) {
-  return Container(
-    width: width,
-    height: height,
-    decoration: BoxDecoration(
-      color: isHidden ? Colors.white : null,
-      image: isHidden ? null : DecorationImage(
-        image: NetworkImage(BACK_CARD),
-        fit: BoxFit.fill,
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        image: isHidden
+            ? DecorationImage(
+                image: NetworkImage(BACK_CARD),
+                fit: BoxFit.fill,
+              )
+            : DecorationImage(
+                image: NetworkImage(cardModel.image),
+                fit: BoxFit.fill,
+              ),
+        border: Border.all(
+          color: Colors.black,
+          width: 2,
+        ),
       ),
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(
-        color: Colors.black,
-        width: 2,
-      ),
-    ),
-    margin: margin,
-    padding: padding,
-    child: Center(
-      child: isHidden ? Text('${cardModel.rank} de ${cardModel.suit}') : null,
-    ),
-  );
-}
+      margin: margin,
+      padding: padding,
+    );
+  }
 }
