@@ -14,8 +14,8 @@ class TrucoCard extends StatelessWidget {
     super.key,
     required this.cardModel,
     this.isHidden = true,
-    this.width = 55,
-    this.height = 95,
+    this.width = 50,
+    this.height = 80,
     this.margin = const EdgeInsets.all(10),
     this.padding = const EdgeInsets.all(5),
   });
@@ -35,10 +35,6 @@ class TrucoCard extends StatelessWidget {
                 image: NetworkImage(cardModel.image),
                 fit: BoxFit.fill,
               ),
-        border: Border.all(
-          color: Colors.black,
-          width: 2,
-        ),
       ),
       margin: margin,
       padding: padding,

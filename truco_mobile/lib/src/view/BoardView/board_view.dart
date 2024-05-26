@@ -96,7 +96,7 @@ class _BoardViewState extends State<BoardView> {
             Text(
               'Carta virada',
               style: TextStyle(
-                fontSize: 16.0,
+                fontSize: 12.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
