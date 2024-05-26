@@ -14,8 +14,8 @@ class TrucoCard extends StatelessWidget {
     super.key,
     required this.cardModel,
     this.isHidden = true,
-    this.width = 60,
-    this.height = 90,
+    this.width = 55,
+    this.height = 95,
     this.margin = const EdgeInsets.all(10),
     this.padding = const EdgeInsets.all(5),
   });

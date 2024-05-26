@@ -4,7 +4,7 @@ import 'package:truco_mobile/src/model/Card/cardmodel.dart';
 import 'package:truco_mobile/src/service/api_service.dart';
 //import 'package:truco_mobile/src/model/Player/player_model.dart';
 //import 'package:truco_mobile/src/model/Table/table_model.dart';
-import 'package:truco_mobile/src/view/BoardView/table_board_view.dart';
+import 'package:truco_mobile/src/view/BoardView/board_view.dart';
 import 'package:truco_mobile/src/view/LoadingView/loading_view.dart';
 import 'package:truco_mobile/src/view/LoginView/login_view.dart';
 import 'package:truco_mobile/src/view/MainView/main_page_view.dart';
