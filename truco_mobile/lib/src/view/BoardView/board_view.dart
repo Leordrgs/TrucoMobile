@@ -15,7 +15,7 @@ class BoardView extends StatefulWidget {
 class _BoardViewState extends State<BoardView> {
   CardModel? selectedCard;
   bool showPlayPrompt = false;
-  bool cardPlayed = false;
+  List<CardModel> playedCards = [];
 
   void onCardTap(CardModel card) {
     setState(() {
@@ -27,9 +27,10 @@ class _BoardViewState extends State<BoardView> {
   void onCenterTap() {
     if (showPlayPrompt && selectedCard != null) {
       setState(() {
-        cardPlayed = true;
-        showPlayPrompt = false;
+        playedCards.add(selectedCard!);
         widget.cards.remove(selectedCard);
+        selectedCard = null;
+        showPlayPrompt = false;
       });
     } else if (selectedCard != null) {
       setState(() {
@@ -38,14 +39,17 @@ class _BoardViewState extends State<BoardView> {
     }
   }
 
-  Widget buildCard(CardModel card, bool isHidden) {
+  Widget buildCard(CardModel card, bool isHidden, {bool isSelected = false}) {
     return GestureDetector(
       onTap: () => onCardTap(card),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 2.0),
-        child: TrucoCard(
-          cardModel: card,
-          isHidden: isHidden,
+        child: Transform.scale(
+          scale: isSelected ? 1.2 : 1.0, 
+          child: TrucoCard(
+            cardModel: card,
+            isHidden: isHidden,
+          ),
         ),
       ),
     );
@@ -59,7 +63,8 @@ class _BoardViewState extends State<BoardView> {
         (index) {
           int cardIndex = startIndex + index;
           if (cardIndex < widget.cards.length) {
-            return buildCard(widget.cards[cardIndex], isHidden);
+            return buildCard(widget.cards[cardIndex], isHidden,
+                isSelected: widget.cards[cardIndex] == selectedCard);
           } else {
             return Container();
           }
@@ -76,7 +81,8 @@ class _BoardViewState extends State<BoardView> {
         (index) {
           int cardIndex = startIndex + index;
           if (cardIndex < widget.cards.length) {
-            return buildCard(widget.cards[cardIndex], isHidden);
+            return buildCard(widget.cards[cardIndex], isHidden,
+                isSelected: widget.cards[cardIndex] == selectedCard);
           } else {
             return Container();
           }
@@ -140,13 +146,21 @@ class _BoardViewState extends State<BoardView> {
     );
   }
 
-  Widget buildPlayedCard() {
+  Widget buildPlayedCards() {
     return Center(
-      child: TrucoCard(
-        cardModel: selectedCard!,
-        isHidden: false,
-        width: 60,
-        height: 90,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: playedCards.map((card) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            child: TrucoCard(
+              cardModel: card,
+              isHidden: false,
+              width: 60,
+              height: 90,
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -182,7 +196,7 @@ class _BoardViewState extends State<BoardView> {
               ),
               buildManilhaCard(),
               if (showPlayPrompt) buildPlayPrompt(),
-              if (cardPlayed && selectedCard != null) buildPlayedCard(),
+              buildPlayedCards(),
               Positioned(
                 top: 120.0,
                 child: Container(
