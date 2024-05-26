@@ -42,12 +42,12 @@ class ScoreBoard extends StatelessWidget {
                     value: index,
                     groupValue: 2,
                     onChanged: (int? value) {},
-                    activeColor: Colors.white, // Cor quando selecionado
+                    activeColor: Colors.white, 
                   ),
                 ),
               ),
               Text(
-                '$scoreTeamA', // Placar literal do time A
+                '$scoreTeamA',
                 style: TextStyle(fontSize: size, color: fontColor),
               ),
             ],
@@ -69,12 +69,12 @@ class ScoreBoard extends StatelessWidget {
                     value: index,
                     groupValue: 2,
                     onChanged: (int? value) {},
-                    activeColor: Colors.white, // Cor quando selecionado
+                    activeColor: Colors.white, 
                   ),
                 ),
               ),
               Text(
-                '$scoreTeamB', // Placar literal do time B
+                '$scoreTeamB', 
                 style: TextStyle(fontSize: size, color: fontColor),
               ),
             ],
