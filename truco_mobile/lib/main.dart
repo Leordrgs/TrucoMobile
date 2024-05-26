@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide Table, Card;
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/Card/cardmodel.dart';
@@ -11,35 +10,8 @@ import 'package:truco_mobile/src/view/LoginView/login_view.dart';
 import 'package:truco_mobile/src/view/MainView/main_page_view.dart';
 import 'package:truco_mobile/src/view/RegisterView/register_view.dart';
 //import 'package:truco_mobile/src/view/game_screen.dart'; 
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 void main() async {
-  await Firebase.initializeApp(
-  options: DefaultFirebaseOptions.currentPlatform,
-);
-
-WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
-  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-
-  FirebaseAuth.instance.authStateChanges().listen((User? user) {
-    if (user == null) {
-      print('User is currently signed out!');
-    } else {
-      print('User is signed in!');
-    }
-  });
-
-  FirebaseAuth.instance.idTokenChanges().listen((User? user) {
-    if (user == null) {
-      print('User is currently signed out!');
-    } else {
-      print('User is signed in!');
-    }
-  });
-
   // ApiService apiService = ApiService(baseUrl: DECK_API);
   // Map<String, dynamic> newDeck = await apiService.createNewDeck();
   // String deckId = newDeck['deck_id'];
