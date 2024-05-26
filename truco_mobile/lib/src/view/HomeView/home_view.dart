@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:truco_mobile/src/view/CreateGameView/create_game_view.dart';
 import 'package:truco_mobile/src/view/LoginView/login_view.dart';
 import 'package:truco_mobile/src/view/RegisterView/register_view.dart';
 import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
 
 class MyHomePagePage extends StatefulWidget {
-  const MyHomePagePage({Key? key}) : super(key: key);
+    final String title;
+  const MyHomePagePage({Key? key, required this.title}) : super(key: key);
 
   @override
   _MyHomePagePageState createState() => _MyHomePagePageState();
@@ -48,7 +50,7 @@ class _MyHomePagePageState extends State<MyHomePagePage> {
                 onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => MyLoginPage(title: 'Login'))),
+                        builder: (context) => MyCreateNewGamePage(title: 'Login'))),
                 width: 200,
                 height: 50,
                 fontSize: 32,
@@ -60,7 +62,7 @@ class _MyHomePagePageState extends State<MyHomePagePage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            MyRegisterPage(title: 'Registrar'))),
+                            MyCreateNewGamePage(title: 'Criar jogo'))),
                 width: 200,
                 height: 50,
                 fontSize: 32,
