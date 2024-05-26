@@ -3,17 +3,26 @@ import 'package:truco_mobile/src/view/LoginView/login_view.dart';
 import 'package:truco_mobile/src/view/RegisterView/register_view.dart';
 import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
 
-class MyMainPagePage extends StatefulWidget {
-  const MyMainPagePage({Key? key}) : super(key: key);
+class MyHomePagePage extends StatefulWidget {
+  const MyHomePagePage({Key? key}) : super(key: key);
 
   @override
-  _MyMainPagePageState createState() => _MyMainPagePageState();
+  _MyHomePagePageState createState() => _MyHomePagePageState();
 }
 
-class _MyMainPagePageState extends State<MyMainPagePage> {
+class _MyHomePagePageState extends State<MyHomePagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(style: TextStyle(color: Colors.white), 'Tela inicial'),
+        backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => MyLoginPage(title: 'Login',))),
+        ),
+      ),
       body: Container(
         color: Colors.red,
         width: double.infinity,
@@ -35,7 +44,7 @@ class _MyMainPagePageState extends State<MyMainPagePage> {
               ),
               SizedBox(height: 20), 
               CustomButton(
-                text: 'Entrar',
+                text: 'Criar jogo',
                 onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -46,7 +55,7 @@ class _MyMainPagePageState extends State<MyMainPagePage> {
               ),
               SizedBox(height: 10), 
               CustomButton(
-                text: 'Registrar',
+                text: 'Ver salas',
                 onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
