@@ -33,18 +33,18 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
     );
   }
 
-  Widget _buildCheckbox() {
+  Widget _buildGameTypeButton() {
     return Row(
       children: [
-        Checkbox(
-          value: _isPaulista,
+        Radio<bool>(
+          value: true,
+          groupValue: _isPaulista,
           onChanged: (bool? value) {
             setState(() {
               _isPaulista = value ?? false;
             });
           },
           activeColor: Colors.red,
-          checkColor: Colors.white,
         ),
         const Text(
           'Paulista',
@@ -132,7 +132,7 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
               'Tipo de jogo:',
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-            _buildCheckbox(),
+            _buildGameTypeButton(),
             const SizedBox(height: 20),
             const Text(
               'Nome da sala:',
