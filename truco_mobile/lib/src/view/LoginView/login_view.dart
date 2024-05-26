@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/view/MainPage/main_page_view.dart';
+import 'package:truco_mobile/src/view/MainView/main_page_view.dart';
 import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
 import 'package:truco_mobile/src/widget/CustomTextInput/custom_text.dart';
 
