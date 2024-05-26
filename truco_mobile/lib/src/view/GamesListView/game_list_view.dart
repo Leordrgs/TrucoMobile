@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/controller/truco_controller.dart';
 import 'package:truco_mobile/src/service/api_service.dart';
-import 'package:truco_mobile/src/view/BoardView/table_board_view.dart';
+import 'package:truco_mobile/src/view/BoardView/board_view.dart';
 import 'package:truco_mobile/src/view/HomeView/home_view.dart';
 import 'package:truco_mobile/src/model/Card/cardmodel.dart';
 
