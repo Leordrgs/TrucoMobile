@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:truco_mobile/src/config/general_config.dart';
+import 'package:truco_mobile/src/model/Card/cardmodel.dart';
 
 class ApiService {
   final String baseUrl;
@@ -54,4 +56,5 @@ class ApiService {
       throw Exception('Falha ao embaralhar o deck');
     }
   }
+
 }
