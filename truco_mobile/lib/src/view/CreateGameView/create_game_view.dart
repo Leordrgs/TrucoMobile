@@ -115,7 +115,7 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
         color: Colors.black,
-        borderRadius: BorderRadius.circular(16.0), // Aplicando borderRadius
+        borderRadius: BorderRadius.circular(16.0), 
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -154,7 +154,7 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
                 width: 200,
                 height: 50,
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.white,// Aplicando borderRadius
                 textColor: Colors.black,
               ),
             ),
