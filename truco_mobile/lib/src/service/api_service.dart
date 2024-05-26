@@ -12,7 +12,6 @@ class ApiService {
     final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
 
     if (response.statusCode == 200) {
-      // Se você espera um JSON, pode decodificá-lo aqui
       return jsonDecode(response.body);
     } else {
       throw Exception('Falha ao carregar dados da API');
@@ -57,4 +56,11 @@ class ApiService {
     }
   }
 
+  Future<List<CardModel>> getCards(String deckId, int count) async {
+    final response = await drawCards(deckId, count);
+    final cards = (response['cards'] as List)
+        .map((data) => CardModel.fromMap(data))
+        .toList();
+    return cards;
+  }
 }

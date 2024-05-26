@@ -14,7 +14,10 @@ class Card {
     return '$rank de $suit';
   }
 
-  Card.fromJson(Map<String, dynamic> json) : rank = json['rank'], suit = json['suit'], value = json['value'];
+  Card.fromJson(Map<String, dynamic> json)
+      : rank = json['rank'],
+        suit = json['suit'],
+        value = json['value'];
 
   Map<String, dynamic> toJson() {
     return {

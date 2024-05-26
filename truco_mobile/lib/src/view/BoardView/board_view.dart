@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:truco_mobile/src/model/Card/card_model.dart';
 import 'package:truco_mobile/src/model/Card/cardmodel.dart';
 import 'package:truco_mobile/src/widget/ScoreBoard/score_board.dart';
 import 'package:truco_mobile/src/widget/TrucoCard/truco_card.dart';
@@ -45,7 +46,7 @@ class _BoardViewState extends State<BoardView> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 2.0),
         child: Transform.scale(
-          scale: isSelected ? 1.2 : 1.0, 
+          scale: isSelected ? 1.2 : 1.0,
           child: TrucoCard(
             cardModel: card,
             isHidden: isHidden,
@@ -60,7 +61,7 @@ class _BoardViewState extends State<BoardView> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         3,
-        (index) {
+            (index) {
           int cardIndex = startIndex + index;
           if (cardIndex < widget.cards.length) {
             return buildCard(widget.cards[cardIndex], isHidden,
@@ -78,7 +79,7 @@ class _BoardViewState extends State<BoardView> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         3,
-        (index) {
+            (index) {
           int cardIndex = startIndex + index;
           if (cardIndex < widget.cards.length) {
             return buildCard(widget.cards[cardIndex], isHidden,
@@ -92,6 +93,9 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Widget buildManilhaCard() {
+    if (widget.cards.isEmpty) {
+      return Container();
+    }
     return Padding(
       padding: EdgeInsets.only(top: 110.0),
       child: Align(
@@ -114,10 +118,9 @@ class _BoardViewState extends State<BoardView> {
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: List.generate(
-                  1,
-                  (index) => buildCard(widget.cards[index], false),
-                ),
+                children: [
+                  buildCard(widget.cards.first, false),
+                ],
               ),
             ),
           ],

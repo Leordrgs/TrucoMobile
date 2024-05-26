@@ -11,30 +11,27 @@ class TrucoCard extends StatelessWidget {
   final EdgeInsets padding;
 
   const TrucoCard({
-    super.key,
+    Key? key,
     required this.cardModel,
     this.isHidden = true,
     this.width = 50,
     this.height = 80,
     this.margin = const EdgeInsets.all(10),
     this.padding = const EdgeInsets.all(5),
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = isHidden ? BACK_CARD : cardModel.image;
+
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        image: isHidden
-            ? DecorationImage(
-                image: NetworkImage(BACK_CARD),
-                fit: BoxFit.fill,
-              )
-            : DecorationImage(
-                image: NetworkImage(cardModel.image),
-                fit: BoxFit.fill,
-              ),
+        image: DecorationImage(
+          image: NetworkImage(imageUrl),
+          fit: BoxFit.fill,
+        ),
       ),
       margin: margin,
       padding: padding,
