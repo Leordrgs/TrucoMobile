@@ -66,7 +66,10 @@ class _BoardViewState extends State<BoardView> {
             return buildCard(widget.cards[cardIndex], isHidden,
                 isSelected: widget.cards[cardIndex] == selectedCard);
           } else {
-            return Container();
+            return SizedBox(
+              width: 70.0,
+              height: 100.0,
+            );
           }
         },
       ),
@@ -99,7 +102,7 @@ class _BoardViewState extends State<BoardView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               'Carta virada',
               style: TextStyle(
                 fontSize: 12.0,
@@ -131,9 +134,11 @@ class _BoardViewState extends State<BoardView> {
       child: GestureDetector(
         onTap: onCenterTap,
         child: Container(
+          width: 100,
+          height: 100,
           color: Colors.black.withOpacity(0.5),
-          padding: EdgeInsets.all(20.0),
-          child: Text(
+          alignment: Alignment.center,
+          child: const Text(
             'Clique aqui',
             style: TextStyle(
               fontSize: 12,
