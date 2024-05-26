@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart' hide Table, Card;
+import 'package:truco_mobile/src/config/general_config.dart';
+import 'package:truco_mobile/src/model/Card/cardmodel.dart';
 import 'package:truco_mobile/src/model/Player/player_model.dart';
 import '../model/Table/table_model.dart';
 import '../model/Card/card_model.dart';
@@ -23,6 +25,20 @@ class TrucoController with ChangeNotifier {
       table = Table([Player(name: 'Player 1'), Player(name: 'Player 2'), Player(name: 'Player 3'), Player(name: 'Player 4')]);
       notifyListeners();
     }
+  }
+
+
+  Future<List<CardModel>> fetchCards() async {
+    ApiService apiService = ApiService(baseUrl: DECK_API);
+
+    Map<String, dynamic> newDeck = await apiService.createNewDeck();
+
+    String deckId = newDeck['deck_id'];
+    var response = await apiService.drawCards(deckId, 12);
+    List<CardModel> cards = (response['cards'] as List)
+        .map((cardMap) => CardModel.fromMap(cardMap))
+        .toList();
+    return cards;
   }
 
   void playCard(Card card) {

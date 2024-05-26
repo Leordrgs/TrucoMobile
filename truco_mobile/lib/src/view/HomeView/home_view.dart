@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/view/CreateGameView/create_game_view.dart';
+import 'package:truco_mobile/src/view/GamesListView/game_list_view.dart';
 import 'package:truco_mobile/src/view/LoginView/login_view.dart';
 import 'package:truco_mobile/src/view/RegisterView/register_view.dart';
 import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
@@ -62,7 +63,7 @@ class _MyHomePagePageState extends State<MyHomePagePage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            MyCreateNewGamePage(title: 'Criar jogo'))),
+                            GameListView(title: 'Ver salas'))),
                 width: 200,
                 height: 50,
                 fontSize: 32,
