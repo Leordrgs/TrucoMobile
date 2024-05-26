@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/view/MainPage/main_page_view.dart';
+import 'package:truco_mobile/src/view/HomeView/home_view.dart';
+import 'package:truco_mobile/src/view/MainView/main_page_view.dart';
 import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
 import 'package:truco_mobile/src/widget/CustomTextInput/custom_text.dart';
 
@@ -68,7 +69,7 @@ class _MyLoginPage extends State<MyLoginPage> {
                       SizedBox(height: 30),
                       CustomButton(
                         text: 'Entrar',
-                        onPressed: () => print('Clicou'),
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePagePage())),
                         width: 50,
                         height: 50,
                         fontSize: 36,

@@ -7,7 +7,7 @@ import 'package:truco_mobile/src/service/api_service.dart';
 import 'package:truco_mobile/src/view/BoardView/table_board_view.dart';
 import 'package:truco_mobile/src/view/LoadingView/loading_view.dart';
 import 'package:truco_mobile/src/view/LoginView/login_view.dart';
-import 'package:truco_mobile/src/view/MainPage/main_page_view.dart';
+import 'package:truco_mobile/src/view/MainView/main_page_view.dart';
 import 'package:truco_mobile/src/view/RegisterView/register_view.dart';
 //import 'package:truco_mobile/src/view/game_screen.dart'; 
 
