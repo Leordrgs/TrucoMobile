@@ -69,7 +69,7 @@ class _MyLoginPage extends State<MyLoginPage> {
                       SizedBox(height: 30),
                       CustomButton(
                         text: 'Entrar',
-                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePagePage())),
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePagePage(title: 'Tela inicial'))),
                         width: 50,
                         height: 50,
                         fontSize: 36,
