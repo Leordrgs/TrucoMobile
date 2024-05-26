@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/model/Card/cardmodel.dart';
+import 'package:truco_mobile/src/widget/ScoreBoard/score_board.dart';
 import 'package:truco_mobile/src/widget/TrucoCard/truco_card.dart';
 
 class BoardView extends StatefulWidget {
@@ -89,19 +90,31 @@ class _BoardViewState extends State<BoardView> {
       padding: EdgeInsets.only(top: 110.0),
       child: Align(
         alignment: Alignment.topRight,
-        child: Container(
-          margin: const EdgeInsets.all(8.0),
-          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(
-              1,
-              (index) => buildCard(widget.cards[index], false),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Carta virada',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+            Container(
+              margin: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(
+                  1,
+                  (index) => buildCard(widget.cards[index], false),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -170,6 +183,22 @@ class _BoardViewState extends State<BoardView> {
               buildManilhaCard(),
               if (showPlayPrompt) buildPlayPrompt(),
               if (cardPlayed && selectedCard != null) buildPlayedCard(),
+              Positioned(
+                top: 140.0,
+                child: Container(
+                  width: 160.0,
+                  height: 100.0,
+                  child: FittedBox(
+                    child: ScoreBoard(
+                      scoreTeamA: 10,
+                      scoreTeamB: 7,
+                      color: Colors.black,
+                      fontColor: Colors.white,
+                      size: 12.0,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
