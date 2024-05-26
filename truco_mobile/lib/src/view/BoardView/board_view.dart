@@ -184,7 +184,7 @@ class _BoardViewState extends State<BoardView> {
               if (showPlayPrompt) buildPlayPrompt(),
               if (cardPlayed && selectedCard != null) buildPlayedCard(),
               Positioned(
-                top: 140.0,
+                top: 120.0,
                 child: Container(
                   width: 160.0,
                   height: 100.0,
