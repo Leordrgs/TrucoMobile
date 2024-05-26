@@ -96,7 +96,7 @@ class _BoardViewState extends State<BoardView> {
 
   Widget buildManilhaCard() {
     return Padding(
-      padding: EdgeInsets.only(top: 110.0),
+      padding: const EdgeInsets.only(top: 110.0),
       child: Align(
         alignment: Alignment.topRight,
         child: Column(
@@ -152,29 +152,37 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Widget buildPlayedCards() {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+  return Positioned(
+    left: MediaQuery.of(context).size.width / 2 - 80,
+    top: MediaQuery.of(context).size.height / 2 - 60,
+    child: SizedBox(
+      width: 160,
+      height: 160,
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: -8,
+        runSpacing: -8,
         children: playedCards.map((card) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            padding: const EdgeInsets.symmetric(horizontal:0),
             child: TrucoCard(
               cardModel: card,
               isHidden: false,
-              width: 60,
-              height: 90,
+              width: 40,
+              height: 60,
             ),
           );
         }).toList(),
       ),
-    );
-  }
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Color.fromRGBO(50, 168, 82, 1.0),
+        backgroundColor: const Color.fromRGBO(50, 168, 82, 1.0),
         body: SafeArea(
           child: Stack(
             children: [
