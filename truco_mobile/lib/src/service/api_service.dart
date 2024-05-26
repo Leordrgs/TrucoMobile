@@ -12,7 +12,6 @@ class ApiService {
     final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
 
     if (response.statusCode == 200) {
-      // Se você espera um JSON, pode decodificá-lo aqui
       return jsonDecode(response.body);
     } else {
       throw Exception('Falha ao carregar dados da API');
@@ -57,53 +56,4 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> addToPile(String deckId, String pileName, String cards) async {
-    var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/pile/$pileName/add/?cards=$cards'));
-
-    if ([200, 201].contains(response.statusCode)) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to add to pile');
-    }
-  }
-
-  Future<Map<String, dynamic>> shufflePile(String deckId, String pileName) async {
-    var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/pile/$pileName/shuffle/'));
-
-    if ([200, 201].contains(response.statusCode)) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to shuffle pile');
-    }
-  }
-
-  Future<Map<String, dynamic>> listCardsInPile(String deckId, String pileName) async {
-    var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/pile/$pileName/list/'));
-
-    if ([200, 201].contains(response.statusCode)) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to list cards in pile');
-    }
-  }
-
-  Future<Map<String, dynamic>> drawFromPile(String deckId, String pileName, {required String cards, required int count}) async {
-    var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/pile/$pileName/draw/?cards=$cards&count=$count'));
-
-    if ([200, 201].contains(response.statusCode)) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to draw from pile');
-    }
-  }
-
-  Future<Map<String, dynamic>> returnCardsToDeck(String deckId, {required String pileName, required String cards}) async {
-    var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/pile/$pileName/return/?cards=$cards'));
-
-    if ([200, 201].contains(response.statusCode)) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to return cards to deck');
-    }
-  }
 }
