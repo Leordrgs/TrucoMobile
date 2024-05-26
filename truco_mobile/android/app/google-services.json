@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "70588996288",
+    "project_id": "trucomobile-8e89f",
+    "storage_bucket": "trucomobile-8e89f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70588996288:android:2bc464a9deffef6a40eb25",
+        "android_client_info": {
+          "package_name": "com.example.truco_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDikkXXd7dgaaUOqyi2nGbtASWMSvUSSOo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
