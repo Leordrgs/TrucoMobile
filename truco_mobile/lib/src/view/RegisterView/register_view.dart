@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:truco_mobile/src/view/MainView/main_page_view.dart';
 import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
 import 'package:truco_mobile/src/widget/CustomTextInput/custom_text.dart';
@@ -6,23 +7,45 @@ import 'package:truco_mobile/src/widget/CustomTextInput/custom_text.dart';
 class MyRegisterPage extends StatefulWidget {
   final String title;
 
-  const MyRegisterPage({super.key, required this.title});
+  const MyRegisterPage({Key? key, required this.title}) : super(key: key);
 
   @override
-  _MyRegisterPage createState() => _MyRegisterPage();
+  _MyRegisterPageState createState() => _MyRegisterPageState();
 }
 
-class _MyRegisterPage extends State<MyRegisterPage> {
-  String loginBox = "";
+class _MyRegisterPageState extends State<MyRegisterPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _register() async {
+    try {
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      User? user = userCredential.user;
+      if (user != null) {
+        // Navegar para a tela principal após o registro bem-sucedido
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyMainPagePage()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      // Mostrar um erro se o registro falhar
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Erro ao registrar')));
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(style: TextStyle(color: Colors.white), widget.title),
+        title: Text(widget.title, style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -49,33 +72,36 @@ class _MyRegisterPage extends State<MyRegisterPage> {
                   child: ListView(
                     children: <Widget>[
                       CustomTextField(
-                          controller: nameController,
-                          hintText: "Digite seu nome...",
-                          labelTextFontSize: 36,
-                          hintTextFontSize: 20,
-                          fontSize: 20,
-                          labelText: "Nome"),
+                        controller: nameController,
+                        hintText: "Digite seu nome...",
+                        labelTextFontSize: 36,
+                        hintTextFontSize: 20,
+                        fontSize: 20,
+                        labelText: "Nome",
+                      ),
                       SizedBox(height: 30),
                       CustomTextField(
-                          controller: emailController,
-                          hintText: "Digite seu email...",
-                          labelTextFontSize: 36,
-                          hintTextFontSize: 20,
-                          fontSize: 20,
-                          labelText: "Email"),
+                        controller: emailController,
+                        hintText: "Digite seu email...",
+                        labelTextFontSize: 36,
+                        hintTextFontSize: 20,
+                        fontSize: 20,
+                        labelText: "Email",
+                      ),
                       SizedBox(height: 30),
                       CustomTextField(
-                          controller: passwordController,
-                          hintText: "Digite sua senha...",
-                          labelTextFontSize: 36,
-                          hintTextFontSize: 20,
-                          fontSize: 20,
-                          obscureText: true,
-                          labelText: "Senha"),
+                        controller: passwordController,
+                        hintText: "Digite sua senha...",
+                        labelTextFontSize: 36,
+                        hintTextFontSize: 20,
+                        fontSize: 20,
+                        obscureText: true,
+                        labelText: "Senha",
+                      ),
                       SizedBox(height: 30),
                       CustomButton(
                         text: 'Salvar',
-                        onPressed: () => print('Clicou'),
+                        onPressed: _register,
                         width: 50,
                         height: 50,
                         fontSize: 36,
