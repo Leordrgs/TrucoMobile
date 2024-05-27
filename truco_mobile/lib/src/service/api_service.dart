@@ -25,7 +25,7 @@ class ApiService {
     var response = await http
         .get(Uri.parse('$baseUrl/deck/new/shuffle/?deck_count=1&cards=$cards'));
     print('$baseUrl/deck/new/shuffle/?deck_count=1?cards=$cards');
-    if (response.statusCode == 200) {
+    if ([200, 201].contains(response.statusCode)) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Falha ao criar novo deck');
@@ -36,7 +36,7 @@ class ApiService {
     var response = await http
         .get(Uri.parse('$baseUrl/deck/$deckId/draw/?count=$cardAmount'));
 
-    if (response.statusCode == 200) {
+    if ([200, 201].contains(response.statusCode)) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Falha ao desenhar cartas');
@@ -50,7 +50,7 @@ class ApiService {
   Future<Map<String, dynamic>> shuffleDeck(String deckId) async {
     var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/shuffle/'));
 
-    if (response.statusCode == 200) {
+    if ([200, 201].contains(response.statusCode)) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Falha ao embaralhar o deck');
