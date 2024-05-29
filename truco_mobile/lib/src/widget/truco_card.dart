@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' hide Card;
 import 'package:truco_mobile/src/config/general_config.dart';
-import 'package:truco_mobile/src/model/Card/cardmodel.dart';
+import 'package:truco_mobile/src/model/cardmodel.dart';
 
 class TrucoCard extends StatelessWidget {
   final CardModel cardModel;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide Card;
-import '../model/Card/card_model.dart';
+import '../model/card_model.dart';
 
 class CardWidget extends StatelessWidget {
   final Card card;

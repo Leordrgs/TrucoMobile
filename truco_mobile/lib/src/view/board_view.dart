@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/model/Card/cardmodel.dart';
-import 'package:truco_mobile/src/widget/ScoreBoard/score_board.dart';
-import 'package:truco_mobile/src/widget/TrucoCard/truco_card.dart';
+import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/widget/score_board.dart';
+import 'package:truco_mobile/src/widget/truco_card.dart';
 
 class BoardView extends StatefulWidget {
   final List<CardModel> cards;
-
+  
   const BoardView({Key? key, required this.cards}) : super(key: key);
 
   @override

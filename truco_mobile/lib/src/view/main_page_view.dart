@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/view/LoginView/login_view.dart';
-import 'package:truco_mobile/src/view/RegisterView/register_view.dart';
-import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
+import 'package:truco_mobile/src/view/login_view.dart';
+import 'package:truco_mobile/src/view/register_view.dart';
+import 'package:truco_mobile/src/widget/custom_button.dart';
 
 class MyMainPagePage extends StatefulWidget {
   const MyMainPagePage({Key? key}) : super(key: key);

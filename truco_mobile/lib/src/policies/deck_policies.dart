@@ -1,4 +1,4 @@
-import 'package:truco_mobile/src/model/Card/card_model.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
 
 class DeckPolicies {
 

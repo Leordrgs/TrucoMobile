@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/view/HomeView/home_view.dart';
-import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
+import 'package:truco_mobile/src/view/home_view.dart';
+import 'package:truco_mobile/src/widget/custom_button.dart';
 
 class MyCreateNewGamePage extends StatefulWidget {
   final String title;

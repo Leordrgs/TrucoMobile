@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/view/CreateGameView/create_game_view.dart';
-import 'package:truco_mobile/src/view/GamesListView/game_list_view.dart';
-import 'package:truco_mobile/src/view/LoginView/login_view.dart';
-import 'package:truco_mobile/src/view/RegisterView/register_view.dart';
-import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
+import 'package:truco_mobile/src/view/create_game_view.dart';
+import 'package:truco_mobile/src/view/game_list_view.dart';
+import 'package:truco_mobile/src/view/login_view.dart';
+import 'package:truco_mobile/src/view/register_view.dart';
+import 'package:truco_mobile/src/widget/custom_button.dart';
 
 class MyHomePagePage extends StatefulWidget {
     final String title;

@@ -1,5 +1,5 @@
-import '../Table/table_model.dart';
-import '../Card/card_model.dart';
+import 'table_model.dart';
+import 'card_model.dart';
 
 class Player {
   late final String name;
