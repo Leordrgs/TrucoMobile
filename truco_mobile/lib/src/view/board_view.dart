@@ -20,6 +20,7 @@ class _BoardViewState extends State<BoardView> {
   bool showPlayPrompt = false;
   int playerToPlay = 0;
   CardModel? manilha;
+
   void startGame() async {
     var gameData = await widget.gameController.startGame();
     setState(() {
@@ -66,13 +67,17 @@ class _BoardViewState extends State<BoardView> {
       {bool isSelected = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 2.0),
-      child: Transform.scale(
-        scale: isSelected ? 1.2 : 1.0,
-        child: TrucoCard(
-          cardModel: card,
-          isHidden: isHidden,
-          width: 50,
-          height: 80,
+      child: GestureDetector(
+        onTap: () => onCardTap(card),
+        child: AnimatedScale(
+          scale: isSelected ? 1.2 : 1.0,
+          duration: const Duration(milliseconds: 300),
+          child: TrucoCard(
+            cardModel: card,
+            isHidden: isHidden,
+            width: 50,
+            height: 80,
+          ),
         ),
       ),
     );
