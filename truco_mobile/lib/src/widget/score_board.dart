@@ -6,6 +6,7 @@ class ScoreBoard extends StatelessWidget {
   final Color color;
   final double size;
   final Color fontColor;
+  int roundWinner = 0;
 
   ScoreBoard({
     required this.scoreTeamA,
@@ -13,6 +14,7 @@ class ScoreBoard extends StatelessWidget {
     this.color = Colors.white,
     this.size = 14.0,
     this.fontColor = Colors.black,
+    this.roundWinner = 0,
   });
 
   @override
@@ -40,7 +42,7 @@ class ScoreBoard extends StatelessWidget {
                   3,
                   (index) => Radio(
                     value: index,
-                    groupValue: 2,
+                    groupValue: roundWinner+1,
                     onChanged: (int? value) {},
                     activeColor: Colors.white, 
                   ),
@@ -67,7 +69,7 @@ class ScoreBoard extends StatelessWidget {
                   3,
                   (index) => Radio(
                     value: index,
-                    groupValue: 2,
+                    groupValue: roundWinner,
                     onChanged: (int? value) {},
                     activeColor: Colors.white, 
                   ),

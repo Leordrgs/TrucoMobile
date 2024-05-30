@@ -16,12 +16,11 @@ class CardModel {
 
   factory CardModel.fromMap(Map<String, dynamic> map) {
     return CardModel(
-      code: map['code'],
-      image: map['image'],
-      value: map['value'],
-      suit: map['suit'],
-      rank: calculateCardRank(map['value'])
-    );
+        code: map['code'],
+        image: map['image'],
+        value: map['value'],
+        suit: map['suit'],
+        rank: calculateCardRank(map['value']));
   }
 
   @override

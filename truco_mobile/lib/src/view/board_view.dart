@@ -5,6 +5,13 @@ import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/widget/score_board.dart';
 import 'package:truco_mobile/src/widget/truco_card.dart';
 
+class PlayedCard {
+  final PlayerModel player;
+  final CardModel card;
+
+  PlayedCard(this.player, this.card);
+}
+
 class BoardView extends StatefulWidget {
   final GameController gameController;
 
@@ -15,12 +22,11 @@ class BoardView extends StatefulWidget {
 }
 
 class _BoardViewState extends State<BoardView> {
-  List<CardModel> playedCards = [];
   CardModel? selectedCard;
   bool showPlayPrompt = false;
   int playerToPlay = 0;
   CardModel? manilha;
-
+  List<PlayedCard> playedCards = [];
   void startGame() async {
     var gameData = await widget.gameController.startGame();
     setState(() {
@@ -50,8 +56,12 @@ class _BoardViewState extends State<BoardView> {
   void onCenterTap() {
     if (showPlayPrompt && selectedCard != null) {
       setState(() {
-        playedCards.add(selectedCard!);
+        var playedCard = PlayedCard(widget.gameController.players[playerToPlay], selectedCard!);
+        print('PLAYEDCARD ADD $playedCard');
+        playedCards.add(playedCard); 
         widget.gameController.players[playerToPlay].hand.remove(selectedCard);
+        print('AQUI È O PLAYED CARDS $playedCards');
+        print(widget.gameController.players[playerToPlay].hand);
         selectedCard = null;
         showPlayPrompt = false;
       });
@@ -144,14 +154,16 @@ class _BoardViewState extends State<BoardView> {
           alignment: WrapAlignment.center,
           spacing: -8,
           runSpacing: -8,
-          children: playedCards.map((card) {
+          children: playedCards.map((playedCard) {
+            print('Dentro do map $playedCard');
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: TrucoCard(
-                cardModel: card,
+                cardModel: playedCard.card,
+                player: playedCard.player,
                 isHidden: false,
-                width: 40,
-                height: 60,
+                width: 50,
+                height: 70,
               ),
             );
           }).toList(),
@@ -175,7 +187,7 @@ class _BoardViewState extends State<BoardView> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      buildRowOfCards(widget.gameController.players[1], true),
+                      buildRowOfCards(widget.gameController.players[1], false),
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -199,11 +211,12 @@ class _BoardViewState extends State<BoardView> {
                   child: FittedBox(
                     alignment: Alignment.topLeft,
                     child: ScoreBoard(
-                      scoreTeamA: 10,
-                      scoreTeamB: 7,
+                      scoreTeamA: widget.gameController.players[0].score,
+                      scoreTeamB: widget.gameController.players[1].score,
                       color: Colors.black,
                       fontColor: Colors.white,
                       size: 12.0,
+                      roundWinner: 0,
                     ),
                   ),
                 ),
