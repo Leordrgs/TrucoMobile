@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
 
 class ApiService {
@@ -8,7 +7,7 @@ class ApiService {
   
   ApiService({required this.baseUrl});
 
-  Future<Map<String, dynamic>> createNewDeck(List<CardModel> cards) async {
+  Future<Map<String, dynamic>> createNewDeck(List<String> cards) async {
     var response = await http.get(
       Uri.parse('$baseUrl/deck/new/shuffle/?deck_count=1&cards=${cards.join(',')}')
       );

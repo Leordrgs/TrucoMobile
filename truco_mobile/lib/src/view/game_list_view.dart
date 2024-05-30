@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
+import 'package:truco_mobile/src/controller/game_controller.dart';
+import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/service/api_service.dart';
 import 'package:truco_mobile/src/view/board_view.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
@@ -111,13 +113,18 @@ class _GameListView extends State<GameListView> {
         title: Text(name),
         trailing: Text('$players/$maxPlayers jogadores'),
         onTap: () async {
-          // if (name == 'Sala 1') {
-          //   List<CardModel> cards = await trucoController.fetchCards();
-          //   Navigator.push(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => BoardView(cards: cards)),
-          //   );
-          // }
+          if (name == 'Sala 1') {
+            // List<CardModel> cards = await trucoController.fetchCards();
+            List<PlayerModel> players = [
+              PlayerModel(name: 'Jogador 1'),
+              PlayerModel(name: 'Jogador 2'),
+            ];
+            GameController gameController = GameController(players: players);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BoardView(gameController: gameController)),
+            );
+          }
         },
       ),
     );

@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:truco_mobile/src/controller/game_controller.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/widget/score_board.dart';
 import 'package:truco_mobile/src/widget/truco_card.dart';
 
 class BoardView extends StatefulWidget {
-  final List<CardModel> cards;
-  
-  const BoardView({Key? key, required this.cards}) : super(key: key);
+  final GameController gameController;
+
+  BoardView({Key? key, required this.gameController}) : super(key: key);
 
   @override
   _BoardViewState createState() => _BoardViewState();
 }
 
 class _BoardViewState extends State<BoardView> {
+  List<CardModel> playedCards = [];
   CardModel? selectedCard;
   bool showPlayPrompt = false;
-  List<CardModel> playedCards = [];
+  int playerToPlay = 0;
+  CardModel? manilha;
+  void startGame() async {
+    var gameData = await widget.gameController.startGame();
+    setState(() {
+      manilha = (gameData as Map)['manilha'];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    startGame();
+  }
 
   void onCardTap(CardModel card) {
     setState(() {
@@ -24,14 +40,21 @@ class _BoardViewState extends State<BoardView> {
     });
   }
 
+  void switchPlayer() {
+    setState(() {
+      playerToPlay = playerToPlay == 0 ? 1 : 0;
+    });
+  }
+
   void onCenterTap() {
     if (showPlayPrompt && selectedCard != null) {
       setState(() {
         playedCards.add(selectedCard!);
-        widget.cards.remove(selectedCard);
+        widget.gameController.players[playerToPlay].hand.remove(selectedCard);
         selectedCard = null;
         showPlayPrompt = false;
       });
+      switchPlayer();
     } else if (selectedCard != null) {
       setState(() {
         showPlayPrompt = false;
@@ -39,34 +62,33 @@ class _BoardViewState extends State<BoardView> {
     }
   }
 
-  Widget buildCard(CardModel card, bool isHidden, {bool isSelected = false}) {
-    return GestureDetector(
-      onTap: () => onCardTap(card),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-        child: Transform.scale(
-          scale: isSelected ? 1.2 : 1.0, 
-          child: TrucoCard(
-            cardModel: card,
-            isHidden: isHidden,
-          ),
+  Widget buildCard(CardModel card, bool isManilhaCard, bool isHidden,
+      {bool isSelected = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+      child: Transform.scale(
+        scale: isSelected ? 1.2 : 1.0,
+        child: TrucoCard(
+          cardModel: card,
+          isHidden: isHidden,
+          width: 50,
+          height: 80,
         ),
       ),
     );
   }
 
-  Widget buildRowOfCards(int startIndex, bool isHidden) {
+  Widget buildRowOfCards(PlayerModel player, bool isHidden) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         3,
         (index) {
-          int cardIndex = startIndex + index;
-          if (cardIndex < widget.cards.length) {
-            return buildCard(widget.cards[cardIndex], isHidden,
-                isSelected: widget.cards[cardIndex] == selectedCard);
+          if (index < player.hand.length) {
+            return buildCard(player.hand[index], false, isHidden,
+                isSelected: player.hand[index] == selectedCard);
           } else {
-            return SizedBox(
+            return const SizedBox(
               width: 70.0,
               height: 100.0,
             );
@@ -76,56 +98,11 @@ class _BoardViewState extends State<BoardView> {
     );
   }
 
-  Widget buildColumnOfCards(int startIndex, bool isHidden) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        3,
-        (index) {
-          int cardIndex = startIndex + index;
-          if (cardIndex < widget.cards.length) {
-            return buildCard(widget.cards[cardIndex], isHidden,
-                isSelected: widget.cards[cardIndex] == selectedCard);
-          } else {
-            return Container();
-          }
-        },
-      ),
-    );
-  }
-
   Widget buildManilhaCard() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 110.0),
-      child: Align(
-        alignment: Alignment.topRight,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Carta virada',
-              style: TextStyle(
-                fontSize: 12.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(8.0),
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(
-                  1,
-                  (index) => buildCard(widget.cards[index], false),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return Positioned(
+      top: 120,
+      right: 10,
+      child: buildCard(manilha!, true, false),
     );
   }
 
@@ -152,31 +129,31 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Widget buildPlayedCards() {
-  return Positioned(
-    left: MediaQuery.of(context).size.width / 2 - 80,
-    top: MediaQuery.of(context).size.height / 2 - 60,
-    child: SizedBox(
-      width: 160,
-      height: 160,
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        spacing: -8,
-        runSpacing: -8,
-        children: playedCards.map((card) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal:0),
-            child: TrucoCard(
-              cardModel: card,
-              isHidden: false,
-              width: 40,
-              height: 60,
-            ),
-          );
-        }).toList(),
+    return Positioned(
+      left: MediaQuery.of(context).size.width / 2 - 80,
+      top: MediaQuery.of(context).size.height / 2 - 60,
+      child: SizedBox(
+        width: 160,
+        height: 160,
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          spacing: -8,
+          runSpacing: -8,
+          children: playedCards.map((card) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 0),
+              child: TrucoCard(
+                cardModel: card,
+                isHidden: false,
+                width: 40,
+                height: 60,
+              ),
+            );
+          }).toList(),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,29 +170,29 @@ class _BoardViewState extends State<BoardView> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      buildRowOfCards(0, true),
-                      Row(
+                      buildRowOfCards(widget.gameController.players[1], true),
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          buildColumnOfCards(3, true),
-                          const Spacer(flex: 5),
-                          buildColumnOfCards(6, true),
+                          Spacer(flex: 5),
                         ],
                       ),
-                      buildRowOfCards(9, false),
+                      buildRowOfCards(widget.gameController.players[0], false),
                     ],
                   ),
                 ),
               ),
-              buildManilhaCard(),
+              if (manilha != null) buildManilhaCard(),
               if (showPlayPrompt) buildPlayPrompt(),
               buildPlayedCards(),
               Positioned(
                 top: 120.0,
+                left: 0,
                 child: Container(
                   width: 160.0,
                   height: 100.0,
                   child: FittedBox(
+                    alignment: Alignment.topLeft,
                     child: ScoreBoard(
                       scoreTeamA: 10,
                       scoreTeamB: 7,
