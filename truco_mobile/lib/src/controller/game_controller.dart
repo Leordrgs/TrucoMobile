@@ -15,12 +15,15 @@ class GameController {
     var deckId = deck['deck_id'];
     var drawnCards = await apiService.drawCards(deckId, 6);
     var manilha = await apiService.drawCards(deckId, 1);
-
+    print('AQUI È A MANILHA $manilha');
     //distribute the cards
     for (var i = 0; i < drawnCards['cards'].length; i++) {
       CardModel card = CardModel.fromMap(drawnCards['cards'][i]);
       players[i % players.length].hand.add(card);
     }
+
+    //adjust the cards rank if is manilha cards
+    adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
     //zero the points
     for (var i = 0; i < players.length; i++) {
@@ -36,15 +39,33 @@ class GameController {
           .toList(),
     };
 
+
     return obj;
   }
 
+  bool isCardValueEqualToNextValue(int manilhaRank, nextValue) {
+
+    return manilhaRank + 1 == nextValue;
+  }
+
+
+  void adjustCardsRankByManilha(List<PlayerModel> players, CardModel manilha) {
+    players.forEach((player) {
+      player.hand.forEach((card) {
+        if (isCardValueEqualToNextValue(manilha.rank, card.rank)) {
+
+          card.rank = CardModel.adjustCardValue(card);
+        }
+      });
+    });
+  }
+
   Map<String, Object> processPlayedCards(List<PlayedCard> playedCards) {
-    var cards = playedCards.map((playedCard) => {
-              'rank': playedCard.card.rank,
-              'player': playedCard.player
-            }).toList();
-            
+    var cards = playedCards
+        .map((playedCard) =>
+            {'rank': playedCard.card.rank, 'player': playedCard.player})
+        .toList();
+
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
@@ -59,4 +80,30 @@ class GameController {
       players[1].score++;
     }
   }
+
+  // void playRound(playedCards) {
+  //   int player1RoundWins = 0;
+  //   int player2RoundWins = 0;
+
+  //   for (int i = 0; i < 3; i++) {
+  //     Map<String, Object> highestRankCard = processPlayedCards(playedCards);
+  //     checkWhoWins(highestRankCard);
+
+  //     if (highestRankCard['player'] == players[0]) {
+  //       player1RoundWins++;
+  //     } else {
+  //       player2RoundWins++;
+  //     }
+
+  //     if (player1RoundWins == 2 || player2RoundWins == 2) {
+  //       break;
+  //     }
+  //   }
+
+  //   if (player1RoundWins > player2RoundWins) {
+  //     players[0].score++;
+  //   } else {
+  //     players[1].score++;
+  //   }
+  // }
 }

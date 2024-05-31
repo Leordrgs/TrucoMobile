@@ -56,7 +56,7 @@ class CardModel {
     }
   }
 
-  int adjustCardValue(CardModel card) {
+  static int adjustCardValue(CardModel card) {
     switch (card.suit) {
       case 'DIAMONDS':
         return card.rank += 11;

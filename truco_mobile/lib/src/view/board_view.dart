@@ -10,6 +10,11 @@ class PlayedCard {
   final CardModel card;
 
   PlayedCard(this.player, this.card);
+
+  @override
+  String toString() {
+    return 'PlayedCard[{player: $player, card: $card]}';
+  }
 }
 
 class BoardView extends StatefulWidget {
@@ -27,6 +32,7 @@ class _BoardViewState extends State<BoardView> {
   int playerToPlay = 0;
   CardModel? manilha;
   List<PlayedCard> playedCards = [];
+  
   void startGame() async {
     var gameData = await widget.gameController.startGame();
     setState(() {
@@ -155,7 +161,7 @@ class _BoardViewState extends State<BoardView> {
           spacing: -8,
           runSpacing: -8,
           children: playedCards.map((playedCard) {
-            print('Dentro do map $playedCard');
+            print('Dentro do map ${playedCard.toString()}');
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: TrucoCard(
