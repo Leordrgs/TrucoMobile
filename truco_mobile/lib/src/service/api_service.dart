@@ -56,4 +56,11 @@ class ApiService {
     }
   }
 
+  Future<List<CardModel>> getCards(String deckId, int count) async {
+    final response = await drawCards(deckId, count);
+    final cards = (response['cards'] as List)
+        .map((data) => CardModel.fromMap(data))
+        .toList();
+    return cards;
+  }
 }
