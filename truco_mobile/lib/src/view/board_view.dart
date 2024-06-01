@@ -45,7 +45,7 @@ class _BoardViewState extends State<BoardView> {
   void initState() {
     super.initState();
     startGame();
-    setupNotificationStream();
+    // setupNotificationStream();
   }
 
   void onCardTap(CardModel card) {
@@ -66,19 +66,18 @@ class _BoardViewState extends State<BoardView> {
       setState(() {
         var playedCard = PlayedCard(
             widget.gameController.players[playerToPlay], selectedCard!);
-        print('PLAYEDCARD ADD $playedCard');
         playedCards.add(playedCard);
         widget.gameController.players[playerToPlay].hand.remove(selectedCard);
-        print('AQUI È O PLAYED CARDS $playedCards');
-        print(widget.gameController.players[playerToPlay].hand);
         selectedCard = null;
         showPlayPrompt = false;
 
         if (isNumberOfCardEqualNumbersOfPlayers()) {
           var highestRankCard =
               widget.gameController.processPlayedCards(playedCards);
-          widget.gameController.checkWhoWins(highestRankCard);
-          setupNotificationStream();
+          int roundNumber = widget.gameController.currentRound;
+          print('ROUND NUMBER NO ONCENTERTAP --> $roundNumber');
+          widget.gameController.checkWhoWins(highestRankCard, roundNumber);
+          // setupNotificationStream();
           playedCards.clear(); // Clear the played cards for the next round
         }
       });
@@ -94,19 +93,19 @@ class _BoardViewState extends State<BoardView> {
     return playedCards.length == widget.gameController.players.length;
   }
 
-  void setupNotificationStream() {
-    widget.gameController.notificationStream.listen((highestRankCard) {
-      Fluttertoast.showToast(
-          msg:
-              "${(highestRankCard['player'] as PlayerModel).name} ganhou a rodada!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    });
-  }
+  // void setupNotificationStream() {
+  //   widget.gameController.notificationStream.listen((highestRankCard) {
+  //     Fluttertoast.showToast(
+  //         msg:
+  //             "${(highestRankCard['player'] as PlayerModel).name} ganhou a rodada!",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         gravity: ToastGravity.BOTTOM,
+  //         timeInSecForIosWeb: 1,
+  //         backgroundColor: Colors.green,
+  //         textColor: Colors.white,
+  //         fontSize: 16.0);
+  //   });
+  // }
 
   Widget buildCard(CardModel card, bool isManilhaCard, bool isHidden,
       {bool isSelected = false}) {
@@ -120,8 +119,8 @@ class _BoardViewState extends State<BoardView> {
           child: TrucoCard(
             cardModel: card,
             isHidden: isHidden,
-            width: 50,
-            height: 80,
+            width: 60,
+            height: 90,
           ),
         ),
       ),
@@ -190,7 +189,6 @@ class _BoardViewState extends State<BoardView> {
           spacing: -8,
           runSpacing: -8,
           children: playedCards.map((playedCard) {
-            print('Dentro do map ${playedCard.toString()}');
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: TrucoCard(
@@ -262,6 +260,8 @@ class _BoardViewState extends State<BoardView> {
                       scoreTeamB: widget.gameController.players[1].score,
                       playerA: widget.gameController.players[0].name,
                       playerB: widget.gameController.players[1].name,
+                      roundWinnerA: widget.gameController.players[0].roundWins,
+                      roundWinnerB: widget.gameController.players[0].roundWins,
                       color: Colors.black,
                       fontColor: Colors.white,
                       size: 12.0,

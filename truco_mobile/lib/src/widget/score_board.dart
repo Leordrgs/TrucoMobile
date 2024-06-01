@@ -9,10 +9,14 @@ class ScoreBoard extends StatelessWidget {
   int roundWinner = 0;
   final String playerA;
   final String playerB;
+  final List<bool> roundWinnerA;
+  final List<bool> roundWinnerB;
 
   ScoreBoard({
     required this.scoreTeamA,
     required this.scoreTeamB,
+    required this.roundWinnerA,
+    required this.roundWinnerB,
     required this.playerA,
     required this.playerB,
     this.color = Colors.white,
@@ -44,11 +48,10 @@ class ScoreBoard extends StatelessWidget {
               Row(
                 children: List.generate(
                   3,
-                  (index) => Radio(
-                    value: index,
-                    groupValue: roundWinner + 1,
-                    onChanged: (int? value) {},
+                  (index) => Checkbox(
+                    value: roundWinnerA[index],
                     activeColor: Colors.white,
+                    onChanged: (bool? value) {},
                   ),
                 ),
               ),
@@ -71,11 +74,10 @@ class ScoreBoard extends StatelessWidget {
               Row(
                 children: List.generate(
                   3,
-                  (index) => Radio(
-                    value: index,
-                    groupValue: roundWinner,
-                    onChanged: (int? value) {},
+                  (index) => Checkbox(
+                    value: roundWinnerB[index],
                     activeColor: Colors.white,
+                    onChanged: (bool? value) {},
                   ),
                 ),
               ),

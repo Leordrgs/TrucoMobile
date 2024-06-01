@@ -13,8 +13,8 @@ class ApiService {
       );
 
     if ([200, 201].contains(response.statusCode)) {
-      var result = jsonDecode(response.body); 
-      print(result);
+      var result = jsonDecode(response.body);
+
       return result;
     } else {
       throw Exception('Falha ao criar novo deck');
@@ -29,7 +29,7 @@ class ApiService {
     if ([200, 201].contains(response.statusCode)) {
 
       var result = jsonDecode(response.body);
-      print(result);
+      
       return result;
     } else {
       throw Exception('Falha ao desenhar cartas');

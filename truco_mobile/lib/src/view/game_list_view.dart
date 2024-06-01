@@ -119,7 +119,6 @@ class _GameListView extends State<GameListView> {
               PlayerModel(name: 'Jogador 1'),
               PlayerModel(name: 'Jogador 2'),
             ];
-            print('PLAYERS -> $players');
             GameController gameController = GameController(players: players);
             Navigator.push(
               context,

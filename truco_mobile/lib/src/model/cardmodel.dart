@@ -29,7 +29,7 @@ class CardModel {
   }
 
   static int calculateCardRank(String value) {
-    print('VALUE $value');
+
     switch (value) {
       case '4':
         return 1;

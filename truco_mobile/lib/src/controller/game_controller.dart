@@ -7,13 +7,14 @@ import 'package:truco_mobile/src/view/board_view.dart';
 
 class GameController {
   late List<PlayerModel> players;
+  int currentRound = 0;
   ApiService apiService = ApiService(baseUrl: DECK_API);
   GameController({required this.players});
-  final StreamController<Map<String, Object>> _notificationController =
-      StreamController.broadcast();
+  // final StreamController<Map<String, Object>> _notificationController =
+  //     StreamController.broadcast();
 
-  Stream<Map<String, Object>> get notificationStream =>
-      _notificationController.stream;
+  // Stream<Map<String, Object>> get notificationStream =>
+  //     _notificationController.stream;
 
   Future<Object> startGame() async {
     //create deck things here
@@ -21,7 +22,7 @@ class GameController {
     var deckId = deck['deck_id'];
     var drawnCards = await apiService.drawCards(deckId, 6);
     var manilha = await apiService.drawCards(deckId, 1);
-    print('AQUI È A MANILHA $manilha');
+
     //distribute the cards
     for (var i = 0; i < drawnCards['cards'].length; i++) {
       CardModel card = CardModel.fromMap(drawnCards['cards'][i]);
@@ -35,6 +36,9 @@ class GameController {
     for (var i = 0; i < players.length; i++) {
       players[i].score = 0;
     }
+
+    //current round
+    currentRound = 0;
 
     //return an object with the deckId, the manilha and the cards
     var obj = {
@@ -71,21 +75,27 @@ class GameController {
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
-    print('HIGH CARD $highestRankCard');
+
     return highestRankCard;
   }
 
-  void checkWhoWins(highestRankCard) {
+  void checkWhoWins(highestRankCard, int roundNumber) {
+    players[0].resetRoundWins();
+    players[1].resetRoundWins();
+    print('ROUND NUMBER --> $roundNumber');
     if (highestRankCard['player'] == players[0] && players[0].score < 12) {
-      players[0].score++;
-    } else {
-      players[1].score++;
+      players[0].winRound(roundNumber);
+      roundNumber++;
+    } else if (highestRankCard['player'] == players[1] &&
+        players[1].score < 12) {
+      players[1].winRound(roundNumber);
+      roundNumber++;
     }
 
-    _notificationController.add({
-      'player': highestRankCard['player'],
-      'score': highestRankCard['player'].score
-    });
+    // _notificationController.add({
+    //   'player': highestRankCard['player'],
+    //   'score': highestRankCard['player'].score
+    // });
   }
 
   // void playRound(playedCards) {

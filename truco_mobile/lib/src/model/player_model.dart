@@ -5,6 +5,7 @@ class PlayerModel {
   late String name;
   late List<CardModel> hand;
   int score = 0;
+  List<bool> roundWins = [false, false, false];
 
   PlayerModel({required this.name}) {
     hand = [];
@@ -13,6 +14,19 @@ class PlayerModel {
   @override
   String toString() {
     return 'Player: $name, Score: $score, Hand: $hand';
+  }
+
+
+  void winRound(int roundNumber) {
+    roundWins[roundNumber] = true;
+  }
+
+  void loseRound(int roundNumber) {
+    roundWins[roundNumber] = false;
+  }
+
+  void resetRoundWins() {
+    roundWins = [false, false, false];
   }
 
   void addPoints(int points) {
