@@ -7,10 +7,14 @@ class ScoreBoard extends StatelessWidget {
   final double size;
   final Color fontColor;
   int roundWinner = 0;
+  final String playerA;
+  final String playerB;
 
   ScoreBoard({
     required this.scoreTeamA,
     required this.scoreTeamB,
+    required this.playerA,
+    required this.playerB,
     this.color = Colors.white,
     this.size = 14.0,
     this.fontColor = Colors.black,
@@ -31,7 +35,7 @@ class ScoreBoard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Time A',
+                playerA,
                 style: TextStyle(
                     fontSize: size,
                     fontWeight: FontWeight.bold,
@@ -42,9 +46,9 @@ class ScoreBoard extends StatelessWidget {
                   3,
                   (index) => Radio(
                     value: index,
-                    groupValue: roundWinner+1,
+                    groupValue: roundWinner + 1,
                     onChanged: (int? value) {},
-                    activeColor: Colors.white, 
+                    activeColor: Colors.white,
                   ),
                 ),
               ),
@@ -58,7 +62,7 @@ class ScoreBoard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Time B',
+                playerB,
                 style: TextStyle(
                     fontSize: size,
                     fontWeight: FontWeight.bold,
@@ -71,12 +75,12 @@ class ScoreBoard extends StatelessWidget {
                     value: index,
                     groupValue: roundWinner,
                     onChanged: (int? value) {},
-                    activeColor: Colors.white, 
+                    activeColor: Colors.white,
                   ),
                 ),
               ),
               Text(
-                '$scoreTeamB', 
+                '$scoreTeamB',
                 style: TextStyle(fontSize: size, color: fontColor),
               ),
             ],

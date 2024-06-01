@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
@@ -8,6 +9,11 @@ class GameController {
   late List<PlayerModel> players;
   ApiService apiService = ApiService(baseUrl: DECK_API);
   GameController({required this.players});
+  final StreamController<Map<String, Object>> _notificationController =
+      StreamController.broadcast();
+
+  Stream<Map<String, Object>> get notificationStream =>
+      _notificationController.stream;
 
   Future<Object> startGame() async {
     //create deck things here
@@ -39,21 +45,17 @@ class GameController {
           .toList(),
     };
 
-
     return obj;
   }
 
   bool isCardValueEqualToNextValue(int manilhaRank, nextValue) {
-
     return manilhaRank + 1 == nextValue;
   }
-
 
   void adjustCardsRankByManilha(List<PlayerModel> players, CardModel manilha) {
     players.forEach((player) {
       player.hand.forEach((card) {
         if (isCardValueEqualToNextValue(manilha.rank, card.rank)) {
-
           card.rank = CardModel.adjustCardValue(card);
         }
       });
@@ -69,7 +71,7 @@ class GameController {
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
-
+    print('HIGH CARD $highestRankCard');
     return highestRankCard;
   }
 
@@ -79,6 +81,11 @@ class GameController {
     } else {
       players[1].score++;
     }
+
+    _notificationController.add({
+      'player': highestRankCard['player'],
+      'score': highestRankCard['player'].score
+    });
   }
 
   // void playRound(playedCards) {

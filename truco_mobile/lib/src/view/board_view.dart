@@ -4,6 +4,7 @@ import 'package:truco_mobile/src/model/cardmodel.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/widget/score_board.dart';
 import 'package:truco_mobile/src/widget/truco_card.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class PlayedCard {
   final PlayerModel player;
@@ -32,7 +33,7 @@ class _BoardViewState extends State<BoardView> {
   int playerToPlay = 0;
   CardModel? manilha;
   List<PlayedCard> playedCards = [];
-  
+
   void startGame() async {
     var gameData = await widget.gameController.startGame();
     setState(() {
@@ -44,6 +45,7 @@ class _BoardViewState extends State<BoardView> {
   void initState() {
     super.initState();
     startGame();
+    setupNotificationStream();
   }
 
   void onCardTap(CardModel card) {
@@ -62,14 +64,23 @@ class _BoardViewState extends State<BoardView> {
   void onCenterTap() {
     if (showPlayPrompt && selectedCard != null) {
       setState(() {
-        var playedCard = PlayedCard(widget.gameController.players[playerToPlay], selectedCard!);
+        var playedCard = PlayedCard(
+            widget.gameController.players[playerToPlay], selectedCard!);
         print('PLAYEDCARD ADD $playedCard');
-        playedCards.add(playedCard); 
+        playedCards.add(playedCard);
         widget.gameController.players[playerToPlay].hand.remove(selectedCard);
         print('AQUI È O PLAYED CARDS $playedCards');
         print(widget.gameController.players[playerToPlay].hand);
         selectedCard = null;
         showPlayPrompt = false;
+
+        if (isNumberOfCardEqualNumbersOfPlayers()) {
+          var highestRankCard =
+              widget.gameController.processPlayedCards(playedCards);
+          widget.gameController.checkWhoWins(highestRankCard);
+          setupNotificationStream();
+          playedCards.clear(); // Clear the played cards for the next round
+        }
       });
       switchPlayer();
     } else if (selectedCard != null) {
@@ -77,6 +88,24 @@ class _BoardViewState extends State<BoardView> {
         showPlayPrompt = false;
       });
     }
+  }
+
+  bool isNumberOfCardEqualNumbersOfPlayers() {
+    return playedCards.length == widget.gameController.players.length;
+  }
+
+  void setupNotificationStream() {
+    widget.gameController.notificationStream.listen((highestRankCard) {
+      Fluttertoast.showToast(
+          msg:
+              "${(highestRankCard['player'] as PlayerModel).name} ganhou a rodada!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
   }
 
   Widget buildCard(CardModel card, bool isManilhaCard, bool isHidden,
@@ -193,14 +222,26 @@ class _BoardViewState extends State<BoardView> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      buildRowOfCards(widget.gameController.players[1], false),
+                      Column(
+                        children: [
+                          Text(widget.gameController.players[1].name),
+                          buildRowOfCards(
+                              widget.gameController.players[1], false),
+                        ],
+                      ),
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Spacer(flex: 5),
                         ],
                       ),
-                      buildRowOfCards(widget.gameController.players[0], false),
+                      Column(
+                        children: [
+                          Text(widget.gameController.players[0].name),
+                          buildRowOfCards(
+                              widget.gameController.players[0], false),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -209,7 +250,7 @@ class _BoardViewState extends State<BoardView> {
               if (showPlayPrompt) buildPlayPrompt(),
               buildPlayedCards(),
               Positioned(
-                top: 120.0,
+                top: 140.0,
                 left: 0,
                 child: Container(
                   width: 160.0,
@@ -219,6 +260,8 @@ class _BoardViewState extends State<BoardView> {
                     child: ScoreBoard(
                       scoreTeamA: widget.gameController.players[0].score,
                       scoreTeamB: widget.gameController.players[1].score,
+                      playerA: widget.gameController.players[0].name,
+                      playerB: widget.gameController.players[1].name,
                       color: Colors.black,
                       fontColor: Colors.white,
                       size: 12.0,
