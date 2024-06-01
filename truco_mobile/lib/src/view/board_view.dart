@@ -33,19 +33,20 @@ class _BoardViewState extends State<BoardView> {
   int playerToPlay = 0;
   CardModel? manilha;
   List<PlayedCard> playedCards = [];
-
-  void startGame() async {
-    var gameData = await widget.gameController.startGame();
+  int roundNumber = 0;
+  void startGame([bool newGame = false]) async {
+    var gameData = await widget.gameController.manageGame(newGame);
     setState(() {
       manilha = (gameData as Map)['manilha'];
     });
   }
 
+  
+
   @override
   void initState() {
     super.initState();
-    startGame();
-    // setupNotificationStream();
+    startGame(true);
   }
 
   void onCardTap(CardModel card) {
@@ -92,20 +93,6 @@ class _BoardViewState extends State<BoardView> {
   bool isNumberOfCardEqualNumbersOfPlayers() {
     return playedCards.length == widget.gameController.players.length;
   }
-
-  // void setupNotificationStream() {
-  //   widget.gameController.notificationStream.listen((highestRankCard) {
-  //     Fluttertoast.showToast(
-  //         msg:
-  //             "${(highestRankCard['player'] as PlayerModel).name} ganhou a rodada!",
-  //         toastLength: Toast.LENGTH_SHORT,
-  //         gravity: ToastGravity.BOTTOM,
-  //         timeInSecForIosWeb: 1,
-  //         backgroundColor: Colors.green,
-  //         textColor: Colors.white,
-  //         fontSize: 16.0);
-  //   });
-  // }
 
   Widget buildCard(CardModel card, bool isManilhaCard, bool isHidden,
       {bool isSelected = false}) {
@@ -260,8 +247,12 @@ class _BoardViewState extends State<BoardView> {
                       scoreTeamB: widget.gameController.players[1].score,
                       playerA: widget.gameController.players[0].name,
                       playerB: widget.gameController.players[1].name,
-                      roundWinnerA: widget.gameController.players[0].roundWins,
-                      roundWinnerB: widget.gameController.players[0].roundWins,
+                      roundOneWinnerA: widget.gameController.players[0].roundOneWin,
+                      roundOneWinnerB: widget.gameController.players[1].roundOneWin,
+                      roundTwoWinnerA: widget.gameController.players[0].roundTwoWin, 
+                      roundTwoWinnerB: widget.gameController.players[1].roundTwoWin,
+                      roundThreeWinnerA: widget.gameController.players[0].roundThreeWin,
+                      roundThreeWinnerB: widget.gameController.players[1].roundThreeWin,
                       color: Colors.black,
                       fontColor: Colors.white,
                       size: 12.0,

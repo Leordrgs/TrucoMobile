@@ -16,40 +16,8 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  // ApiService apiService = ApiService(baseUrl: DECK_API);
-  // Map<String, dynamic> newDeck = await apiService.createNewDeck();
-  // String deckId = newDeck['deck_id'];
-  // var response = await apiService.drawCards(deckId, 12);
-  // List<CardModel> cards = (response['cards'] as List).map((cardMap) => CardModel.fromMap(cardMap)).toList();
-
-  // runApp(BoardView(cards: cards));
 
   runApp(MaterialApp(
     home: MyLoadingPage(title: 'Carregando'),
   ));
 }
-/*class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    Table mesa = Table([Player(name: 'Player 1'), Player(name: 'Player 2'), Player(name: 'Player 3'), Player(name: 'Player 4')]);
-    mesa.startNewRound();
-
-    // Exibindo o placar
-    mesa.showScore();
-
-    // Verificando a vitória
-    if (mesa.checkVictory()) {
-      print('Jogo finalizado! Equipe vencedora: ${mesa.currentRoundWinner == 0 ? mesa.teams[0].name : mesa.teams[1].name}');
-    }
-
-    return MaterialApp(
-      title: 'Truco Game',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: GameScreen(table: mesa),  // Passando a mesa para o GameScreen
-    );
-  }
-}*/

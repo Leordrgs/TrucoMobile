@@ -42,7 +42,6 @@ const DECK_API_CARDS = [
   'KH',
   'KC'
 ];
-
 const cardsValues = [
   '4',
   '5',

@@ -9,14 +9,22 @@ class ScoreBoard extends StatelessWidget {
   int roundWinner = 0;
   final String playerA;
   final String playerB;
-  final List<bool> roundWinnerA;
-  final List<bool> roundWinnerB;
+  final bool roundOneWinnerA;
+  final bool roundOneWinnerB;
+  final bool roundTwoWinnerA;
+  final bool roundTwoWinnerB;
+  final bool roundThreeWinnerA;
+  final bool roundThreeWinnerB;
 
   ScoreBoard({
     required this.scoreTeamA,
     required this.scoreTeamB,
-    required this.roundWinnerA,
-    required this.roundWinnerB,
+    required this.roundOneWinnerA,
+    required this.roundOneWinnerB,
+    required this.roundTwoWinnerA,
+    required this.roundTwoWinnerB,
+    required this.roundThreeWinnerA,
+    required this.roundThreeWinnerB,
     required this.playerA,
     required this.playerB,
     this.color = Colors.white,
@@ -46,14 +54,23 @@ class ScoreBoard extends StatelessWidget {
                     color: fontColor),
               ),
               Row(
-                children: List.generate(
-                  3,
-                  (index) => Checkbox(
-                    value: roundWinnerA[index],
+                children: [
+                  Checkbox(
+                    value: roundOneWinnerA,
                     activeColor: Colors.white,
                     onChanged: (bool? value) {},
                   ),
-                ),
+                  Checkbox(
+                    value: roundTwoWinnerA,
+                    activeColor: Colors.white,
+                    onChanged: (bool? value) {},
+                  ),
+                  Checkbox(
+                    value: roundThreeWinnerA,
+                    activeColor: Colors.white,
+                    onChanged: (bool? value) {},
+                  )
+                ],
               ),
               Text(
                 '$scoreTeamA',
@@ -71,16 +88,23 @@ class ScoreBoard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: fontColor),
               ),
-              Row(
-                children: List.generate(
-                  3,
-                  (index) => Checkbox(
-                    value: roundWinnerB[index],
-                    activeColor: Colors.white,
-                    onChanged: (bool? value) {},
-                  ),
+              Row(children: [
+                Checkbox(
+                  value: roundOneWinnerB,
+                  activeColor: Colors.white,
+                  onChanged: (bool? value) {},
                 ),
-              ),
+                Checkbox(
+                  value: roundTwoWinnerB,
+                  activeColor: Colors.white,
+                  onChanged: (bool? value) {},
+                ),
+                Checkbox(
+                  value: roundThreeWinnerB,
+                  activeColor: Colors.white,
+                  onChanged: (bool? value) {},
+                ),
+              ]),
               Text(
                 '$scoreTeamB',
                 style: TextStyle(fontSize: size, color: fontColor),

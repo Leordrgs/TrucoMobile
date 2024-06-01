@@ -7,16 +7,11 @@ import 'package:truco_mobile/src/view/board_view.dart';
 
 class GameController {
   late List<PlayerModel> players;
-  int currentRound = 0;
+  late int currentRound = 0;
   ApiService apiService = ApiService(baseUrl: DECK_API);
   GameController({required this.players});
-  // final StreamController<Map<String, Object>> _notificationController =
-  //     StreamController.broadcast();
 
-  // Stream<Map<String, Object>> get notificationStream =>
-  //     _notificationController.stream;
-
-  Future<Object> startGame() async {
+  Future<Object> manageGame([bool newGame = false]) async {
     //create deck things here
     var deck = await apiService.createNewDeck(DECK_API_CARDS);
     var deckId = deck['deck_id'];
@@ -24,21 +19,22 @@ class GameController {
     var manilha = await apiService.drawCards(deckId, 1);
 
     //distribute the cards
-    for (var i = 0; i < drawnCards['cards'].length; i++) {
-      CardModel card = CardModel.fromMap(drawnCards['cards'][i]);
-      players[i % players.length].hand.add(card);
-    }
+    distributeCards(drawnCards);
 
     //adjust the cards rank if is manilha cards
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
-    //zero the points
-    for (var i = 0; i < players.length; i++) {
-      players[i].score = 0;
+    if (newGame != null && newGame) {
+      resetPoints();
     }
 
-    //current round
-    currentRound = 0;
+    // if (!newGame) {
+    //   if (currentRound == 2) {
+    //       currentRound = 0;
+    //   }
+    // }
+
+    // currentRound++;
 
     //return an object with the deckId, the manilha and the cards
     var obj = {
@@ -50,6 +46,33 @@ class GameController {
     };
 
     return obj;
+  }
+
+  void distributeCards(drawnCards) {
+    for (var i = 0; i < drawnCards['cards'].length; i++) {
+      CardModel card = CardModel.fromMap(drawnCards['cards'][i]);
+      players[i % players.length].hand.add(card);
+    }
+  }
+
+  void markRoundAsWon(PlayerModel winningPlayer, int roundNumber) {
+    print('markRoundAsWon');
+    winningPlayer.winRound(roundNumber);
+    currentRound = roundNumber;
+    currentRound++;
+    print('CURRENT ROUND: $currentRound');
+  }
+
+  void resetPoints() {
+    for (var i = 0; i < players.length; i++) {
+      players[i].score = 0;
+    }
+  }
+
+  void resetPlayersHand() {
+    for (var i = 0; i < players.length; i++) {
+      players[i].hand = [];
+    }
   }
 
   bool isCardValueEqualToNextValue(int manilhaRank, nextValue) {
@@ -80,47 +103,17 @@ class GameController {
   }
 
   void checkWhoWins(highestRankCard, int roundNumber) {
-    players[0].resetRoundWins();
-    players[1].resetRoundWins();
-    print('ROUND NUMBER --> $roundNumber');
-    if (highestRankCard['player'] == players[0] && players[0].score < 12) {
-      players[0].winRound(roundNumber);
-      roundNumber++;
-    } else if (highestRankCard['player'] == players[1] &&
-        players[1].score < 12) {
-      players[1].winRound(roundNumber);
-      roundNumber++;
+    if (roundNumber == 2 && players[0].hand.isEmpty ||
+        players[1].hand.isEmpty) {
+      players[0].resetRoundWins();
+      players[1].resetRoundWins();
     }
 
-    // _notificationController.add({
-    //   'player': highestRankCard['player'],
-    //   'score': highestRankCard['player'].score
-    // });
+    if (highestRankCard['player'] == players[0] && players[0].score < 12) {
+      markRoundAsWon(players[0], roundNumber);
+    } else if (highestRankCard['player'] == players[1] &&
+        players[1].score < 12) {
+      markRoundAsWon(players[1], roundNumber);
+    }
   }
-
-  // void playRound(playedCards) {
-  //   int player1RoundWins = 0;
-  //   int player2RoundWins = 0;
-
-  //   for (int i = 0; i < 3; i++) {
-  //     Map<String, Object> highestRankCard = processPlayedCards(playedCards);
-  //     checkWhoWins(highestRankCard);
-
-  //     if (highestRankCard['player'] == players[0]) {
-  //       player1RoundWins++;
-  //     } else {
-  //       player2RoundWins++;
-  //     }
-
-  //     if (player1RoundWins == 2 || player2RoundWins == 2) {
-  //       break;
-  //     }
-  //   }
-
-  //   if (player1RoundWins > player2RoundWins) {
-  //     players[0].score++;
-  //   } else {
-  //     players[1].score++;
-  //   }
-  // }
 }
