@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/service/api_service.dart';
 import 'package:truco_mobile/src/view/board_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class GameController {
   late List<PlayerModel> players;
@@ -111,7 +113,7 @@ class GameController {
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
-
+    print('HIGHEST RANK CARD --> $highestRankCard');
     return highestRankCard;
   }
 
@@ -123,9 +125,26 @@ class GameController {
     }
 
     if (highestRankCard['player'] == players[0] && players[0].score < 12) {
+      Fluttertoast.showToast(
+          msg:
+              "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
       markRoundAsWon(players[0], roundNumber);
     } else if (highestRankCard['player'] == players[1] &&
         players[1].score < 12) {
+      Fluttertoast.showToast(
+          msg: "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+          fontSize: 16.0);
       markRoundAsWon(players[1], roundNumber);
     }
   }
