@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/view/HomeView/home_view.dart';
-import 'package:truco_mobile/src/widget/CustomButton/custom_button.dart';
+import 'package:truco_mobile/src/view/home_view.dart';
+import 'package:truco_mobile/src/widget/custom_button.dart';
 
 class MyCreateNewGamePage extends StatefulWidget {
   final String title;
@@ -154,7 +154,7 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
                 width: 200,
                 height: 50,
                 fontSize: 16,
-                color: Colors.white,// Aplicando borderRadius
+                color: Colors.white,
                 textColor: Colors.black,
               ),
             ),

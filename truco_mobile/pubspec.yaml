@@ -37,6 +37,7 @@ dependencies:
   firebase_core: ^2.31.1
   firebase_database: ^10.5.6
   firebase_auth: ^4.19.6 # Versão recomendada
+  fluttertoast: ^8.2.5
 
 dev_dependencies:
   flutter_test:
