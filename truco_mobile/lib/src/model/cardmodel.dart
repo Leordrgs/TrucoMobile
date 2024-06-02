@@ -1,5 +1,3 @@
-import 'package:truco_mobile/src/config/general_config.dart';
-
 class CardModel {
   String code;
   String image;

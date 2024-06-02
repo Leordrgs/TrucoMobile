@@ -51,6 +51,19 @@ class PlayerModel {
     roundThreeWin = false;
   }
 
+  bool hasWonTwoRounds() {
+    int wins = 0;
+    if (roundOneWin) wins++;
+    if (roundTwoWin) wins++;
+    if (roundThreeWin) wins++;
+    return wins >= 2;
+  }
+
+  void winGameAndResetRounds() {
+    score++;
+    resetRoundWins();
+  }
+
   void addPoints(int points) {
     score += points;
   }

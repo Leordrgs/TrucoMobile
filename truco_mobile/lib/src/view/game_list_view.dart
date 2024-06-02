@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/controller/game_controller.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
-import 'package:truco_mobile/src/service/api_service.dart';
 import 'package:truco_mobile/src/view/board_view.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
-import 'package:truco_mobile/src/model/cardmodel.dart';
 
 class GameListView extends StatefulWidget {
   final String title;
@@ -17,7 +14,6 @@ class GameListView extends StatefulWidget {
 }
 
 class _GameListView extends State<GameListView> {
-  // TrucoController trucoController = TrucoController(apiService: ApiService(baseUrl: DECK_API));
 
   List<Map<String, dynamic>> gameRooms = [
     {'name': 'Sala 1', 'players': 4, 'maxPlayers': 4},
@@ -114,7 +110,6 @@ class _GameListView extends State<GameListView> {
         trailing: Text('$players/$maxPlayers jogadores'),
         onTap: () async {
           if (name == 'Sala 1') {
-            // List<CardModel> cards = await trucoController.fetchCards();
             List<PlayerModel> players = [
               PlayerModel(name: 'Jogador 1'),
               PlayerModel(name: 'Jogador 2'),

@@ -28,9 +28,14 @@ class GameController {
       resetPoints();
     }
 
-    // if (!newGame) {
-    //   if (currentRound == 2) {
+    // while (players[0].score < 12 && players[1].score < 12) {
+    //   if (!newGame) {
+    //     if (verifyIfAnyPlayerWonTwoRounds()) {
+    //       print('verifyIfAnyPlayerWonTwoRounds');
     //       currentRound = 0;
+    //       resetPlayersHand();
+    //       manageGame();
+    //     }
     //   }
     // }
 
@@ -48,6 +53,16 @@ class GameController {
     return obj;
   }
 
+  bool verifyIfAnyPlayerWonTwoRounds() {
+    for (var player in players) {
+      if (player.hasWonTwoRounds()) {
+        player.winGameAndResetRounds();
+        return true;
+      }
+    }
+    return false;
+  }
+
   void distributeCards(drawnCards) {
     for (var i = 0; i < drawnCards['cards'].length; i++) {
       CardModel card = CardModel.fromMap(drawnCards['cards'][i]);
@@ -56,11 +71,9 @@ class GameController {
   }
 
   void markRoundAsWon(PlayerModel winningPlayer, int roundNumber) {
-    print('markRoundAsWon');
     winningPlayer.winRound(roundNumber);
     currentRound = roundNumber;
     currentRound++;
-    print('CURRENT ROUND: $currentRound');
   }
 
   void resetPoints() {
@@ -71,7 +84,7 @@ class GameController {
 
   void resetPlayersHand() {
     for (var i = 0; i < players.length; i++) {
-      players[i].hand = [];
+      players[i].hand.clear();
     }
   }
 

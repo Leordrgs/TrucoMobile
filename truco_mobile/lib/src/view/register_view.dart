@@ -27,14 +27,12 @@ class _MyRegisterPageState extends State<MyRegisterPage> {
       );
       User? user = userCredential.user;
       if (user != null) {
-        // Navegar para a tela principal após o registro bem-sucedido
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => MyMainPagePage()),
         );
       }
     } on FirebaseAuthException catch (e) {
-      // Mostrar um erro se o registro falhar
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Erro ao registrar')));
     } catch (e) {
       print(e);

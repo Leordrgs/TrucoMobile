@@ -154,7 +154,7 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
                 width: 200,
                 height: 50,
                 fontSize: 16,
-                color: Colors.white,// Aplicando borderRadius
+                color: Colors.white,
                 textColor: Colors.black,
               ),
             ),

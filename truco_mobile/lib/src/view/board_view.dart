@@ -4,7 +4,6 @@ import 'package:truco_mobile/src/model/cardmodel.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/widget/score_board.dart';
 import 'package:truco_mobile/src/widget/truco_card.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class PlayedCard {
   final PlayerModel player;
@@ -78,8 +77,7 @@ class _BoardViewState extends State<BoardView> {
           int roundNumber = widget.gameController.currentRound;
           print('ROUND NUMBER NO ONCENTERTAP --> $roundNumber');
           widget.gameController.checkWhoWins(highestRankCard, roundNumber);
-          // setupNotificationStream();
-          playedCards.clear(); // Clear the played cards for the next round
+          playedCards.clear();
         }
       });
       switchPlayer();

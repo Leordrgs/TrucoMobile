@@ -32,7 +32,6 @@ class _MyLoginPageState extends State<MyLoginPage> {
       );
       User? user = userCredential.user;
       if (user != null) {
-        // Navegar para a tela inicial após o login bem-sucedido
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => MyHomePagePage(title: 'Tela inicial')),
