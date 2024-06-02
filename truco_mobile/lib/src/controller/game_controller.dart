@@ -126,8 +126,7 @@ class GameController {
 
     if (highestRankCard['player'] == players[0] && players[0].score < 12) {
       Fluttertoast.showToast(
-          msg:
-              "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
+          msg: "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
