@@ -72,8 +72,7 @@ class _BoardViewState extends State<BoardView> {
         showPlayPrompt = false;
 
         if (isNumberOfCardEqualNumbersOfPlayers()) {
-          var highestRankCard =
-              widget.gameController.processPlayedCards(playedCards);
+          var highestRankCard = widget.gameController.processPlayedCards(playedCards);
           int roundNumber = widget.gameController.currentRound;
           print('ROUND NUMBER NO ONCENTERTAP --> $roundNumber');
           widget.gameController.checkWhoWins(highestRankCard, roundNumber);
