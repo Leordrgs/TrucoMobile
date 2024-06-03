@@ -13,7 +13,7 @@ class GameController {
   ApiService apiService = ApiService(baseUrl: DECK_API);
   GameController({required this.players});
 
-  Future<Object> manageGame([bool newGame = false]) async {
+  Future<Object> manageGame([bool? newGame = false]) async {
     //create deck things here
     var deck = await apiService.createNewDeck(DECK_API_CARDS);
     var deckId = deck['deck_id'];
