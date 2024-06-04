@@ -27,23 +27,6 @@ class GameController {
     //adjust the cards rank if is manilha cards
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
-    // if (newGame != null && newGame) {
-    //   resetPoints();
-    // }
-
-    // while (players[0].score < 12 && players[1].score < 12) {
-    //   if (!newGame) {
-    //     if (verifyIfAnyPlayerWonTwoRounds()) {
-    //       print('verifyIfAnyPlayerWonTwoRounds');
-    //       currentRound = 0;
-    //       resetPlayersHand();
-    //       manageGame();
-    //     }
-    //   }
-    // }
-
-    // currentRound++;
-
     //return an object with the deckId, the manilha and the cards
     var obj = {
       'deckId': deckId,
@@ -160,7 +143,7 @@ class GameController {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 3,
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.blue,
             textColor: Colors.black,
             fontSize: 16.0);
         players[0].roundsWinsCounter = 0;
@@ -187,7 +170,7 @@ class GameController {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 3,
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.blue,
             textColor: Colors.black,
             fontSize: 16.0);
         players[1].roundsWinsCounter = 0;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:truco_mobile/src/controller/game_controller.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
@@ -63,18 +64,40 @@ class _BoardViewState extends State<BoardView> {
 
   void checkGameStatus(deckId) {
     if (widget.gameController.players[0].score < 12 &&
-        widget.gameController.players[1].score < 12 && 
-        widget.gameController.players[0].hand.isEmpty && 
+        widget.gameController.players[1].score < 12 &&
+        widget.gameController.players[0].hand.isEmpty &&
         widget.gameController.players[1].hand.isEmpty) {
       widget.gameController.returnCardsAndShuffle(deckId);
       widget.gameController.currentRound = 0;
-      for(var i=0;i<widget.gameController.players.length;i++){
+      for (var i = 0; i < widget.gameController.players.length; i++) {
         print('entrou no for');
         widget.gameController.players[i].hand.clear();
         widget.gameController.players[i].resetRoundWins();
         widget.gameController.players[i].roundsWinsCounter = 0;
       }
       startGame();
+    }
+
+    if (widget.gameController.players[0].score == 12) {
+      Fluttertoast.showToast(
+          msg:
+              "O vencedor do jogo foi ${widget.gameController.players[0].name}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (widget.gameController.players[1].score == 12) {
+      Fluttertoast.showToast(
+          msg:
+              "O vencedor do jogo foi ${widget.gameController.players[1].name}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
   }
 
