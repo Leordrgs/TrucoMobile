@@ -24,12 +24,12 @@ class GameController {
     //distribute the cards
     distributeCards(drawnCards);
 
+    //adjust the cards rank if is manilha cards
+    adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
+
     if (newGame != null && newGame) {
       resetPoints();
     }
-
-    //adjust the cards rank if is manilha cards
-    adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
     //return an object with the deckId, the manilha and the cards
     var obj = {
