@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:truco_mobile/src/controller/game_controller.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
@@ -33,14 +34,14 @@ class _BoardViewState extends State<BoardView> {
   CardModel? manilha;
   List<PlayedCard> playedCards = [];
   int roundNumber = 0;
+  String deckId = '';
   void startGame([bool newGame = false]) async {
     var gameData = await widget.gameController.manageGame(newGame);
+    deckId = (gameData as Map)['deckId'];
     setState(() {
       manilha = (gameData as Map)['manilha'];
     });
   }
-
-  
 
   @override
   void initState() {
@@ -61,6 +62,45 @@ class _BoardViewState extends State<BoardView> {
     });
   }
 
+  void checkGameStatus(deckId) {
+    if (widget.gameController.players[0].score < 12 &&
+        widget.gameController.players[1].score < 12 &&
+        widget.gameController.players[0].hand.isEmpty &&
+        widget.gameController.players[1].hand.isEmpty) {
+      widget.gameController.returnCardsAndShuffle(deckId);
+      widget.gameController.currentRound = 0;
+      for (var i = 0; i < widget.gameController.players.length; i++) {
+        print('entrou no for');
+        widget.gameController.players[i].hand.clear();
+        widget.gameController.players[i].resetRoundWins();
+        widget.gameController.players[i].roundsWinsCounter = 0;
+      }
+      startGame();
+    }
+
+    if (widget.gameController.players[0].score == 12) {
+      Fluttertoast.showToast(
+          msg:
+              "O vencedor do jogo foi ${widget.gameController.players[0].name}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (widget.gameController.players[1].score == 12) {
+      Fluttertoast.showToast(
+          msg:
+              "O vencedor do jogo foi ${widget.gameController.players[1].name}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
   void onCenterTap() {
     if (showPlayPrompt && selectedCard != null) {
       setState(() {
@@ -72,9 +112,9 @@ class _BoardViewState extends State<BoardView> {
         showPlayPrompt = false;
 
         if (isNumberOfCardEqualNumbersOfPlayers()) {
-          var highestRankCard = widget.gameController.processPlayedCards(playedCards);
           int roundNumber = widget.gameController.currentRound;
-          print('ROUND NUMBER NO ONCENTERTAP --> $roundNumber');
+          var highestRankCard =
+              widget.gameController.processPlayedCards(playedCards);
           widget.gameController.checkWhoWins(highestRankCard, roundNumber);
           playedCards.clear();
         }
@@ -85,6 +125,8 @@ class _BoardViewState extends State<BoardView> {
         showPlayPrompt = false;
       });
     }
+
+    checkGameStatus(deckId);
   }
 
   bool isNumberOfCardEqualNumbersOfPlayers() {
@@ -244,12 +286,18 @@ class _BoardViewState extends State<BoardView> {
                       scoreTeamB: widget.gameController.players[1].score,
                       playerA: widget.gameController.players[0].name,
                       playerB: widget.gameController.players[1].name,
-                      roundOneWinnerA: widget.gameController.players[0].roundOneWin,
-                      roundOneWinnerB: widget.gameController.players[1].roundOneWin,
-                      roundTwoWinnerA: widget.gameController.players[0].roundTwoWin, 
-                      roundTwoWinnerB: widget.gameController.players[1].roundTwoWin,
-                      roundThreeWinnerA: widget.gameController.players[0].roundThreeWin,
-                      roundThreeWinnerB: widget.gameController.players[1].roundThreeWin,
+                      roundOneWinnerA:
+                          widget.gameController.players[0].roundOneWin,
+                      roundOneWinnerB:
+                          widget.gameController.players[1].roundOneWin,
+                      roundTwoWinnerA:
+                          widget.gameController.players[0].roundTwoWin,
+                      roundTwoWinnerB:
+                          widget.gameController.players[1].roundTwoWin,
+                      roundThreeWinnerA:
+                          widget.gameController.players[0].roundThreeWin,
+                      roundThreeWinnerB:
+                          widget.gameController.players[1].roundThreeWin,
                       color: Colors.black,
                       fontColor: Colors.white,
                       size: 12.0,

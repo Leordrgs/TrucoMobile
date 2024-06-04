@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
@@ -13,7 +14,7 @@ class GameController {
   ApiService apiService = ApiService(baseUrl: DECK_API);
   GameController({required this.players});
 
-  Future<Object> manageGame([bool newGame = false]) async {
+  Future<Object> manageGame([bool? newGame = false]) async {
     //create deck things here
     var deck = await apiService.createNewDeck(DECK_API_CARDS);
     var deckId = deck['deck_id'];
@@ -29,19 +30,6 @@ class GameController {
     if (newGame != null && newGame) {
       resetPoints();
     }
-
-    // while (players[0].score < 12 && players[1].score < 12) {
-    //   if (!newGame) {
-    //     if (verifyIfAnyPlayerWonTwoRounds()) {
-    //       print('verifyIfAnyPlayerWonTwoRounds');
-    //       currentRound = 0;
-    //       resetPlayersHand();
-    //       manageGame();
-    //     }
-    //   }
-    // }
-
-    // currentRound++;
 
     //return an object with the deckId, the manilha and the cards
     var obj = {
@@ -110,11 +98,25 @@ class GameController {
             {'rank': playedCard.card.rank, 'player': playedCard.player})
         .toList();
 
+    var card1Rank = cards[0]['rank'] as int;
+    var card2Rank = cards[1]['rank'] as int;
+    var rankDifference = card1Rank - card2Rank;
+
+    if (rankDifference == 0) {
+      return {
+        'cards': [cards[0], cards[1]],
+      };
+    }
+
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
-    print('HIGHEST RANK CARD --> $highestRankCard');
     return highestRankCard;
+  }
+
+  void returnCardsAndShuffle(deckId) async {
+    await apiService.returnCardsToDeck(deckId);
+    await apiService.shuffleDeck(deckId);
   }
 
   void checkWhoWins(highestRankCard, int roundNumber) {
@@ -126,7 +128,8 @@ class GameController {
 
     if (highestRankCard['player'] == players[0] && players[0].score < 12) {
       Fluttertoast.showToast(
-          msg: "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
+          msg:
+              "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -134,16 +137,61 @@ class GameController {
           textColor: Colors.white,
           fontSize: 16.0);
       markRoundAsWon(players[0], roundNumber);
+      players[0].roundsWinsCounter++;
+
+      if (players[0].roundsWinsCounter == 2) {
+        players[0].score += 1;
+        Fluttertoast.showToast(
+            msg:
+                "O vencedor da mão ${roundNumber + 1} foi ${highestRankCard['player'].name} e foi adicionado um ponto ao placar!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.blue,
+            textColor: Colors.black,
+            fontSize: 16.0);
+        players[0].roundsWinsCounter = 0;
+        players[1].resetRoundWins();
+      }
     } else if (highestRankCard['player'] == players[1] &&
         players[1].score < 12) {
       Fluttertoast.showToast(
-          msg: "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
+          msg:
+              "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16.0);
+      markRoundAsWon(players[1], roundNumber);
+      players[1].roundsWinsCounter++;
+      if (players[1].roundsWinsCounter == 2) {
+        players[1].score += 1;
+        Fluttertoast.showToast(
+            msg:
+                "O vencedor da mão foi ${highestRankCard['player'].name} e foi adicionado um ponto ao placar!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.blue,
+            textColor: Colors.black,
+            fontSize: 16.0);
+        players[1].roundsWinsCounter = 0;
+        players[1].resetRoundWins();
+      }
+    } else if (highestRankCard['cards'].length == 2) {
+      Fluttertoast.showToast(
+          msg: "Empate na rodada ${roundNumber + 1}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+      players[0].roundsWinsCounter++;
+      players[1].roundsWinsCounter++;
+      markRoundAsWon(players[0], roundNumber);
       markRoundAsWon(players[1], roundNumber);
     }
   }
