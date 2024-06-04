@@ -24,6 +24,10 @@ class GameController {
     //distribute the cards
     distributeCards(drawnCards);
 
+    if (newGame != null && newGame) {
+      resetPoints();
+    }
+
     //adjust the cards rank if is manilha cards
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
@@ -100,7 +104,7 @@ class GameController {
 
     if (rankDifference == 0) {
       return {
-        'cards': [cards[0], cards[1]], 
+        'cards': [cards[0], cards[1]],
       };
     }
 
