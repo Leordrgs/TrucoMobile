@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:truco_mobile/src/model/cardmodel.dart';
 
 class ApiService {
   final String baseUrl;

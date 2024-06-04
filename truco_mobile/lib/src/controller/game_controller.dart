@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
@@ -110,10 +111,19 @@ class GameController {
             {'rank': playedCard.card.rank, 'player': playedCard.player})
         .toList();
 
+    var card1Rank = cards[0]['rank'] as int;
+    var card2Rank = cards[1]['rank'] as int;
+    var rankDifference = card1Rank - card2Rank;
+
+    if (rankDifference == 0) {
+      return {
+        'cards': [cards[0], cards[1]], 
+      };
+    }
+
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
-    print('HIGHEST RANK CARD --> $highestRankCard');
     return highestRankCard;
   }
 
@@ -183,6 +193,19 @@ class GameController {
         players[1].roundsWinsCounter = 0;
         players[1].resetRoundWins();
       }
+    } else if (highestRankCard['cards'].length == 2) {
+      Fluttertoast.showToast(
+          msg: "Empate na rodada ${roundNumber + 1}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      players[0].roundsWinsCounter++;
+      players[1].roundsWinsCounter++;
+      markRoundAsWon(players[0], roundNumber);
+      markRoundAsWon(players[1], roundNumber);
     }
   }
 }
