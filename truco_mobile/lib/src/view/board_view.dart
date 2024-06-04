@@ -33,14 +33,14 @@ class _BoardViewState extends State<BoardView> {
   CardModel? manilha;
   List<PlayedCard> playedCards = [];
   int roundNumber = 0;
+  String deckId = '';
   void startGame([bool newGame = false]) async {
     var gameData = await widget.gameController.manageGame(newGame);
+    deckId = (gameData as Map)['deckId'];
     setState(() {
       manilha = (gameData as Map)['manilha'];
     });
   }
-
-  
 
   @override
   void initState() {
@@ -61,6 +61,24 @@ class _BoardViewState extends State<BoardView> {
     });
   }
 
+  void checkGameStatus(deckId) {
+    if (widget.gameController.players[0].score < 12 &&
+        widget.gameController.players[1].score < 12 && 
+        widget.gameController.players[0].hand.isEmpty && 
+        widget.gameController.players[1].hand.isEmpty ) {
+      //retornar as cartas da mão para o deck
+      widget.gameController.returnCardsAndShuffle(deckId);
+      widget.gameController.currentRound = 0;
+      for(var i=0;i<widget.gameController.players.length;i++){
+        print('entrou no for');
+        widget.gameController.players[i].hand.clear();
+        widget.gameController.players[i].resetRoundWins();
+        widget.gameController.players[i].roundsWinsCounter = 0;
+      }
+      startGame();
+    }
+  }
+
   void onCenterTap() {
     if (showPlayPrompt && selectedCard != null) {
       setState(() {
@@ -72,7 +90,8 @@ class _BoardViewState extends State<BoardView> {
         showPlayPrompt = false;
 
         if (isNumberOfCardEqualNumbersOfPlayers()) {
-          var highestRankCard = widget.gameController.processPlayedCards(playedCards);
+          var highestRankCard =
+              widget.gameController.processPlayedCards(playedCards);
           int roundNumber = widget.gameController.currentRound;
           print('ROUND NUMBER NO ONCENTERTAP --> $roundNumber');
           widget.gameController.checkWhoWins(highestRankCard, roundNumber);
@@ -85,6 +104,8 @@ class _BoardViewState extends State<BoardView> {
         showPlayPrompt = false;
       });
     }
+
+    checkGameStatus(deckId);
   }
 
   bool isNumberOfCardEqualNumbersOfPlayers() {
@@ -244,12 +265,18 @@ class _BoardViewState extends State<BoardView> {
                       scoreTeamB: widget.gameController.players[1].score,
                       playerA: widget.gameController.players[0].name,
                       playerB: widget.gameController.players[1].name,
-                      roundOneWinnerA: widget.gameController.players[0].roundOneWin,
-                      roundOneWinnerB: widget.gameController.players[1].roundOneWin,
-                      roundTwoWinnerA: widget.gameController.players[0].roundTwoWin, 
-                      roundTwoWinnerB: widget.gameController.players[1].roundTwoWin,
-                      roundThreeWinnerA: widget.gameController.players[0].roundThreeWin,
-                      roundThreeWinnerB: widget.gameController.players[1].roundThreeWin,
+                      roundOneWinnerA:
+                          widget.gameController.players[0].roundOneWin,
+                      roundOneWinnerB:
+                          widget.gameController.players[1].roundOneWin,
+                      roundTwoWinnerA:
+                          widget.gameController.players[0].roundTwoWin,
+                      roundTwoWinnerB:
+                          widget.gameController.players[1].roundTwoWin,
+                      roundThreeWinnerA:
+                          widget.gameController.players[0].roundThreeWin,
+                      roundThreeWinnerB:
+                          widget.gameController.players[1].roundThreeWin,
                       color: Colors.black,
                       fontColor: Colors.white,
                       size: 12.0,

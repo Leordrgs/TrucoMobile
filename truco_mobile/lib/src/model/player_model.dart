@@ -7,6 +7,7 @@ class PlayerModel {
   bool roundOneWin = false;
   bool roundTwoWin = false;
   bool roundThreeWin = false;
+  int roundsWinsCounter = 0;
 
   PlayerModel({required this.name}) {
     hand = [];
@@ -14,7 +15,7 @@ class PlayerModel {
 
   @override
   String toString() {
-    return 'Player: $name, Score: $score, Hand: $hand';
+    return 'Player: $name, Score: $score, Hand: $hand, Round 1 Win: $roundOneWin, Round 2 Win: $roundTwoWin, Round 3 Win: $roundThreeWin, Rounds Wins: $roundsWinsCounter';
   }
 
   void winRound(int roundNumber) {
@@ -52,11 +53,10 @@ class PlayerModel {
   }
 
   bool hasWonTwoRounds() {
-    int wins = 0;
-    if (roundOneWin) wins++;
-    if (roundTwoWin) wins++;
-    if (roundThreeWin) wins++;
-    return wins >= 2;
+    if (roundOneWin) roundsWinsCounter++;
+    if (roundTwoWin) roundsWinsCounter++;
+    if (roundThreeWin) roundsWinsCounter++;
+    return roundsWinsCounter >= 2;
   }
 
   void winGameAndResetRounds() {

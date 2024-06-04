@@ -34,8 +34,9 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> shuffleDeck(String deckId) async {
-    var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/shuffle/'));
 
+    var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/shuffle/'));
+    print('--> BASE URL $baseUrl/deck/$deckId/shuffle/');
     if ([200, 201].contains(response.statusCode)) {
       var result = jsonDecode(response.body);
 
@@ -47,7 +48,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> returnCardsToDeck(String deckId) async {
     var response = await http.get(Uri.parse('$baseUrl/deck/$deckId/return/'));
-
+    print('--> RETURN CARDS $baseUrl/deck/$deckId/return');
     if ([200, 201].contains(response.statusCode)) {
       var result = jsonDecode(response.body);
 

@@ -26,9 +26,9 @@ class GameController {
     //adjust the cards rank if is manilha cards
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
-    if (newGame != null && newGame) {
-      resetPoints();
-    }
+    // if (newGame != null && newGame) {
+    //   resetPoints();
+    // }
 
     // while (players[0].score < 12 && players[1].score < 12) {
     //   if (!newGame) {
@@ -117,6 +117,11 @@ class GameController {
     return highestRankCard;
   }
 
+  void returnCardsAndShuffle(deckId) async {
+    await apiService.returnCardsToDeck(deckId);
+    await apiService.shuffleDeck(deckId);
+  }
+
   void checkWhoWins(highestRankCard, int roundNumber) {
     if (roundNumber == 2 && players[0].hand.isEmpty ||
         players[1].hand.isEmpty) {
@@ -126,7 +131,8 @@ class GameController {
 
     if (highestRankCard['player'] == players[0] && players[0].score < 12) {
       Fluttertoast.showToast(
-          msg: "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
+          msg:
+              "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 2,
@@ -134,10 +140,18 @@ class GameController {
           textColor: Colors.white,
           fontSize: 16.0);
       markRoundAsWon(players[0], roundNumber);
+      players[0].roundsWinsCounter++;
+
+      if (players[0].roundsWinsCounter == 2) {
+        players[0].score += 1;
+        players[0].roundsWinsCounter = 0;
+        players[1].resetRoundWins();
+      }
     } else if (highestRankCard['player'] == players[1] &&
         players[1].score < 12) {
       Fluttertoast.showToast(
-          msg: "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
+          msg:
+              "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -145,6 +159,12 @@ class GameController {
           textColor: Colors.white,
           fontSize: 16.0);
       markRoundAsWon(players[1], roundNumber);
+      players[1].roundsWinsCounter++;
+      if (players[1].roundsWinsCounter == 2) {
+        players[1].score += 1;
+        players[1].roundsWinsCounter = 0;
+        players[1].resetRoundWins();
+      }
     }
   }
 }
