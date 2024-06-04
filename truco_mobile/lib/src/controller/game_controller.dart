@@ -144,6 +144,15 @@ class GameController {
 
       if (players[0].roundsWinsCounter == 2) {
         players[0].score += 1;
+        Fluttertoast.showToast(
+            msg:
+                "O vencedor da mão ${roundNumber + 1} foi ${highestRankCard['player'].name} e foi adicionado um ponto ao placar!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.green,
+            textColor: Colors.black,
+            fontSize: 16.0);
         players[0].roundsWinsCounter = 0;
         players[1].resetRoundWins();
       }
@@ -154,14 +163,23 @@ class GameController {
               "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
           fontSize: 16.0);
       markRoundAsWon(players[1], roundNumber);
       players[1].roundsWinsCounter++;
       if (players[1].roundsWinsCounter == 2) {
         players[1].score += 1;
+        Fluttertoast.showToast(
+            msg:
+                "O vencedor da mão foi ${highestRankCard['player'].name} e foi adicionado um ponto ao placar!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.green,
+            textColor: Colors.black,
+            fontSize: 16.0);
         players[1].roundsWinsCounter = 0;
         players[1].resetRoundWins();
       }

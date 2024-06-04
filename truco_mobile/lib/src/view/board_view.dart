@@ -65,8 +65,7 @@ class _BoardViewState extends State<BoardView> {
     if (widget.gameController.players[0].score < 12 &&
         widget.gameController.players[1].score < 12 && 
         widget.gameController.players[0].hand.isEmpty && 
-        widget.gameController.players[1].hand.isEmpty ) {
-      //retornar as cartas da mão para o deck
+        widget.gameController.players[1].hand.isEmpty) {
       widget.gameController.returnCardsAndShuffle(deckId);
       widget.gameController.currentRound = 0;
       for(var i=0;i<widget.gameController.players.length;i++){
