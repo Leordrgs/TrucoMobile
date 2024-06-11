@@ -1,37 +1,33 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
 import 'package:truco_mobile/src/model/played_card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/service/api_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:truco_mobile/src/widget/custom_toast.dart';
 
 class GameController {
-  late List<PlayerModel> players;
-  late int currentRound = 0;
+  List<PlayerModel> players;
+  int currentRound = 0;
+
   ApiService apiService = ApiService(baseUrl: DECK_API);
+
   GameController({required this.players});
 
   Future<Object> manageGame([bool? newGame = false]) async {
-    //create deck things here
+
     var deck = await apiService.createNewDeck(DECK_API_CARDS);
     var deckId = deck['deck_id'];
     var drawnCards = await apiService.drawCards(deckId, 6);
     var manilha = await apiService.drawCards(deckId, 1);
 
-    //distribute the cards
     distributeCards(drawnCards);
-
-    //adjust the cards rank if is manilha cards
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
     if (newGame != null && newGame) {
       resetPoints();
     }
 
-    //return an object with the deckId, the manilha and the cards
     var obj = {
       'deckId': deckId,
       'manilha': CardModel.fromMap(manilha['cards'][0]),
@@ -111,6 +107,7 @@ class GameController {
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
+  
     return highestRankCard;
   }
 
