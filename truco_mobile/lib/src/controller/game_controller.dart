@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/model/played_card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/service/api_service.dart';
-import 'package:truco_mobile/src/view/board_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class GameController {
