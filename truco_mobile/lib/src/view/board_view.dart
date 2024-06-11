@@ -24,6 +24,7 @@ class _BoardViewState extends State<BoardView> {
   List<PlayedCard> playedCards = [];
   int roundNumber = 0;
   String deckId = '';
+
   void startGame([bool newGame = false]) async {
     var gameData = await widget.gameController.manageGame(newGame);
     deckId = (gameData as Map)['deckId'];
