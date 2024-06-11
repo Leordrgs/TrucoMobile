@@ -1,4 +1,4 @@
-import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 
 class PlayedCard {

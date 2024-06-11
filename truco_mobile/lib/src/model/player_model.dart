@@ -1,4 +1,4 @@
-import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
 
 class PlayerModel {
   late String name;

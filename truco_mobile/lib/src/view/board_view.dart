@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:truco_mobile/src/controller/game_controller.dart';
-import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
 import 'package:truco_mobile/src/model/played_card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/widget/score_board.dart';

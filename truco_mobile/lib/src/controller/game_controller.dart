@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:truco_mobile/src/config/general_config.dart';
-import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
 import 'package:truco_mobile/src/model/played_card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/service/api_service.dart';
