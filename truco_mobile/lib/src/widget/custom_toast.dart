@@ -38,3 +38,14 @@ void showTiedRoundToast(int roundNumber) {
       textColor: Colors.white,
       fontSize: 16.0);
 }
+
+void showGameWinnerToast(String playerName) {
+  Fluttertoast.showToast(
+      msg: "O vencedor do jogo foi ${playerName}",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.yellow,
+      textColor: Colors.white,
+      fontSize: 16.0);
+}

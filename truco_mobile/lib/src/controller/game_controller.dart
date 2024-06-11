@@ -39,6 +39,10 @@ class GameController {
     return obj;
   }
 
+  bool isGameFinished() {
+    return players[0].score < 12 && players[1].score < 12 && players[0].hand.isEmpty && players[1].hand.isEmpty;
+  }
+
   bool verifyIfAnyPlayerWonTwoRounds() {
     for (var player in players) {
       if (player.hasWonTwoRounds()) {
