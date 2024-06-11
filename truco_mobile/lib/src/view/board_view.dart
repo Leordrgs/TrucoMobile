@@ -28,7 +28,7 @@ class _BoardViewState extends State<BoardView> {
     var gameData = await widget.gameController.manageGame(newGame);
     deckId = (gameData as Map)['deckId'];
     setState(() {
-      manilha = (gameData as Map)['manilha'];
+      manilha = (gameData)['manilha'];
     });
   }
 
