@@ -53,7 +53,6 @@ class _BoardViewState extends State<BoardView> {
   }
 
   void checkGameStatus(deckId) {
-    print("AQUIIIIIIIIIIIIIIIIIIIII");
     if (widget.gameController.isGameFinished()) {
       widget.gameController.returnCardsAndShuffle(deckId);
       widget.gameController.currentRound = 0;
