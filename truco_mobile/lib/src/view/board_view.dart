@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:truco_mobile/src/controller/game_controller.dart';
-import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
 import 'package:truco_mobile/src/model/played_card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
+import 'package:truco_mobile/src/widget/custom_toast.dart';
 import 'package:truco_mobile/src/widget/score_board.dart';
 import 'package:truco_mobile/src/widget/truco_card.dart';
 
@@ -24,6 +24,7 @@ class _BoardViewState extends State<BoardView> {
   List<PlayedCard> playedCards = [];
   int roundNumber = 0;
   String deckId = '';
+
   void startGame([bool newGame = false]) async {
     var gameData = await widget.gameController.manageGame(newGame);
     deckId = (gameData as Map)['deckId'];
@@ -52,14 +53,10 @@ class _BoardViewState extends State<BoardView> {
   }
 
   void checkGameStatus(deckId) {
-    if (widget.gameController.players[0].score < 12 &&
-        widget.gameController.players[1].score < 12 &&
-        widget.gameController.players[0].hand.isEmpty &&
-        widget.gameController.players[1].hand.isEmpty) {
+    if (widget.gameController.isGameFinished()) {
       widget.gameController.returnCardsAndShuffle(deckId);
       widget.gameController.currentRound = 0;
       for (var i = 0; i < widget.gameController.players.length; i++) {
-        print('entrou no for');
         widget.gameController.players[i].hand.clear();
         widget.gameController.players[i].resetRoundWins();
         widget.gameController.players[i].roundsWinsCounter = 0;
@@ -68,54 +65,51 @@ class _BoardViewState extends State<BoardView> {
     }
 
     if (widget.gameController.players[0].score == 12) {
-      Fluttertoast.showToast(
-          msg:
-              "O vencedor do jogo foi ${widget.gameController.players[0].name}",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 5,
-          backgroundColor: Colors.yellow,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      showGameWinnerToast(widget.gameController.players[0].name);
     } else if (widget.gameController.players[1].score == 12) {
-      Fluttertoast.showToast(
-          msg:
-              "O vencedor do jogo foi ${widget.gameController.players[1].name}",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Colors.yellow,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      showGameWinnerToast(widget.gameController.players[1].name);
     }
   }
 
-  void onCenterTap() {
+  void handleCenterTap() {
     if (showPlayPrompt && selectedCard != null) {
-      setState(() {
-        var playedCard = PlayedCard(
-            widget.gameController.players[playerToPlay], selectedCard!);
-        playedCards.add(playedCard);
-        widget.gameController.players[playerToPlay].hand.remove(selectedCard);
-        selectedCard = null;
-        showPlayPrompt = false;
-
-        if (isNumberOfCardEqualNumbersOfPlayers()) {
-          int roundNumber = widget.gameController.currentRound;
-          var highestRankCard =
-              widget.gameController.processPlayedCards(playedCards);
-          widget.gameController.checkWhoWins(highestRankCard, roundNumber);
-          playedCards.clear();
-        }
-      });
+      processPlayerMove();
+      if (isNumberOfCardEqualNumbersOfPlayers()) {
+        processRoundEnd();
+      }
       switchPlayer();
     } else if (selectedCard != null) {
-      setState(() {
-        showPlayPrompt = false;
-      });
+      hidePlayPrompt();
     }
 
     checkGameStatus(deckId);
+  }
+
+  void processPlayerMove() {
+    setState(() {
+      var playedCard = PlayedCard(
+          widget.gameController.players[playerToPlay], selectedCard!);
+      playedCards.add(playedCard);
+      widget.gameController.players[playerToPlay].hand.remove(selectedCard);
+      selectedCard = null;
+      showPlayPrompt = false;
+    });
+  }
+
+  void processRoundEnd() {
+    setState(() {
+      int roundNumber = widget.gameController.currentRound;
+      var highestRankCard =
+          widget.gameController.processPlayedCards(playedCards);
+      widget.gameController.checkWhoWins(highestRankCard, roundNumber);
+      playedCards.clear();
+    });
+  }
+
+  void hidePlayPrompt() {
+    setState(() {
+      showPlayPrompt = false;
+    });
   }
 
   bool isNumberOfCardEqualNumbersOfPlayers() {
@@ -173,7 +167,7 @@ class _BoardViewState extends State<BoardView> {
   Widget buildPlayPrompt() {
     return Center(
       child: GestureDetector(
-        onTap: onCenterTap,
+        onTap: handleCenterTap,
         child: Container(
           width: 100,
           height: 100,
@@ -229,7 +223,7 @@ class _BoardViewState extends State<BoardView> {
           child: Stack(
             children: [
               GestureDetector(
-                onTap: onCenterTap,
+                onTap: handleCenterTap,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(

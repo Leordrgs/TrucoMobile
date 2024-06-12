@@ -1,36 +1,33 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
-import 'package:truco_mobile/src/model/cardmodel.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
 import 'package:truco_mobile/src/model/played_card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/service/api_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:truco_mobile/src/widget/custom_toast.dart';
 
 class GameController {
-  late List<PlayerModel> players;
-  late int currentRound = 0;
+  List<PlayerModel> players;
+  int currentRound = 0;
+
   ApiService apiService = ApiService(baseUrl: DECK_API);
+
   GameController({required this.players});
 
   Future<Object> manageGame([bool? newGame = false]) async {
-    //create deck things here
+
     var deck = await apiService.createNewDeck(DECK_API_CARDS);
     var deckId = deck['deck_id'];
     var drawnCards = await apiService.drawCards(deckId, 6);
     var manilha = await apiService.drawCards(deckId, 1);
 
-    //distribute the cards
     distributeCards(drawnCards);
-
-    //adjust the cards rank if is manilha cards
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
     if (newGame != null && newGame) {
       resetPoints();
     }
 
-    //return an object with the deckId, the manilha and the cards
     var obj = {
       'deckId': deckId,
       'manilha': CardModel.fromMap(manilha['cards'][0]),
@@ -40,6 +37,10 @@ class GameController {
     };
 
     return obj;
+  }
+
+  bool isGameFinished() {
+    return players[0].score < 12 && players[1].score < 12 && players[0].hand.isEmpty && players[1].hand.isEmpty;
   }
 
   bool verifyIfAnyPlayerWonTwoRounds() {
@@ -110,6 +111,7 @@ class GameController {
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
+  
     return highestRankCard;
   }
 
@@ -118,76 +120,50 @@ class GameController {
     await apiService.shuffleDeck(deckId);
   }
 
+  bool isHandFinished(List<PlayerModel> players, int roundNumber) {
+    return roundNumber == 2 && players[0].hand.isEmpty || players[1].hand.isEmpty;
+  }
+
+  bool checkTheRoundWinner(PlayerModel player, highestRankCard) {
+    return highestRankCard['player'] == player && player.score < 12;
+  }
+
+  bool playerHasTwoRoundWins(PlayerModel player) {
+    return player.roundsWinsCounter == 2;
+  }
+
+  bool isRoundTied(highestRankCard) {
+    return highestRankCard['cards'].length == 2;
+  }
+
   void checkWhoWins(highestRankCard, int roundNumber) {
-    if (roundNumber == 2 && players[0].hand.isEmpty ||
-        players[1].hand.isEmpty) {
+
+    if (isHandFinished(players, roundNumber)) {
       players[0].resetRoundWins();
       players[1].resetRoundWins();
     }
 
-    if (highestRankCard['player'] == players[0] && players[0].score < 12) {
-      Fluttertoast.showToast(
-          msg:
-              "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16.0);
+    if (checkTheRoundWinner(players[0], highestRankCard)) {
+      showRoundWinnerToast(roundNumber, highestRankCard);
       markRoundAsWon(players[0], roundNumber);
       players[0].roundsWinsCounter++;
 
-      if (players[0].roundsWinsCounter == 2) {
+      if (playerHasTwoRoundWins(players[0])) {
         players[0].score += 1;
-        Fluttertoast.showToast(
-            msg:
-                "O vencedor da mão ${roundNumber + 1} foi ${highestRankCard['player'].name} e foi adicionado um ponto ao placar!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 3,
-            backgroundColor: Colors.blue,
-            textColor: Colors.black,
-            fontSize: 16.0);
+        showHandWinnerToast(roundNumber, highestRankCard);
         players[0].roundsWinsCounter = 0;
-        players[1].resetRoundWins();
       }
-    } else if (highestRankCard['player'] == players[1] &&
-        players[1].score < 12) {
-      Fluttertoast.showToast(
-          msg:
-              "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Colors.white,
-          textColor: Colors.black,
-          fontSize: 16.0);
+    } else if (checkTheRoundWinner(players[1], highestRankCard)) {
+      showRoundWinnerToast(roundNumber, highestRankCard);
       markRoundAsWon(players[1], roundNumber);
       players[1].roundsWinsCounter++;
-      if (players[1].roundsWinsCounter == 2) {
+      if (playerHasTwoRoundWins(players[1])) {
         players[1].score += 1;
-        Fluttertoast.showToast(
-            msg:
-                "O vencedor da mão foi ${highestRankCard['player'].name} e foi adicionado um ponto ao placar!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 3,
-            backgroundColor: Colors.blue,
-            textColor: Colors.black,
-            fontSize: 16.0);
+        showHandWinnerToast(roundNumber, highestRankCard);
         players[1].roundsWinsCounter = 0;
-        players[1].resetRoundWins();
       }
-    } else if (highestRankCard['cards'].length == 2) {
-      Fluttertoast.showToast(
-          msg: "Empate na rodada ${roundNumber + 1}",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 2,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+    } else if (isRoundTied(highestRankCard)) {
+      showTiedRoundToast(roundNumber);
       players[0].roundsWinsCounter++;
       players[1].roundsWinsCounter++;
       markRoundAsWon(players[0], roundNumber);
