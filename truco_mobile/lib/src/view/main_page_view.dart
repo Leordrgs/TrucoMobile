@@ -16,7 +16,7 @@ class _MyMainPagePageState extends State<MyMainPagePage> {
     return Scaffold(
       body: Container(
         color: Colors.red,
-        width: double.infinity,
+        width: MediaQuery.of(context).size.width,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -28,8 +28,8 @@ class _MyMainPagePageState extends State<MyMainPagePage> {
                 padding: EdgeInsets.only(top: 5),
                 width: 300,
                 height: 286,
-                child: Image.network(
-                  'https://gifs.eco.br/wp-content/uploads/2023/11/imagens-de-truco-png-0.png',
+                child: Image.asset(
+                  '/src/assets/truco.png',
                   fit: BoxFit.cover,
                 ),
               ),
