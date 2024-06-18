@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/view/create_game_view.dart';
 import 'package:truco_mobile/src/view/game_list_view.dart';
 import 'package:truco_mobile/src/view/login_view.dart';
-import 'package:truco_mobile/src/view/register_view.dart';
 import 'package:truco_mobile/src/widget/custom_button.dart';
 
 class MyHomePagePage extends StatefulWidget {
@@ -40,10 +39,7 @@ class _MyHomePagePageState extends State<MyHomePagePage> {
                 padding: EdgeInsets.only(top: 5),
                 width: 300,
                 height: 286,
-                child: Image.network(
-                  'https://gifs.eco.br/wp-content/uploads/2023/11/imagens-de-truco-png-0.png',
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset('lib/src/assets/truco.png'),
               ),
               SizedBox(height: 20), 
               CustomButton(

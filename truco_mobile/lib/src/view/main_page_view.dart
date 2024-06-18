@@ -28,10 +28,7 @@ class _MyMainPagePageState extends State<MyMainPagePage> {
                 padding: EdgeInsets.only(top: 5),
                 width: 300,
                 height: 286,
-                child: Image.network(
-                  'https://gifs.eco.br/wp-content/uploads/2023/11/imagens-de-truco-png-0.png',
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset('lib/src/assets/truco.png'),
               ),
               SizedBox(height: 20), 
               CustomButton(
