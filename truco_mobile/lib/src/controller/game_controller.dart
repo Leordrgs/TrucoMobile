@@ -9,6 +9,7 @@ import 'package:truco_mobile/src/widget/custom_toast.dart';
 class GameController {
   List<PlayerModel> players;
   int currentRound = 0;
+  
 
   ApiService apiService = ApiService(baseUrl: DECK_API);
 
@@ -64,6 +65,7 @@ class GameController {
     winningPlayer.winRound(roundNumber);
     currentRound = roundNumber;
     currentRound++;
+    print('Current Round --> $currentRound');
   }
 
   void resetPoints() {
@@ -75,6 +77,7 @@ class GameController {
   void resetPlayersHand() {
     for (var i = 0; i < players.length; i++) {
       players[i].hand.clear();
+      print('HAND DOS JOGADORES --> ${players[i].hand}');
     }
   }
 
@@ -121,7 +124,8 @@ class GameController {
   }
 
   bool isHandFinished(List<PlayerModel> players, int roundNumber) {
-    return roundNumber == 2 && players[0].hand.isEmpty || players[1].hand.isEmpty;
+    print('isHandFinished');
+    return roundNumber == 2; //&& players[0].hand.isEmpty || players[1].hand.isEmpty;
   }
 
   bool checkTheRoundWinner(PlayerModel player, highestRankCard) {
@@ -141,6 +145,7 @@ class GameController {
     if (isHandFinished(players, roundNumber)) {
       players[0].resetRoundWins();
       players[1].resetRoundWins();
+      resetPlayersHand();          
     }
 
     if (checkTheRoundWinner(players[0], highestRankCard)) {
@@ -152,6 +157,8 @@ class GameController {
         players[0].score += 1;
         showHandWinnerToast(roundNumber, highestRankCard);
         players[0].roundsWinsCounter = 0;
+        resetPlayersHand();
+        print('checkTheRoundWinner palyer 1');
       }
     } else if (checkTheRoundWinner(players[1], highestRankCard)) {
       showRoundWinnerToast(roundNumber, highestRankCard);
@@ -161,6 +168,8 @@ class GameController {
         players[1].score += 1;
         showHandWinnerToast(roundNumber, highestRankCard);
         players[1].roundsWinsCounter = 0;
+        resetPlayersHand();
+        print('checkTheRoundWinner player 2');
       }
     } else if (isRoundTied(highestRankCard)) {
       showTiedRoundToast(roundNumber);
@@ -168,6 +177,15 @@ class GameController {
       players[1].roundsWinsCounter++;
       markRoundAsWon(players[0], roundNumber);
       markRoundAsWon(players[1], roundNumber);
+      print('entrou no empate');
+      print('round wins 0 --> ${players[0].roundsWinsCounter}');
+      print('round wins --> ${players[1].roundsWinsCounter}');
+
+      if (players[0].roundsWinsCounter == 2 || 
+          players[1].roundsWinsCounter == 2
+        ) {
+        resetPlayersHand();
+      }
     }
   }
 }

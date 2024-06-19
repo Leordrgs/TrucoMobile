@@ -3,6 +3,7 @@ import 'package:truco_mobile/src/controller/game_controller.dart';
 import 'package:truco_mobile/src/model/card_model.dart';
 import 'package:truco_mobile/src/model/played_card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
+import 'package:truco_mobile/src/model/turn_model.dart';
 import 'package:truco_mobile/src/widget/custom_toast.dart';
 import 'package:truco_mobile/src/widget/score_board.dart';
 import 'package:truco_mobile/src/widget/truco_card.dart';
@@ -19,10 +20,9 @@ class BoardView extends StatefulWidget {
 class _BoardViewState extends State<BoardView> {
   CardModel? selectedCard;
   bool showPlayPrompt = false;
-  int playerToPlay = 0;
+  TurnModel? turnModel;
   CardModel? manilha;
   List<PlayedCard> playedCards = [];
-  int roundNumber = 0;
   String deckId = '';
 
   void startGame([bool newGame = false]) async {
@@ -30,6 +30,8 @@ class _BoardViewState extends State<BoardView> {
     deckId = (gameData as Map)['deckId'];
     setState(() {
       manilha = (gameData)['manilha'];
+      // Inicializa o TurnModel no início do jogo
+      turnModel = TurnModel(turnNumber: 0, players: widget.gameController.players);
     });
   }
 
@@ -39,27 +41,25 @@ class _BoardViewState extends State<BoardView> {
     startGame(true);
   }
 
-  void onCardTap(CardModel card) {
-    setState(() {
-      selectedCard = card;
-      showPlayPrompt = true;
-    });
+  void onCardTap(CardModel card, PlayerModel player) {
+    if (turnModel!.getCurrentPlayer() == player) {
+      setState(() {
+        selectedCard = card;
+        showPlayPrompt = true;
+      });
+    } else {
+      showIsNotYourTurn(player.name);
+    }
   }
 
-  void switchPlayer() {
-    setState(() {
-      playerToPlay = playerToPlay == 0 ? 1 : 0;
-    });
-  }
-
-  void checkGameStatus(deckId) {
+  void checkGameStatus(String deckId) {
     if (widget.gameController.isGameFinished()) {
       widget.gameController.returnCardsAndShuffle(deckId);
       widget.gameController.currentRound = 0;
-      for (var i = 0; i < widget.gameController.players.length; i++) {
-        widget.gameController.players[i].hand.clear();
-        widget.gameController.players[i].resetRoundWins();
-        widget.gameController.players[i].roundsWinsCounter = 0;
+      for (var player in widget.gameController.players) {
+        player.hand.clear();
+        player.resetRoundWins();
+        player.roundsWinsCounter = 0;
       }
       startGame();
     }
@@ -76,8 +76,9 @@ class _BoardViewState extends State<BoardView> {
       processPlayerMove();
       if (isNumberOfCardEqualNumbersOfPlayers()) {
         processRoundEnd();
+      } else {
+        switchPlayer();
       }
-      switchPlayer();
     } else if (selectedCard != null) {
       hidePlayPrompt();
     }
@@ -87,10 +88,10 @@ class _BoardViewState extends State<BoardView> {
 
   void processPlayerMove() {
     setState(() {
-      var playedCard = PlayedCard(
-          widget.gameController.players[playerToPlay], selectedCard!);
+      var currentPlayer = turnModel!.getCurrentPlayer();
+      var playedCard = PlayedCard(currentPlayer, selectedCard!);
       playedCards.add(playedCard);
-      widget.gameController.players[playerToPlay].hand.remove(selectedCard);
+      currentPlayer.hand.remove(selectedCard);
       selectedCard = null;
       showPlayPrompt = false;
     });
@@ -98,11 +99,17 @@ class _BoardViewState extends State<BoardView> {
 
   void processRoundEnd() {
     setState(() {
-      int roundNumber = widget.gameController.currentRound;
-      var highestRankCard =
-          widget.gameController.processPlayedCards(playedCards);
-      widget.gameController.checkWhoWins(highestRankCard, roundNumber);
+      var highestRankCard = widget.gameController.processPlayedCards(playedCards);
+      widget.gameController.checkWhoWins(highestRankCard, widget.gameController.currentRound);
       playedCards.clear();
+      // Avance o turno para o próximo jogador iniciar a próxima rodada
+      turnModel!.nextTurn();
+    });
+  }
+
+  void switchPlayer() {
+    setState(() {
+      turnModel!.nextTurn();
     });
   }
 
@@ -116,12 +123,24 @@ class _BoardViewState extends State<BoardView> {
     return playedCards.length == widget.gameController.players.length;
   }
 
-  Widget buildCard(CardModel card, bool isManilhaCard, bool isHidden,
-      {bool isSelected = false}) {
+  Widget buildCard(CardModel card, bool isManilhaCard, bool isHidden, PlayerModel player, {bool isSelected = false}) {
+    
+    if (isManilhaCard) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+        child: TrucoCard(
+          cardModel: card,
+          isHidden: isHidden,
+          width: 60,
+          height: 90,
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 2.0),
       child: GestureDetector(
-        onTap: () => onCardTap(card),
+        onTap: () => onCardTap(card, player),
         child: AnimatedScale(
           scale: isSelected ? 1.2 : 1.0,
           duration: const Duration(milliseconds: 300),
@@ -143,8 +162,7 @@ class _BoardViewState extends State<BoardView> {
         3,
         (index) {
           if (index < player.hand.length) {
-            return buildCard(player.hand[index], false, isHidden,
-                isSelected: player.hand[index] == selectedCard);
+            return buildCard(player.hand[index], false, isHidden, player, isSelected: player.hand[index] == selectedCard);
           } else {
             return const SizedBox(
               width: 70.0,
@@ -160,7 +178,7 @@ class _BoardViewState extends State<BoardView> {
     return Positioned(
       top: 120,
       right: 10,
-      child: buildCard(manilha!, true, false),
+      child: buildCard(manilha!, true, false, widget.gameController.players[0]),
     );
   }
 
@@ -232,8 +250,7 @@ class _BoardViewState extends State<BoardView> {
                       Column(
                         children: [
                           Text(widget.gameController.players[1].name),
-                          buildRowOfCards(
-                              widget.gameController.players[1], false),
+                          buildRowOfCards(widget.gameController.players[1], false),
                         ],
                       ),
                       const Row(
@@ -245,8 +262,7 @@ class _BoardViewState extends State<BoardView> {
                       Column(
                         children: [
                           Text(widget.gameController.players[0].name),
-                          buildRowOfCards(
-                              widget.gameController.players[0], false),
+                          buildRowOfCards(widget.gameController.players[0], false),
                         ],
                       ),
                     ],
@@ -269,18 +285,12 @@ class _BoardViewState extends State<BoardView> {
                       scoreTeamB: widget.gameController.players[1].score,
                       playerA: widget.gameController.players[0].name,
                       playerB: widget.gameController.players[1].name,
-                      roundOneWinnerA:
-                          widget.gameController.players[0].roundOneWin,
-                      roundOneWinnerB:
-                          widget.gameController.players[1].roundOneWin,
-                      roundTwoWinnerA:
-                          widget.gameController.players[0].roundTwoWin,
-                      roundTwoWinnerB:
-                          widget.gameController.players[1].roundTwoWin,
-                      roundThreeWinnerA:
-                          widget.gameController.players[0].roundThreeWin,
-                      roundThreeWinnerB:
-                          widget.gameController.players[1].roundThreeWin,
+                      roundOneWinnerA: widget.gameController.players[0].roundOneWin,
+                      roundOneWinnerB: widget.gameController.players[1].roundOneWin,
+                      roundTwoWinnerA: widget.gameController.players[0].roundTwoWin,
+                      roundTwoWinnerB: widget.gameController.players[1].roundTwoWin,
+                      roundThreeWinnerA: widget.gameController.players[0].roundThreeWin,
+                      roundThreeWinnerB: widget.gameController.players[1].roundThreeWin,
                       color: Colors.black,
                       fontColor: Colors.white,
                       size: 12.0,
