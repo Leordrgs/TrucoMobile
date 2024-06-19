@@ -35,14 +35,7 @@ class _MyLoadingPageState extends State<MyLoadingPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  height: 350,
-                  width: 350,
-                  child: Image.network(
-                    'https://gifs.eco.br/wp-content/uploads/2023/11/imagens-de-truco-png-0.png',
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                Image.asset('lib/src/assets/truco.png'),
                 SizedBox(height: 20),
                 CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),

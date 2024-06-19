@@ -28,10 +28,7 @@ class _MyMainPagePageState extends State<MyMainPagePage> {
                 padding: EdgeInsets.only(top: 5),
                 width: 300,
                 height: 286,
-                child: Image.asset(
-                  '/src/assets/truco.png',
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset('lib/src/assets/truco.png'),
               ),
               SizedBox(height: 20), 
               CustomButton(

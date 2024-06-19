@@ -60,10 +60,7 @@ class _MyRegisterPageState extends State<MyRegisterPage> {
                 padding: EdgeInsets.only(top: 5),
                 width: 276,
                 height: 264,
-                child: Image.network(
-                  'https://gifs.eco.br/wp-content/uploads/2023/11/imagens-de-truco-png-0.png',
-                  fit: BoxFit.cover,
-                ),
+                child: Image.asset('lib/src/assets/truco.png'),
               ),
               Expanded(
                 child: Scrollbar(
