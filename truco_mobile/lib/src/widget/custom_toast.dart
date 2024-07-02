@@ -8,7 +8,7 @@ void showRoundWinnerToast(
         "O vencedor da rodada ${roundNumber + 1} foi ${highestRankCard['player'].name}",
     toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.CENTER,
-    timeInSecForIosWeb: 2,
+    timeInSecForIosWeb: 1,
     backgroundColor: Colors.black,
     textColor: Colors.white,
     fontSize: 16.0,
@@ -22,7 +22,7 @@ void showHandWinnerToast(
           "O vencedor da mão foi ${highestRankCard['player'].name} e foi adicionado um ponto ao placar!",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 3,
+      timeInSecForIosWeb: 1,
       backgroundColor: Colors.blue,
       textColor: Colors.black,
       fontSize: 16.0);
@@ -33,7 +33,7 @@ void showTiedRoundToast(int roundNumber) {
       msg: "Empate na rodada ${roundNumber + 1}",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 2,
+      timeInSecForIosWeb: 1,
       backgroundColor: Colors.red,
       textColor: Colors.white,
       fontSize: 16.0);
@@ -44,8 +44,20 @@ void showGameWinnerToast(String playerName) {
       msg: "O vencedor do jogo foi ${playerName}",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 5,
+      timeInSecForIosWeb: 1,
       backgroundColor: Colors.yellow,
       textColor: Colors.white,
       fontSize: 16.0);
 }
+
+void showIsNotYourTurn(String playerName) {
+  Fluttertoast.showToast(
+      msg: 'Não é o seu turno!',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0);
+}
+
