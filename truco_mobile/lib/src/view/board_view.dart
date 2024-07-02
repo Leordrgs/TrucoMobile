@@ -100,10 +100,10 @@ class _BoardViewState extends State<BoardView> {
   void processRoundEnd() {
     setState(() {
       var highestRankCard = widget.gameController.processPlayedCards(playedCards);
-      widget.gameController.checkWhoWins(highestRankCard, widget.gameController.currentRound);
+      var roundWinner = widget.gameController.checkWhoWins(highestRankCard, widget.gameController.currentRound);
+      turnModel!.recordRoundWinner(roundWinner);
       playedCards.clear();
-      // Avance o turno para o próximo jogador iniciar a próxima rodada
-      turnModel!.nextTurn();
+      turnModel!.startNextRound();
     });
   }
 
@@ -124,7 +124,6 @@ class _BoardViewState extends State<BoardView> {
   }
 
   Widget buildCard(CardModel card, bool isManilhaCard, bool isHidden, PlayerModel player, {bool isSelected = false}) {
-    
     if (isManilhaCard) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 2.0),

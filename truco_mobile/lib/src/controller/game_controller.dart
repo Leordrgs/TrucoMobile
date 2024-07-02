@@ -140,7 +140,7 @@ class GameController {
     return highestRankCard['cards'].length == 2;
   }
 
-  void checkWhoWins(highestRankCard, int roundNumber) {
+  int checkWhoWins(highestRankCard, int roundNumber) {
 
     if (isHandFinished(players, roundNumber)) {
       players[0].resetRoundWins();
@@ -187,5 +187,7 @@ class GameController {
         resetPlayersHand();
       }
     }
+
+    return players.indexOf(highestRankCard['player']);
   }
 }
