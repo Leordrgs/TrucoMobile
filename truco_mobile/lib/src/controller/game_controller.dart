@@ -11,13 +11,13 @@ class GameController {
   int currentRound = 0;
   
 
-  ApiService apiService = ApiService(baseUrl: DECK_API);
+  ApiService apiService = ApiService(baseUrl: deckApi);
 
   GameController({required this.players});
 
   Future<Object> manageGame([bool? newGame = false]) async {
 
-    var deck = await apiService.createNewDeck(DECK_API_CARDS);
+    var deck = await apiService.createNewDeck(deckApiCards);
     var deckId = deck['deck_id'];
     var drawnCards = await apiService.drawCards(deckId, 6);
     var manilha = await apiService.drawCards(deckId, 1);
@@ -65,7 +65,6 @@ class GameController {
     winningPlayer.winRound(roundNumber);
     currentRound = roundNumber;
     currentRound++;
-    print('Current Round --> $currentRound');
   }
 
   void resetPoints() {
@@ -77,7 +76,6 @@ class GameController {
   void resetPlayersHand() {
     for (var i = 0; i < players.length; i++) {
       players[i].hand.clear();
-      print('HAND DOS JOGADORES --> ${players[i].hand}');
     }
   }
 
@@ -124,7 +122,6 @@ class GameController {
   }
 
   bool isHandFinished(List<PlayerModel> players, int roundNumber) {
-    print('isHandFinished');
     return roundNumber == 2; //&& players[0].hand.isEmpty || players[1].hand.isEmpty;
   }
 
@@ -158,7 +155,6 @@ class GameController {
         showHandWinnerToast(roundNumber, highestRankCard);
         players[0].roundsWinsCounter = 0;
         resetPlayersHand();
-        print('checkTheRoundWinner palyer 1');
       }
     } else if (checkTheRoundWinner(players[1], highestRankCard)) {
       showRoundWinnerToast(roundNumber, highestRankCard);
@@ -169,7 +165,6 @@ class GameController {
         showHandWinnerToast(roundNumber, highestRankCard);
         players[1].roundsWinsCounter = 0;
         resetPlayersHand();
-        print('checkTheRoundWinner player 2');
       }
     } else if (isRoundTied(highestRankCard)) {
       showTiedRoundToast(roundNumber);
@@ -177,9 +172,6 @@ class GameController {
       players[1].roundsWinsCounter++;
       markRoundAsWon(players[0], roundNumber);
       markRoundAsWon(players[1], roundNumber);
-      print('entrou no empate');
-      print('round wins 0 --> ${players[0].roundsWinsCounter}');
-      print('round wins --> ${players[1].roundsWinsCounter}');
 
       if (players[0].roundsWinsCounter == 2 || 
           players[1].roundsWinsCounter == 2

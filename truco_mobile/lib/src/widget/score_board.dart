@@ -17,6 +17,7 @@ class ScoreBoard extends StatelessWidget {
   final bool roundThreeWinnerB;
 
   ScoreBoard({
+    super.key, 
     required this.scoreTeamA,
     required this.scoreTeamB,
     required this.roundOneWinnerA,
@@ -36,7 +37,7 @@ class ScoreBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(10),

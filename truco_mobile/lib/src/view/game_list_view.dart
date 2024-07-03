@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/controller/game_controller.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
@@ -14,32 +15,30 @@ class GameListView extends StatefulWidget {
 }
 
 class _GameListView extends State<GameListView> {
-
-  List<Map<String, dynamic>> gameRooms = [
-    {'name': 'Sala 1', 'players': 4, 'maxPlayers': 4},
-    {'name': 'Sala 2', 'players': 2, 'maxPlayers': 4},
-    {'name': 'Sala 3', 'players': 3, 'maxPlayers': 4},
-    {'name': 'Sala 4', 'players': 3, 'maxPlayers': 4},
-    {'name': 'Sala 5', 'players': 2, 'maxPlayers': 4},
-    {'name': 'Sala 6', 'players': 1, 'maxPlayers': 4},
-    {'name': 'Sala 7', 'players': 3, 'maxPlayers': 4},
-    {'name': 'Sala 8', 'players': 0, 'maxPlayers': 4},
-    {'name': 'Sala 9', 'players': 1, 'maxPlayers': 4},
-  ];
-
+  List<Map<String, dynamic>> gameRooms = [];
   List<Map<String, dynamic>> filteredGameRooms = [];
 
   @override
   void initState() {
     super.initState();
-    filteredGameRooms = gameRooms;
+    _fetchGameRooms();
+  }
+
+  Future<void> _fetchGameRooms() async {
+    CollectionReference games = FirebaseFirestore.instance.collection('games');
+    QuerySnapshot querySnapshot = await games.get();
+    final allData = querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    
+    setState(() {
+      gameRooms = allData;
+      filteredGameRooms = gameRooms;
+    });
   }
 
   void _navigateBack(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => MyHomePagePage(title: 'Tela inicial')),
+      MaterialPageRoute(builder: (context) => MyHomePagePage(title: 'Tela inicial')),
     );
   }
 
@@ -79,13 +78,13 @@ class _GameListView extends State<GameListView> {
           Expanded(
             child: TextField(
               onChanged: (query) => _filterRooms(query),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Pesquisar',
                 border: InputBorder.none,
               ),
             ),
           ),
-          Icon(Icons.search, color: Colors.black),
+          const Icon(Icons.search, color: Colors.black),
         ],
       ),
     );
@@ -97,7 +96,7 @@ class _GameListView extends State<GameListView> {
       itemBuilder: (context, index) {
         final gameRoom = filteredGameRooms[index];
         return _buildGameRoomItem(
-            gameRoom['name'], gameRoom['players'], gameRoom['maxPlayers']);
+            gameRoom['name'], gameRoom['players'].length, gameRoom['totalPlayers']);
       },
     );
   }

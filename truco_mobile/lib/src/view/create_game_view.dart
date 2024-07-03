@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
 import 'package:truco_mobile/src/widget/custom_button.dart';
@@ -7,19 +8,53 @@ class MyCreateNewGamePage extends StatefulWidget {
   const MyCreateNewGamePage({Key? key, required this.title}) : super(key: key);
 
   @override
-  _MyCreateNewGamePage createState() => _MyCreateNewGamePage();
+  _MyCreateNewGamePageState createState() => _MyCreateNewGamePageState();
 }
 
-class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
+class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
   bool _isPaulista = true;
   int _totalPlayers = 2;
+  String _gameName = '';
 
   void _navigateBack(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => MyHomePagePage(title: 'Tela inicial')),
+      MaterialPageRoute(builder: (context) => MyHomePagePage(title: 'Tela inicial')),
     );
+  }
+
+  Future<void> _createGame() async {
+    if (_gameName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Por favor, insira um nome para a sala')),
+      );
+      return;
+    }
+
+    try {
+      // Adiciona a partida ao Firestore
+      CollectionReference games = FirebaseFirestore.instance.collection('games');
+      await games.add({
+        'name': _gameName,
+        'isPaulista': _isPaulista,
+        'totalPlayers': _totalPlayers,
+        'createdAt': FieldValue.serverTimestamp(),
+        'players': [],
+      });
+
+      // Mostra uma mensagem de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Partida criada com sucesso')),
+      );
+
+      // Navega de volta para a tela inicial
+      _navigateBack(context);
+    } catch (e) {
+      // Em caso de erro, mostra uma mensagem de erro
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao criar a partida: $e')),
+      );
+    }
   }
 
   PreferredSizeWidget _buildAppBar() {
@@ -68,6 +103,11 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
           border: InputBorder.none,
         ),
         style: const TextStyle(color: Colors.black),
+        onChanged: (value) {
+          setState(() {
+            _gameName = value;
+          });
+        },
       ),
     );
   }
@@ -115,7 +155,7 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
         color: Colors.black,
-        borderRadius: BorderRadius.circular(16.0), 
+        borderRadius: BorderRadius.circular(16.0),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -149,8 +189,8 @@ class _MyCreateNewGamePage extends State<MyCreateNewGamePage> {
             const SizedBox(height: 20),
             Center(
               child: CustomButton(
-                onPressed: () => {},
-                text: 'Convidar jogadores',
+                onPressed: _createGame,
+                text: 'Criar sala',
                 width: 200,
                 height: 50,
                 fontSize: 16,

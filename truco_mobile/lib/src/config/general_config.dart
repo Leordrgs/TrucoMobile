@@ -1,6 +1,6 @@
-const BACK_CARD = 'https://www.deckofcardsapi.com/static/img/back.png';
-const DECK_API = 'https://deckofcardsapi.com/api';
-const DECK_API_CARDS = [
+const backCard = 'https://www.deckofcardsapi.com/static/img/back.png';
+const deckApi = 'https://deckofcardsapi.com/api';
+const deckApiCards = [
   'AD',
   'AS',
   'AH',
