@@ -16,7 +16,7 @@ class _MyMainPagePageState extends State<MyMainPagePage> {
     return Scaffold(
       body: Container(
         color: Colors.red,
-        width: double.infinity,
+        width: MediaQuery.of(context).size.width,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

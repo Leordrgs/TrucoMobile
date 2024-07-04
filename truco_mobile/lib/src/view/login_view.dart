@@ -18,7 +18,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  bool isDevelopment = true;
+  bool isDevelopment = false;
   Future<void> _login() async {
     
     if (isDevelopment) {

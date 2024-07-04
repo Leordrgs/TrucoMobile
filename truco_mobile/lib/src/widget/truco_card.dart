@@ -13,7 +13,7 @@ class TrucoCard extends StatelessWidget {
   final PlayerModel? player;
 
   const TrucoCard({
-    Key? key,
+    super.key,
     required this.cardModel,
     this.isHidden = true,
     this.width = 80,
@@ -21,7 +21,7 @@ class TrucoCard extends StatelessWidget {
     this.margin = const EdgeInsets.all(10),
     this.padding = const EdgeInsets.all(10),
     this.player,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +32,8 @@ class TrucoCard extends StatelessWidget {
           height: height,
           decoration: BoxDecoration(
             image: isHidden
-                ? DecorationImage(
-                    image: NetworkImage(BACK_CARD),
+                ? const DecorationImage(
+                    image: NetworkImage(backCard),
                     fit: BoxFit.fill,
                   )
                 : DecorationImage(

@@ -9,14 +9,15 @@ import 'package:truco_mobile/src/widget/custom_toast.dart';
 class GameController {
   List<PlayerModel> players;
   int currentRound = 0;
+  
 
-  ApiService apiService = ApiService(baseUrl: DECK_API);
+  ApiService apiService = ApiService(baseUrl: deckApi);
 
   GameController({required this.players});
 
   Future<Object> manageGame([bool? newGame = false]) async {
 
-    var deck = await apiService.createNewDeck(DECK_API_CARDS);
+    var deck = await apiService.createNewDeck(deckApiCards);
     var deckId = deck['deck_id'];
     var drawnCards = await apiService.drawCards(deckId, 6);
     var manilha = await apiService.drawCards(deckId, 1);
@@ -121,7 +122,7 @@ class GameController {
   }
 
   bool isHandFinished(List<PlayerModel> players, int roundNumber) {
-    return roundNumber == 2 && players[0].hand.isEmpty || players[1].hand.isEmpty;
+    return roundNumber == 2; //&& players[0].hand.isEmpty || players[1].hand.isEmpty;
   }
 
   bool checkTheRoundWinner(PlayerModel player, highestRankCard) {
@@ -136,11 +137,12 @@ class GameController {
     return highestRankCard['cards'].length == 2;
   }
 
-  void checkWhoWins(highestRankCard, int roundNumber) {
+  int checkWhoWins(highestRankCard, int roundNumber) {
 
     if (isHandFinished(players, roundNumber)) {
       players[0].resetRoundWins();
       players[1].resetRoundWins();
+      resetPlayersHand();          
     }
 
     if (checkTheRoundWinner(players[0], highestRankCard)) {
@@ -152,6 +154,7 @@ class GameController {
         players[0].score += 1;
         showHandWinnerToast(roundNumber, highestRankCard);
         players[0].roundsWinsCounter = 0;
+        resetPlayersHand();
       }
     } else if (checkTheRoundWinner(players[1], highestRankCard)) {
       showRoundWinnerToast(roundNumber, highestRankCard);
@@ -161,6 +164,7 @@ class GameController {
         players[1].score += 1;
         showHandWinnerToast(roundNumber, highestRankCard);
         players[1].roundsWinsCounter = 0;
+        resetPlayersHand();
       }
     } else if (isRoundTied(highestRankCard)) {
       showTiedRoundToast(roundNumber);
@@ -168,6 +172,14 @@ class GameController {
       players[1].roundsWinsCounter++;
       markRoundAsWon(players[0], roundNumber);
       markRoundAsWon(players[1], roundNumber);
+
+      if (players[0].roundsWinsCounter == 2 || 
+          players[1].roundsWinsCounter == 2
+        ) {
+        resetPlayersHand();
+      }
     }
+
+    return players.indexOf(highestRankCard['player']);
   }
 }
