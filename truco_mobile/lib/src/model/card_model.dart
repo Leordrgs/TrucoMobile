@@ -68,4 +68,14 @@ class CardModel {
         return card.rank;
     }
   }
+
+  toMap() {
+    return {
+      'code': code,
+      'image': image,
+      'value': value,
+      'suit': suit,
+      'rank': rank
+    };
+  }
 }

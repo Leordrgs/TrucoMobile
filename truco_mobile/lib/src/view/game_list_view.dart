@@ -1,5 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:truco_mobile/src/controller/game_controller.dart';
+import 'package:truco_mobile/src/model/player_model.dart';
+import 'package:truco_mobile/src/view/board_view.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
 
 class GameListView extends StatefulWidget {
@@ -8,10 +12,10 @@ class GameListView extends StatefulWidget {
   const GameListView({Key? key, required this.title}) : super(key: key);
 
   @override
-  _GameListView createState() => _GameListView();
+  _GameListViewState createState() => _GameListViewState();
 }
 
-class _GameListView extends State<GameListView> {
+class _GameListViewState extends State<GameListView> {
   List<Map<String, dynamic>> gameRooms = [];
   List<Map<String, dynamic>> filteredGameRooms = [];
 
@@ -61,7 +65,7 @@ class _GameListView extends State<GameListView> {
 
   void _filterRooms(String query) {
     final filtered = gameRooms.where((room) {
-      final roomName = room['name'].toLowerCase();
+      final roomName = (room['name'] as String?)?.toLowerCase() ?? '';
       final searchLower = query.toLowerCase();
       return roomName.contains(searchLower);
     }).toList();
@@ -69,6 +73,45 @@ class _GameListView extends State<GameListView> {
     setState(() {
       filteredGameRooms = filtered;
     });
+  }
+
+  Future<void> _joinGameRoom(
+      String gameId, List<PlayerModel> players, int totalPlayers) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Cria um novo PlayerModel para o usuário autenticado
+      PlayerModel newPlayer = PlayerModel(
+        id: user.uid,
+        name: user.displayName ?? 'Anônimo',
+      );
+
+      // Adiciona o novo jogador à lista de jogadores
+      players.add(newPlayer);
+
+      // Atualiza a sala de jogo no Firestore com o novo jogador
+      CollectionReference games =
+          FirebaseFirestore.instance.collection('games');
+      await games.doc(gameId).update({
+        'players': players.map((player) => player.toMap()).toList(),
+      });
+
+      // Navega para a tela do jogo
+      GameController gameController = GameController(players: players);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BoardView(
+            gameController: gameController,
+            gameId: gameId,
+            totalPlayers: totalPlayers,
+          ),
+        ),
+      );
+    } else {
+      // Trate o caso onde o usuário não está autenticado
+      print('Usuário não autenticado');
+    }
   }
 
   Widget _buildSearchBar() {
@@ -101,14 +144,23 @@ class _GameListView extends State<GameListView> {
       itemCount: filteredGameRooms.length,
       itemBuilder: (context, index) {
         final gameRoom = filteredGameRooms[index];
-        return _buildGameRoomItem(gameRoom['id'], gameRoom['name'],
-            gameRoom['players'].length, gameRoom['totalPlayers']);
+        List<PlayerModel> playerModels = (gameRoom['players'] as List<dynamic>?)
+                ?.map<PlayerModel>((player) =>
+                    PlayerModel.fromMap(player as Map<String, dynamic>))
+                .toList() ??
+            [];
+        return _buildGameRoomItem(
+            gameRoom['id'] as String? ?? '',
+            gameRoom['name'] as String? ?? '',
+            playerModels.length,
+            gameRoom['totalPlayers'] as int? ?? 0,
+            playerModels);
       },
     );
   }
 
-  Widget _buildGameRoomItem(
-      String id, String name, int players, int maxPlayers) {
+  Widget _buildGameRoomItem(String id, String name, int players, int maxPlayers,
+      List<PlayerModel> playerInGameRoom) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
@@ -124,7 +176,7 @@ class _GameListView extends State<GameListView> {
           ],
         ),
         onTap: () async {
-          // Navegação para a tela do tabuleiro
+          await _joinGameRoom(id, playerInGameRoom, maxPlayers);
         },
       ),
     );

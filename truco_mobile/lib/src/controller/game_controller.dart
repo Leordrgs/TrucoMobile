@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:truco_mobile/src/config/general_config.dart';
 import 'package:truco_mobile/src/model/card_model.dart';
 import 'package:truco_mobile/src/model/played_card_model.dart';
@@ -9,14 +10,13 @@ import 'package:truco_mobile/src/widget/custom_toast.dart';
 class GameController {
   List<PlayerModel> players;
   int currentRound = 0;
-  
+  CollectionReference games = FirebaseFirestore.instance.collection('games');
 
   ApiService apiService = ApiService(baseUrl: deckApi);
 
   GameController({required this.players});
 
-  Future<Object> manageGame([bool? newGame = false]) async {
-
+  Future<Object> manageGame(roomId, [bool? newGame = false]) async {
     var deck = await apiService.createNewDeck(deckApiCards);
     var deckId = deck['deck_id'];
     var drawnCards = await apiService.drawCards(deckId, 6);
@@ -29,7 +29,7 @@ class GameController {
       resetPoints();
     }
 
-    var obj = {
+    var gameData = {
       'deckId': deckId,
       'manilha': CardModel.fromMap(manilha['cards'][0]),
       'cards': (drawnCards['cards'] as List)
@@ -37,11 +37,16 @@ class GameController {
           .toList(),
     };
 
-    return obj;
+    await saveGameToFirestore(roomId, deckId, gameData);
+
+    return gameData;
   }
 
   bool isGameFinished() {
-    return players[0].score < 12 && players[1].score < 12 && players[0].hand.isEmpty && players[1].hand.isEmpty;
+    return players[0].score < 12 &&
+        players[1].score < 12 &&
+        players[0].hand.isEmpty &&
+        players[1].hand.isEmpty;
   }
 
   bool verifyIfAnyPlayerWonTwoRounds() {
@@ -112,7 +117,7 @@ class GameController {
     cards.sort((a, b) => (a['rank'] as Comparable).compareTo(b['rank']));
 
     var highestRankCard = cards.last;
-  
+
     return highestRankCard;
   }
 
@@ -122,7 +127,7 @@ class GameController {
   }
 
   bool isHandFinished(List<PlayerModel> players, int roundNumber) {
-    return roundNumber == 2; //&& players[0].hand.isEmpty || players[1].hand.isEmpty;
+    return roundNumber == 2;
   }
 
   bool checkTheRoundWinner(PlayerModel player, highestRankCard) {
@@ -138,11 +143,10 @@ class GameController {
   }
 
   int checkWhoWins(highestRankCard, int roundNumber) {
-
     if (isHandFinished(players, roundNumber)) {
       players[0].resetRoundWins();
       players[1].resetRoundWins();
-      resetPlayersHand();          
+      resetPlayersHand();
     }
 
     if (checkTheRoundWinner(players[0], highestRankCard)) {
@@ -173,13 +177,26 @@ class GameController {
       markRoundAsWon(players[0], roundNumber);
       markRoundAsWon(players[1], roundNumber);
 
-      if (players[0].roundsWinsCounter == 2 || 
-          players[1].roundsWinsCounter == 2
-        ) {
+      if (players[0].roundsWinsCounter == 2 ||
+          players[1].roundsWinsCounter == 2) {
         resetPlayersHand();
       }
     }
 
     return players.indexOf(highestRankCard['player']);
+  }
+
+  Future<void> saveGameToFirestore(
+      String roomId, String deckId, Map<String, dynamic> gameData) async {
+    try {
+      await games.doc(roomId).set({
+        'deckId': deckId,
+        'manilha': gameData['manilha'].toMap(),
+        'players': players.map((player) => player.toMap()).toList(),
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print('Error saving game to Firestore: $e');
+    }
   }
 }

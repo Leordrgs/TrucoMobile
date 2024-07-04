@@ -6,6 +6,7 @@ import 'package:truco_mobile/src/widget/custom_toast.dart';
 class DatabaseService {
   
   createTrucoGame(String gameName, gameType, totalPlayers) async {
+    print('$totalPlayers');
     try {
       CollectionReference games =
           FirebaseFirestore.instance.collection('games');

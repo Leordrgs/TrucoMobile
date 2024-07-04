@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/controller/game_controller.dart';
 import 'package:truco_mobile/src/model/card_model.dart';
@@ -10,8 +11,10 @@ import 'package:truco_mobile/src/widget/truco_card.dart';
 
 class BoardView extends StatefulWidget {
   final GameController gameController;
+  final String gameId;
+  final int totalPlayers;
 
-  BoardView({Key? key, required this.gameController}) : super(key: key);
+  BoardView({Key? key, required this.gameController, required this.gameId, required this.totalPlayers}) : super(key: key);
 
   @override
   _BoardViewState createState() => _BoardViewState();
@@ -24,21 +27,37 @@ class _BoardViewState extends State<BoardView> {
   CardModel? manilha;
   List<PlayedCard> playedCards = [];
   String deckId = '';
+  bool isLoading = true;
 
-  void startGame([bool newGame = false]) async {
-    var gameData = await widget.gameController.manageGame(newGame);
+  void startGame(roomID, [bool newGame = false]) async {
+    var gameData = await widget.gameController.manageGame(roomID, newGame);
     deckId = (gameData as Map)['deckId'];
     setState(() {
       manilha = (gameData)['manilha'];
-      // Inicializa o TurnModel no início do jogo
       turnModel = TurnModel(turnNumber: 0, players: widget.gameController.players);
+      isLoading = false;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    startGame(true);
+    // Começa a verificar os jogadores assim que o widget é inicializado
+    _waitForPlayers();
+  }
+
+  Future<void> _waitForPlayers() async {
+    CollectionReference games = FirebaseFirestore.instance.collection('games');
+    games.doc(widget.gameId).snapshots().listen((DocumentSnapshot snapshot) {
+      var data = snapshot.data() as Map<String, dynamic>;
+      var players = data['players'] as List<dynamic>;
+      if (players.length >= widget.totalPlayers) {
+        setState(() {
+          widget.gameController.players = players.map((player) => PlayerModel.fromMap(player)).toList();
+          startGame(widget.gameId, true);
+        });
+      }
+    });
   }
 
   void onCardTap(CardModel card, PlayerModel player) {
@@ -61,7 +80,7 @@ class _BoardViewState extends State<BoardView> {
         player.resetRoundWins();
         player.roundsWinsCounter = 0;
       }
-      startGame();
+      startGame(widget.gameId);
     }
 
     if (widget.gameController.players[0].score == 12) {
@@ -233,75 +252,83 @@ class _BoardViewState extends State<BoardView> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: const Color.fromRGBO(50, 168, 82, 1.0),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              GestureDetector(
-                onTap: handleCenterTap,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        children: [
-                          Text(widget.gameController.players[1].name),
-                          buildRowOfCards(widget.gameController.players[1], false),
-                        ],
-                      ),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Spacer(flex: 5),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(widget.gameController.players[0].name),
-                          buildRowOfCards(widget.gameController.players[0], false),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (manilha != null) buildManilhaCard(),
-              if (showPlayPrompt) buildPlayPrompt(),
-              buildPlayedCards(),
-              Positioned(
-                top: 140.0,
-                left: 0,
-                child: Container(
-                  width: 160.0,
-                  height: 100.0,
-                  child: FittedBox(
-                    alignment: Alignment.topLeft,
-                    child: ScoreBoard(
-                      scoreTeamA: widget.gameController.players[0].score,
-                      scoreTeamB: widget.gameController.players[1].score,
-                      playerA: widget.gameController.players[0].name,
-                      playerB: widget.gameController.players[1].name,
-                      roundOneWinnerA: widget.gameController.players[0].roundOneWin,
-                      roundOneWinnerB: widget.gameController.players[1].roundOneWin,
-                      roundTwoWinnerA: widget.gameController.players[0].roundTwoWin,
-                      roundTwoWinnerB: widget.gameController.players[1].roundTwoWin,
-                      roundThreeWinnerA: widget.gameController.players[0].roundThreeWin,
-                      roundThreeWinnerB: widget.gameController.players[1].roundThreeWin,
-                      color: Colors.black,
-                      fontColor: Colors.white,
-                      size: 12.0,
-                      roundWinner: 0,
+    if (isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    } else {
+      return MaterialApp(
+        home: Scaffold(
+          backgroundColor: const Color.fromRGBO(50, 168, 82, 1.0),
+          body: SafeArea(
+            child: Stack(
+              children: [
+                GestureDetector(
+                  onTap: handleCenterTap,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Text(widget.gameController.players[1].name),
+                            buildRowOfCards(widget.gameController.players[1], false),
+                          ],
+                        ),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Spacer(flex: 5),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(widget.gameController.players[0].name),
+                            buildRowOfCards(widget.gameController.players[0], false),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ],
+                if (manilha != null) buildManilhaCard(),
+                if (showPlayPrompt) buildPlayPrompt(),
+                buildPlayedCards(),
+                Positioned(
+                  top: 140.0,
+                  left: 0,
+                  child: Container(
+                    width: 160.0,
+                    height: 100.0,
+                    child: FittedBox(
+                      alignment: Alignment.topLeft,
+                      child: ScoreBoard(
+                        scoreTeamA: widget.gameController.players[0].score,
+                        scoreTeamB: widget.gameController.players[1].score,
+                        playerA: widget.gameController.players[0].name,
+                        playerB: widget.gameController.players[1].name,
+                        roundOneWinnerA: widget.gameController.players[0].roundOneWin,
+                        roundOneWinnerB: widget.gameController.players[1].roundOneWin,
+                        roundTwoWinnerA: widget.gameController.players[0].roundTwoWin,
+                        roundTwoWinnerB: widget.gameController.players[1].roundTwoWin,
+                        roundThreeWinnerA: widget.gameController.players[0].roundThreeWin,
+                        roundThreeWinnerB: widget.gameController.players[1].roundThreeWin,
+                        color: Colors.black,
+                        fontColor: Colors.white,
+                        size: 12.0,
+                        roundWinner: 0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 }

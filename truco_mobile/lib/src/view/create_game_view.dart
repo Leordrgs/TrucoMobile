@@ -24,7 +24,7 @@ class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => MyHomePagePage(title: 'Tela inicial')),
+          builder: (context) => const MyHomePagePage(title: 'Tela inicial')),
     );
   }
 
@@ -97,7 +97,7 @@ class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Radio<int>(
-          value: 2,
+          value: 4,
           groupValue: _totalPlayers,
           onChanged: (int? value) {
             setState(() {
@@ -111,7 +111,7 @@ class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
           style: TextStyle(color: Colors.white),
         ),
         Radio<int>(
-          value: 1,
+          value: 2,
           groupValue: _totalPlayers,
           onChanged: (int? value) {
             setState(() {

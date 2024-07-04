@@ -1,6 +1,7 @@
 import 'package:truco_mobile/src/model/card_model.dart';
 
 class PlayerModel {
+  String? id;
   late String name;
   late List<CardModel> hand;
   int score = 0;
@@ -9,13 +10,23 @@ class PlayerModel {
   bool roundThreeWin = false;
   int roundsWinsCounter = 0;
 
-  PlayerModel({required this.name}) {
+  PlayerModel({required this.name, this.id}) {
     hand = [];
   }
 
   @override
   String toString() {
     return 'Player: $name, Score: $score, Hand: $hand, Round 1 Win: $roundOneWin, Round 2 Win: $roundTwoWin, Round 3 Win: $roundThreeWin, Rounds Wins: $roundsWinsCounter';
+  }
+  
+  PlayerModel.fromMap(Map<String, dynamic> map) {
+    name = map['name'];
+    score = map['score'];
+    roundOneWin = map['roundOneWin'];
+    roundTwoWin = map['roundTwoWin'];
+    roundThreeWin = map['roundThreeWin'];
+    roundsWinsCounter = map['roundsWinsCounter'];
+    hand = (map['hand'] as List).map((item) => CardModel.fromMap(item)).toList();
   }
 
   void winRound(int roundNumber) {
@@ -82,5 +93,17 @@ class PlayerModel {
 
   void resetHand() {
     hand.clear();
+  }
+
+  toMap() {
+    return {
+      'name': name,
+      'score': score,
+      'roundOneWin': roundOneWin,
+      'roundTwoWin': roundTwoWin,
+      'roundThreeWin': roundThreeWin,
+      'roundsWinsCounter': roundsWinsCounter,
+      'hand': hand.map((card) => card.toMap()).toList(),
+    };
   }
 }
