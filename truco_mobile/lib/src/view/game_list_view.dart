@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/controller/game_controller.dart';
-import 'package:truco_mobile/src/model/player_model.dart';
-import 'package:truco_mobile/src/view/board_view.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
 
 class GameListView extends StatefulWidget {
@@ -27,18 +24,27 @@ class _GameListView extends State<GameListView> {
   Future<void> _fetchGameRooms() async {
     CollectionReference games = FirebaseFirestore.instance.collection('games');
     QuerySnapshot querySnapshot = await games.get();
-    final allData = querySnapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-    
+    final allData = querySnapshot.docs
+        .map((doc) => ({...doc.data() as Map<String, dynamic>, 'id': doc.id}))
+        .toList();
+
     setState(() {
       gameRooms = allData;
       filteredGameRooms = gameRooms;
     });
   }
 
+  Future<void> _deleteGameRoom(String id) async {
+    CollectionReference games = FirebaseFirestore.instance.collection('games');
+    await games.doc(id).delete();
+    _fetchGameRooms();
+  }
+
   void _navigateBack(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MyHomePagePage(title: 'Tela inicial')),
+      MaterialPageRoute(
+          builder: (context) => const MyHomePagePage(title: 'Tela inicial')),
     );
   }
 
@@ -95,30 +101,30 @@ class _GameListView extends State<GameListView> {
       itemCount: filteredGameRooms.length,
       itemBuilder: (context, index) {
         final gameRoom = filteredGameRooms[index];
-        return _buildGameRoomItem(
-            gameRoom['name'], gameRoom['players'].length, gameRoom['totalPlayers']);
+        return _buildGameRoomItem(gameRoom['id'], gameRoom['name'],
+            gameRoom['players'].length, gameRoom['totalPlayers']);
       },
     );
   }
 
-  Widget _buildGameRoomItem(String name, int players, int maxPlayers) {
+  Widget _buildGameRoomItem(
+      String id, String name, int players, int maxPlayers) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
         title: Text(name),
-        trailing: Text('$players/$maxPlayers jogadores'),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('$players/$maxPlayers jogadores'),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _deleteGameRoom(id),
+            ),
+          ],
+        ),
         onTap: () async {
-          if (name == 'Sala 1') {
-            List<PlayerModel> players = [
-              PlayerModel(name: 'Jogador 1'),
-              PlayerModel(name: 'Jogador 2'),
-            ];
-            GameController gameController = GameController(players: players);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => BoardView(gameController: gameController)),
-            );
-          }
+          // Navegação para a tela do tabuleiro
         },
       ),
     );

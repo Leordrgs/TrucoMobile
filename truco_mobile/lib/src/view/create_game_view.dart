@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:truco_mobile/src/config/error_message.dart';
+import 'package:truco_mobile/src/service/database_service.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
 import 'package:truco_mobile/src/widget/custom_button.dart';
+import 'package:truco_mobile/src/widget/custom_toast.dart';
 
 class MyCreateNewGamePage extends StatefulWidget {
   final String title;
@@ -15,46 +18,23 @@ class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
   bool _isPaulista = true;
   int _totalPlayers = 2;
   String _gameName = '';
+  DatabaseService databaseService = DatabaseService();
 
   void _navigateBack(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MyHomePagePage(title: 'Tela inicial')),
+      MaterialPageRoute(
+          builder: (context) => MyHomePagePage(title: 'Tela inicial')),
     );
   }
 
   Future<void> _createGame() async {
     if (_gameName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Por favor, insira um nome para a sala')),
-      );
+      genericToast(needsGameName, Colors.red, Colors.white);
       return;
     }
 
-    try {
-      // Adiciona a partida ao Firestore
-      CollectionReference games = FirebaseFirestore.instance.collection('games');
-      await games.add({
-        'name': _gameName,
-        'isPaulista': _isPaulista,
-        'totalPlayers': _totalPlayers,
-        'createdAt': FieldValue.serverTimestamp(),
-        'players': [],
-      });
-
-      // Mostra uma mensagem de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Partida criada com sucesso')),
-      );
-
-      // Navega de volta para a tela inicial
-      _navigateBack(context);
-    } catch (e) {
-      // Em caso de erro, mostra uma mensagem de erro
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao criar a partida: $e')),
-      );
-    }
+    databaseService.createTrucoGame(_gameName, _isPaulista, _totalPlayers);
   }
 
   PreferredSizeWidget _buildAppBar() {
