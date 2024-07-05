@@ -14,7 +14,12 @@ class BoardView extends StatefulWidget {
   final String gameId;
   final int totalPlayers;
 
-  BoardView({Key? key, required this.gameController, required this.gameId, required this.totalPlayers}) : super(key: key);
+  BoardView(
+      {Key? key,
+      required this.gameController,
+      required this.gameId,
+      required this.totalPlayers})
+      : super(key: key);
 
   @override
   _BoardViewState createState() => _BoardViewState();
@@ -28,13 +33,16 @@ class _BoardViewState extends State<BoardView> {
   List<PlayedCard> playedCards = [];
   String deckId = '';
   bool isLoading = true;
+  bool isGameStarted = false;
 
   void startGame(roomID, [bool newGame = false]) async {
+    print('startGame called');
     var gameData = await widget.gameController.manageGame(roomID, newGame);
     deckId = (gameData as Map)['deckId'];
     setState(() {
       manilha = (gameData)['manilha'];
-      turnModel = TurnModel(turnNumber: 0, players: widget.gameController.players);
+      turnModel =
+          TurnModel(turnNumber: 0, players: widget.gameController.players);
       isLoading = false;
     });
   }
@@ -51,10 +59,45 @@ class _BoardViewState extends State<BoardView> {
     games.doc(widget.gameId).snapshots().listen((DocumentSnapshot snapshot) {
       var data = snapshot.data() as Map<String, dynamic>;
       var players = data['players'] as List<dynamic>;
-      if (players.length >= widget.totalPlayers) {
+
+      if (players.length >= widget.totalPlayers && !isGameStarted) {
+        isGameStarted =
+            true; // Define a flag para true para evitar chamadas adicionais
         setState(() {
-          widget.gameController.players = players.map((player) => PlayerModel.fromMap(player)).toList();
-          startGame(widget.gameId, true);
+          widget.gameController.players =
+              players.map((player) => PlayerModel.fromMap(player)).toList();
+        });
+        startGameTransaction(widget.gameId);
+      } else {
+        widget.gameController.players =
+            players.map((player) => PlayerModel.fromMap(player)).toList();
+      }
+    });
+  }
+
+  Future<void> startGameTransaction(String roomId) async {
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentReference gameRef =
+          FirebaseFirestore.instance.collection('games').doc(roomId);
+      DocumentSnapshot snapshot = await transaction.get(gameRef);
+      var data = snapshot.data() as Map<String, dynamic>;
+
+      if (!data.containsKey('gameStarted') || !data['gameStarted']) {
+        var gameData = await widget.gameController.manageGame(roomId, true) as Map;
+
+        transaction.update(gameRef, {
+          'gameStarted': true,
+          'deckId': gameData['deckId'],
+          'manilha': gameData['manilha'].toMap(),
+          'cards': gameData['cards'].map((card) => card.toMap()).toList(),
+        });
+
+        setState(() {
+          deckId = gameData['deckId'];
+          manilha = gameData['manilha'];
+          turnModel =
+              TurnModel(turnNumber: 0, players: widget.gameController.players);
+          isLoading = false;
         });
       }
     });
@@ -80,7 +123,7 @@ class _BoardViewState extends State<BoardView> {
         player.resetRoundWins();
         player.roundsWinsCounter = 0;
       }
-      startGame(widget.gameId);
+      // startGame(widget.gameId);
     }
 
     if (widget.gameController.players[0].score == 12) {
@@ -118,8 +161,10 @@ class _BoardViewState extends State<BoardView> {
 
   void processRoundEnd() {
     setState(() {
-      var highestRankCard = widget.gameController.processPlayedCards(playedCards);
-      var roundWinner = widget.gameController.checkWhoWins(highestRankCard, widget.gameController.currentRound);
+      var highestRankCard =
+          widget.gameController.processPlayedCards(playedCards);
+      var roundWinner = widget.gameController
+          .checkWhoWins(highestRankCard, widget.gameController.currentRound);
       turnModel!.recordRoundWinner(roundWinner);
       playedCards.clear();
       turnModel!.startNextRound();
@@ -142,7 +187,9 @@ class _BoardViewState extends State<BoardView> {
     return playedCards.length == widget.gameController.players.length;
   }
 
-  Widget buildCard(CardModel card, bool isManilhaCard, bool isHidden, PlayerModel player, {bool isSelected = false}) {
+  Widget buildCard(
+      CardModel card, bool isManilhaCard, bool isHidden, PlayerModel player,
+      {bool isSelected = false}) {
     if (isManilhaCard) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -180,7 +227,8 @@ class _BoardViewState extends State<BoardView> {
         3,
         (index) {
           if (index < player.hand.length) {
-            return buildCard(player.hand[index], false, isHidden, player, isSelected: player.hand[index] == selectedCard);
+            return buildCard(player.hand[index], false, isHidden, player,
+                isSelected: player.hand[index] == selectedCard);
           } else {
             return const SizedBox(
               width: 70.0,
@@ -275,7 +323,8 @@ class _BoardViewState extends State<BoardView> {
                         Column(
                           children: [
                             Text(widget.gameController.players[1].name),
-                            buildRowOfCards(widget.gameController.players[1], false),
+                            buildRowOfCards(
+                                widget.gameController.players[1], false),
                           ],
                         ),
                         const Row(
@@ -287,7 +336,8 @@ class _BoardViewState extends State<BoardView> {
                         Column(
                           children: [
                             Text(widget.gameController.players[0].name),
-                            buildRowOfCards(widget.gameController.players[0], false),
+                            buildRowOfCards(
+                                widget.gameController.players[0], false),
                           ],
                         ),
                       ],
@@ -310,12 +360,18 @@ class _BoardViewState extends State<BoardView> {
                         scoreTeamB: widget.gameController.players[1].score,
                         playerA: widget.gameController.players[0].name,
                         playerB: widget.gameController.players[1].name,
-                        roundOneWinnerA: widget.gameController.players[0].roundOneWin,
-                        roundOneWinnerB: widget.gameController.players[1].roundOneWin,
-                        roundTwoWinnerA: widget.gameController.players[0].roundTwoWin,
-                        roundTwoWinnerB: widget.gameController.players[1].roundTwoWin,
-                        roundThreeWinnerA: widget.gameController.players[0].roundThreeWin,
-                        roundThreeWinnerB: widget.gameController.players[1].roundThreeWin,
+                        roundOneWinnerA:
+                            widget.gameController.players[0].roundOneWin,
+                        roundOneWinnerB:
+                            widget.gameController.players[1].roundOneWin,
+                        roundTwoWinnerA:
+                            widget.gameController.players[0].roundTwoWin,
+                        roundTwoWinnerB:
+                            widget.gameController.players[1].roundTwoWin,
+                        roundThreeWinnerA:
+                            widget.gameController.players[0].roundThreeWin,
+                        roundThreeWinnerB:
+                            widget.gameController.players[1].roundThreeWin,
                         color: Colors.black,
                         fontColor: Colors.white,
                         size: 12.0,

@@ -16,13 +16,17 @@ class GameController {
 
   GameController({required this.players});
 
-  Future<Object> manageGame(roomId, [bool? newGame = false]) async {
+  Future<Object> manageGame(String roomId, [bool? newGame = false]) async {
+    print('ROOM ID --> $roomId');
+    print('manageGame called');
     var deck = await apiService.createNewDeck(deckApiCards);
     var deckId = deck['deck_id'];
+    print('Deck ID --> $deckId');
     var drawnCards = await apiService.drawCards(deckId, 6);
     var manilha = await apiService.drawCards(deckId, 1);
 
     distributeCards(drawnCards);
+    print({players});
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
     if (newGame != null && newGame) {
@@ -36,7 +40,7 @@ class GameController {
           .map((item) => CardModel.fromMap(item))
           .toList(),
     };
-
+    print({gameData});
     await saveGameToFirestore(roomId, deckId, gameData);
 
     return gameData;
@@ -188,6 +192,8 @@ class GameController {
 
   Future<void> saveGameToFirestore(
       String roomId, String deckId, Map<String, dynamic> gameData) async {
+    print(
+        'Saving game to Firestore... roomId $roomId deckId $deckId gameData $gameData');
     try {
       await games.doc(roomId).set({
         'deckId': deckId,

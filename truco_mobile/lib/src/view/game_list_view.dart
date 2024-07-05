@@ -78,17 +78,19 @@ class _GameListViewState extends State<GameListView> {
   Future<void> _joinGameRoom(
       String gameId, List<PlayerModel> players, int totalPlayers) async {
     User? user = FirebaseAuth.instance.currentUser;
-
+    print(user);
     if (user != null) {
-      // Cria um novo PlayerModel para o usuário autenticado
+
       PlayerModel newPlayer = PlayerModel(
         id: user.uid,
         name: user.displayName ?? 'Anônimo',
       );
 
+      print('PLAYER --> $newPlayer');
+
       // Adiciona o novo jogador à lista de jogadores
       players.add(newPlayer);
-
+      print({players});
       // Atualiza a sala de jogo no Firestore com o novo jogador
       CollectionReference games =
           FirebaseFirestore.instance.collection('games');
@@ -96,8 +98,10 @@ class _GameListViewState extends State<GameListView> {
         'players': players.map((player) => player.toMap()).toList(),
       });
 
-      // Navega para a tela do jogo
+      print({games});
+
       GameController gameController = GameController(players: players);
+      print({gameController});
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -109,7 +113,6 @@ class _GameListViewState extends State<GameListView> {
         ),
       );
     } else {
-      // Trate o caso onde o usuário não está autenticado
       print('Usuário não autenticado');
     }
   }

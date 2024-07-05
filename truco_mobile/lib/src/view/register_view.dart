@@ -26,7 +26,9 @@ class _MyRegisterPageState extends State<MyRegisterPage> {
         password: passwordController.text,
       );
       User? user = userCredential.user;
+
       if (user != null) {
+        await user.updateDisplayName(nameController.text);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => MyMainPagePage()),
