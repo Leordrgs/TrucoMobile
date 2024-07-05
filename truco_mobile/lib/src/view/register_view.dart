@@ -54,9 +54,12 @@ class _MyRegisterPageState extends State<MyRegisterPage> {
       ),
       body: Container(
         color: Colors.red,
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Container(
                 padding: EdgeInsets.only(top: 5),

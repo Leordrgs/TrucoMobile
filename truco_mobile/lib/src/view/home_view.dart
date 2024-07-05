@@ -17,10 +17,10 @@ class _MyHomePagePageState extends State<MyHomePagePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(style: TextStyle(color: Colors.white), 'Tela inicial'),
+        title: const Text(style: TextStyle(color: Colors.white), 'Tela inicial'),
         backgroundColor: Colors.black,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.push(context,
               MaterialPageRoute(builder: (context) => MyLoginPage(title: 'Login',))),
         ),
@@ -28,7 +28,8 @@ class _MyHomePagePageState extends State<MyHomePagePage> {
       body: Container(
         color: Colors.red,
         width: double.infinity,
-        child: Padding(
+        height: double.infinity,
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
