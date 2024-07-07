@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:truco_mobile/src/controller/game_controller.dart';
+import 'package:truco_mobile/src/controller/game_controller_provider.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
 import 'package:truco_mobile/src/view/board_view.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
+import 'package:provider/provider.dart';
 
 class GameListView extends StatefulWidget {
   final String title;
@@ -80,7 +81,6 @@ class _GameListViewState extends State<GameListView> {
     User? user = FirebaseAuth.instance.currentUser;
     print(user);
     if (user != null) {
-
       PlayerModel newPlayer = PlayerModel(
         id: user.uid,
         name: user.displayName ?? 'Anônimo',
@@ -100,15 +100,22 @@ class _GameListViewState extends State<GameListView> {
 
       print({games});
 
-      GameController gameController = GameController(players: players);
+      GameControllerProvider gameController =
+          GameControllerProvider(players: players);
       print({gameController});
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => BoardView(
-            gameController: gameController,
-            gameId: gameId,
-            totalPlayers: totalPlayers,
+          builder: (context) => MultiProvider(
+            providers: [
+              ChangeNotifierProvider<GameControllerProvider>.value(
+                value: gameController,
+              ),
+            ],
+            child: BoardView(
+              gameId: gameId,
+              totalPlayers: totalPlayers,
+            ),
           ),
         ),
       );
