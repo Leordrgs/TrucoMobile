@@ -103,7 +103,10 @@ class PlayerModel {
       'roundTwoWin': roundTwoWin,
       'roundThreeWin': roundThreeWin,
       'roundsWinsCounter': roundsWinsCounter,
-      'hand': hand.map((card) => card.toMap()).toList(),
+      'hand': hand.map((card) {
+      print('AQUI É O PRINT DO TO MAP CARDS $card');
+        return card.toMap();
+  }).toList(),
     };
   }
 }
