@@ -28,23 +28,23 @@ class GameControllerProvider extends ChangeNotifier {
     var deckId = deck['deck_id'];
     var drawnCards = await apiService.drawCards(deckId, 6);
     var manilha = await apiService.drawCards(deckId, 1);
-
+    var cardsAsList = (drawnCards['cards'] as List)
+          .map((item) => CardModel.fromMap(item))
+          .toList();
     distributeCards(drawnCards);
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
 
     var gameData = {
       'deckId': deckId,
       'manilha': CardModel.fromMap(manilha['cards'][0]),
-      'cards': (drawnCards['cards'] as List)
-          .map((item) => CardModel.fromMap(item))
-          .toList(),
+      'cards': cardsAsList,
     };
 
-
+    // games.doc(roomId).update({'cards': cardsAsList});
 
     if (newGame != null && newGame) {
       resetPoints();
-      await saveGameToFirestore(roomId, deckId, gameData, newGame, totalPlayers, gameStarted);
+      await saveGameToFirestore(roomId, deckId, gameData, newGame, totalPlayers);
     }
 
     if (newGame == false && newRound) {
@@ -218,15 +218,21 @@ class GameControllerProvider extends ChangeNotifier {
     return players.indexOf(highestRankCard['player']);
   }
 
-  Future<void> saveGameToFirestore(String roomId, String deckId, Map<String, dynamic> gameData, bool newGame, int totalPlayers, bool gameStarted) async {
+  Future<void> saveGameToFirestore(String roomId, String deckId, Map<String, dynamic> gameData, bool newGame, int totalPlayers) async {
     print('Saving game to Firestore... roomId $roomId deckId $deckId gameData $gameData');
+    var manilhas = gameData['manilha'] as CardModel;
+    var toMapManilha = manilhas.toMap();
+    var cards = gameData['cards'] as List<CardModel>;
+    var toMapCards = cards.map((card) => card.toMap()).toList();
+    // var roomPlayers = gameData['players'] as List<dynamic>;
+
     try {
-      await games.doc(roomId).set({
-        'deckId': deckId,
-        'manilha': gameData['manilha'],
-        'players': players.map((player) => player.toMap()).toList(),
-        'timestamp': FieldValue.serverTimestamp(),
-        'gameStarted': gameData['players'] == totalPlayers ? true : false,
+      await games.doc(roomId).update({ 
+        'deck': {
+          'deckId': deckId,
+          'manilha': toMapManilha,
+          'cards': toMapCards,
+        }
       });
       notifyListeners();
     } catch (e) {

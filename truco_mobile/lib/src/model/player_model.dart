@@ -10,9 +10,7 @@ class PlayerModel {
   bool roundThreeWin = false;
   int roundsWinsCounter = 0;
 
-  PlayerModel({required this.name, this.id}) {
-    hand = [];
-  }
+  PlayerModel({required this.name, this.id, required this.hand});
 
   @override
   String toString() {
@@ -104,7 +102,7 @@ class PlayerModel {
       'roundThreeWin': roundThreeWin,
       'roundsWinsCounter': roundsWinsCounter,
       'hand': hand.map((card) {
-      print('AQUI É O PRINT DO TO MAP CARDS $card');
+      print('AQUI È O PRINT DO TO MAP CARDS $card');
         return card.toMap();
   }).toList(),
     };
