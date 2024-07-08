@@ -22,7 +22,7 @@ class GameControllerProvider extends ChangeNotifier {
   bool get newRound => _newRound;
   set newRound(bool value) => _newRound;
 
-  Future<Object> manageGame(String roomId, [bool? newGame = false]) async {
+  Future<Object> manageGame(String roomId, bool newRound, totalPlayers, [bool? newGame = false]) async {
 
     var deck = await apiService.createNewDeck(deckApiCards);
     var deckId = deck['deck_id'];
@@ -30,12 +30,7 @@ class GameControllerProvider extends ChangeNotifier {
     var manilha = await apiService.drawCards(deckId, 1);
 
     distributeCards(drawnCards);
-    print({players});
     adjustCardsRankByManilha(players, CardModel.fromMap(manilha['cards'][0]));
-
-    if (newGame != null && newGame) {
-      resetPoints();
-    }
 
     var gameData = {
       'deckId': deckId,
@@ -44,19 +39,35 @@ class GameControllerProvider extends ChangeNotifier {
           .map((item) => CardModel.fromMap(item))
           .toList(),
     };
-    print({gameData});
-    await saveGameToFirestore(roomId, deckId, gameData);
-    gameStarted = true;
+
+
+
+    if (newGame != null && newGame) {
+      resetPoints();
+      await saveGameToFirestore(roomId, deckId, gameData, newGame, totalPlayers, gameStarted);
+    }
+
+    if (newGame == false && newRound) {
+      return {
+        'deckId': deckId,
+        'manilha': CardModel.fromMap(manilha['cards'][0]),
+        'cards': (drawnCards['cards'] as List)
+            .map((item) => CardModel.fromMap(item))
+            .toList(),
+      };
+    }
+
+  
     notifyListeners();
     return gameData;
   }
 
-  void startNewRound(String roomId) async {
-    newRound = true;
+  // void startNewRound(String roomId) async {
+  //   newRound = true;
 
-    var gameData = await manageGame(roomId, true);
-    notifyListeners();
-  }
+  //   var gameData = await manageGame(roomId, true);
+  //   notifyListeners();
+  // }
 
   bool isGameFinished() {
     return players[0].score < 12 &&
@@ -207,16 +218,15 @@ class GameControllerProvider extends ChangeNotifier {
     return players.indexOf(highestRankCard['player']);
   }
 
-  Future<void> saveGameToFirestore(
-      String roomId, String deckId, Map<String, dynamic> gameData) async {
-    print(
-        'Saving game to Firestore... roomId $roomId deckId $deckId gameData $gameData');
+  Future<void> saveGameToFirestore(String roomId, String deckId, Map<String, dynamic> gameData, bool newGame, int totalPlayers, bool gameStarted) async {
+    print('Saving game to Firestore... roomId $roomId deckId $deckId gameData $gameData');
     try {
       await games.doc(roomId).set({
         'deckId': deckId,
-        'manilha': gameData['manilha'].toMap(),
+        'manilha': gameData['manilha'],
         'players': players.map((player) => player.toMap()).toList(),
         'timestamp': FieldValue.serverTimestamp(),
+        'gameStarted': gameData['players'] == totalPlayers ? true : false,
       });
       notifyListeners();
     } catch (e) {

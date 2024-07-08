@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,16 +33,34 @@ class _BoardViewState extends State<BoardView> {
   bool isLoading = true;
   bool isGameStarted = false;
 
-  void startGame(roomID, GameControllerProvider gameController,
-      [bool newGame = false]) async {
-    print('startGame called');
-    var gameData = await gameController.manageGame(roomID, newGame);
-    deckId = (gameData as Map)['deckId'];
-    setState(() {
-      manilha = (gameData)['manilha'];
-      turnModel = TurnModel(turnNumber: 0, players: gameController.players);
-      isLoading = false;
-    });
+  // void startGame(roomID, GameControllerProvider gameController, [bool newGame = false]) async {
+   
+  //   var gameData = await gameController.manageGame(roomID, newGame, widget.totalPlayers);
+  //   deckId = (gameData as Map)['deckId'];
+  //   setState(() {
+  //     manilha = (gameData)['manilha'];
+  //     turnModel = TurnModel(turnNumber: 0, players: gameController.players);
+  //     isLoading = false;
+  //   });
+  // }
+
+    void checkGameStatus(String deckId, GameControllerProvider gameController) {
+    if (gameController.isGameFinished()) {
+      gameController.returnCardsAndShuffle(deckId);
+      gameController.currentRound = 0;
+      for (var player in gameController.players) {
+        player.hand.clear();
+        player.resetRoundWins();
+        player.roundsWinsCounter = 0;
+      }
+      startGameTransaction(widget.gameId, gameController);
+    }
+
+    if (gameController.players[0].score == 12) {
+      showGameWinnerToast(gameController.players[0].name);
+    } else if (gameController.players[1].score == 12) {
+      showGameWinnerToast(gameController.players[1].name);
+    }
   }
 
   @override
@@ -57,16 +77,14 @@ class _BoardViewState extends State<BoardView> {
     games.doc(widget.gameId).snapshots().listen((DocumentSnapshot snapshot) {
       var data = snapshot.data() as Map<String, dynamic>;
       var players = data['players'] as List<dynamic>;
-      var gameController =
-          Provider.of<GameControllerProvider>(context, listen: false);
+      var gameController = Provider.of<GameControllerProvider>(context, listen: false);
 
-      if (players.length >= widget.totalPlayers && !isGameStarted) {
-        isGameStarted =
-            true; // Define a flag para true para evitar chamadas adicionais
+      if (players.length == widget.totalPlayers && !isGameStarted) {
+        isGameStarted = true;
         setState(() {
-          gameController.players =
-              players.map((player) => PlayerModel.fromMap(player)).toList();
+          gameController.players = players.map((player) => PlayerModel.fromMap(player)).toList();
         });
+        games.doc(widget.gameId).update({'gameStarted': true});
         startGameTransaction(widget.gameId, gameController);
       } else {
         gameController.players =
@@ -75,33 +93,36 @@ class _BoardViewState extends State<BoardView> {
     });
   }
 
-  Future<void> startGameTransaction(
-      String roomId, GameControllerProvider gameController) async {
-    FirebaseFirestore.instance.runTransaction((transaction) async {
-      DocumentReference gameRef =
-          FirebaseFirestore.instance.collection('games').doc(roomId);
-      DocumentSnapshot snapshot = await transaction.get(gameRef);
-      var data = snapshot.data() as Map<String, dynamic>;
+  Future<void> startGameTransaction(String roomId, GameControllerProvider gameController) async {
+  FirebaseFirestore.instance.runTransaction((transaction) async {
+    DocumentReference gameRef = FirebaseFirestore.instance.collection('games').doc(roomId);
+    DocumentSnapshot snapshot = await transaction.get(gameRef);
+    var data = snapshot.data() as Map<String, dynamic>;
+    var players = data['players'] as List<dynamic>;
+    var totalPlayers = data['totalPlayers'];
+    print('VALIDAÇÂO PARA INICAR JOGO ${!data.containsKey('gameStarted') || !data['gameStarted']}');
+    print('DATA DO GAME START -> ${data}');
+    if (!data.containsKey('gameStarted') || !data['gameStarted'] || players.length == totalPlayers) {
+      var gameData = await gameController.manageGame(roomId, false, widget.totalPlayers, true) as Map;
 
-      if (!data.containsKey('gameStarted') || !data['gameStarted']) {
-        var gameData = await gameController.manageGame(roomId, true) as Map;
+      transaction.update(gameRef, {
+        'gameStarted': true,
+        'deckId': gameData['deckId'],
+        'manilha': gameData['manilha'],
+        'cards': gameData['cards'],
+      });
 
-        transaction.update(gameRef, {
-          'gameStarted': true,
-          'deckId': gameData['deckId'],
-          'manilha': gameData['manilha'].toMap(),
-          'cards': gameData['cards'].map((card) => card.toMap()).toList(),
-        });
+      if (!mounted) return;
 
-        setState(() {
-          deckId = gameData['deckId'];
-          manilha = gameData['manilha'];
-          turnModel = TurnModel(turnNumber: 0, players: gameController.players);
-          isLoading = false;
-        });
-      }
-    });
-  }
+      setState(() {
+        deckId = gameData['deckId'];
+        manilha = gameData['manilha'];
+        turnModel = TurnModel(turnNumber: 0, players: gameController.players);
+        isLoading = false;
+      });
+    }
+  });
+}
 
   void onCardTap(CardModel card, PlayerModel player,
       GameControllerProvider gameController) {
@@ -112,25 +133,6 @@ class _BoardViewState extends State<BoardView> {
       });
     } else {
       showIsNotYourTurn(player.name);
-    }
-  }
-
-  void checkGameStatus(String deckId, GameControllerProvider gameController) {
-    if (gameController.isGameFinished()) {
-      gameController.returnCardsAndShuffle(deckId);
-      gameController.currentRound = 0;
-      for (var player in gameController.players) {
-        player.hand.clear();
-        player.resetRoundWins();
-        player.roundsWinsCounter = 0;
-      }
-      // startGame(widget.gameId);
-    }
-
-    if (gameController.players[0].score == 12) {
-      showGameWinnerToast(gameController.players[0].name);
-    } else if (gameController.players[1].score == 12) {
-      showGameWinnerToast(gameController.players[1].name);
     }
   }
 
@@ -307,7 +309,7 @@ class _BoardViewState extends State<BoardView> {
     return Consumer<GameControllerProvider>(
       builder: (context, gameController, child) {
         if (isLoading) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
