@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/controller/game_controller_provider.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
 import 'package:truco_mobile/src/model/player_model.dart';
+import 'package:truco_mobile/src/service/database_service.dart';
 import 'package:truco_mobile/src/view/board_view.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,7 @@ class GameListView extends StatefulWidget {
 class _GameListViewState extends State<GameListView> {
   List<Map<String, dynamic>> gameRooms = [];
   List<Map<String, dynamic>> filteredGameRooms = [];
+  GameDatabaseManager gameDatabaseManager = GameDatabaseManager();
 
   @override
   void initState() {
@@ -27,11 +29,7 @@ class _GameListViewState extends State<GameListView> {
   }
 
   Future<void> _fetchGameRooms() async {
-    CollectionReference games = FirebaseFirestore.instance.collection('games');
-    QuerySnapshot querySnapshot = await games.get();
-    final allData = querySnapshot.docs
-        .map((doc) => ({...doc.data() as Map<String, dynamic>, 'id': doc.id}))
-        .toList();
+    List<Map<String, dynamic>> allData = await gameDatabaseManager.fetchGameRooms();
 
     setState(() {
       gameRooms = allData;
@@ -40,8 +38,7 @@ class _GameListViewState extends State<GameListView> {
   }
 
   Future<void> _deleteGameRoom(String id) async {
-    CollectionReference games = FirebaseFirestore.instance.collection('games');
-    await games.doc(id).delete();
+    await gameDatabaseManager.deleteGameRoom(id);
     _fetchGameRooms();
   }
 
@@ -76,33 +73,27 @@ class _GameListViewState extends State<GameListView> {
     });
   }
 
-  Future<void> _joinGameRoom(
-      String gameId, List<PlayerModel> players, int totalPlayers) async {
+  Future<void> _joinGameRoom(String gameId, List<PlayerModel> players, int totalPlayers) async {
     User? user = FirebaseAuth.instance.currentUser;
-    print(user);
+    var result  = await gameDatabaseManager.getGameCards(gameId);
+    List<CardModel> hand = [];
+    if (result is List) {
+      hand = result.map((item) => CardModel.fromMap(item)).take(3).toList();
+      result.removeRange(0, 3);
+      await gameDatabaseManager.updateGameCards(gameId, result);
+    }
     if (user != null) {
+      
       PlayerModel newPlayer = PlayerModel(
         id: user.uid,
         name: user.displayName ?? 'Anônimo',
+        hand: hand,
       );
 
-      print('PLAYER --> $newPlayer');
+      gameDatabaseManager.joinGame(gameId, newPlayer);
 
-      // Adiciona o novo jogador à lista de jogadores
-      players.add(newPlayer);
-      print({players});
-      // Atualiza a sala de jogo no Firestore com o novo jogador
-      CollectionReference games =
-          FirebaseFirestore.instance.collection('games');
-      await games.doc(gameId).update({
-        'players': players.map((player) => player.toMap()).toList(),
-      });
+      GameControllerProvider gameController = GameControllerProvider(players: players);
 
-      print({games});
-
-      GameControllerProvider gameController =
-          GameControllerProvider(players: players);
-      print({gameController});
       Navigator.push(
         context,
         MaterialPageRoute(

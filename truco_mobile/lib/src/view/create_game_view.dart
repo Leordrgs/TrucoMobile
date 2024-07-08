@@ -1,6 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:truco_mobile/src/config/error_message.dart';
+import 'package:truco_mobile/src/config/general_config.dart';
+import 'package:truco_mobile/src/model/card_model.dart';
+import 'package:truco_mobile/src/service/api_service.dart';
 import 'package:truco_mobile/src/service/database_service.dart';
 import 'package:truco_mobile/src/view/home_view.dart';
 import 'package:truco_mobile/src/widget/custom_button.dart';
@@ -8,7 +10,7 @@ import 'package:truco_mobile/src/widget/custom_toast.dart';
 
 class MyCreateNewGamePage extends StatefulWidget {
   final String title;
-  const MyCreateNewGamePage({Key? key, required this.title}) : super(key: key);
+  const MyCreateNewGamePage({super.key, required this.title});
 
   @override
   _MyCreateNewGamePageState createState() => _MyCreateNewGamePageState();
@@ -18,7 +20,8 @@ class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
   bool _isPaulista = true;
   int _totalPlayers = 2;
   String _gameName = '';
-  DatabaseService databaseService = DatabaseService();
+  GameDatabaseManager gameDatabaseManager = GameDatabaseManager();
+  ApiService apiService = ApiService(baseUrl: deckApi);
 
   void _navigateBack(BuildContext context) {
     Navigator.push(
@@ -34,7 +37,18 @@ class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
       return;
     }
 
-    databaseService.createTrucoGame(_gameName, _isPaulista, _totalPlayers);
+    if (_totalPlayers == 2) {
+      var deck = await apiService.createNewDeck(deckApiCards);
+      var deckId = deck['deck_id'];
+      var drawCards = await apiService.drawCards(deck['deck_id'], 6);
+      var manilha = await apiService.drawCards(deckId, 1);
+      var deckObj = {
+        'deckId': deckId,
+        'manilha': CardModel.fromMap(manilha['cards'][0]).toMap(),
+        'cards': drawCards['cards'].map((item) => CardModel.fromMap(item).toMap()),
+      };
+      gameDatabaseManager.createTrucoGame(_gameName, _isPaulista, _totalPlayers, deckObj);
+    }
   }
 
   PreferredSizeWidget _buildAppBar() {
