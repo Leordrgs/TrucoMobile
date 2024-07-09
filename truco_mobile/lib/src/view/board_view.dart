@@ -16,7 +16,7 @@ class BoardView extends StatefulWidget {
   final String gameId;
   final int totalPlayers;
 
-  BoardView({Key? key, required this.gameId, required this.totalPlayers})
+  const BoardView({Key? key, required this.gameId, required this.totalPlayers})
       : super(key: key);
 
   @override
@@ -32,9 +32,10 @@ class _BoardViewState extends State<BoardView> {
   String deckId = '';
   bool isLoading = true;
   bool isGameStarted = false;
+  
 
   // void startGame(roomID, GameControllerProvider gameController, [bool newGame = false]) async {
-   
+
   //   var gameData = await gameController.manageGame(roomID, newGame, widget.totalPlayers);
   //   deckId = (gameData as Map)['deckId'];
   //   setState(() {
@@ -44,8 +45,9 @@ class _BoardViewState extends State<BoardView> {
   //   });
   // }
 
-    void checkGameStatus(String deckId, GameControllerProvider gameController) {
-    if (gameController.isGameFinished()) {
+  void checkGameStatus(String deckId, GameControllerProvider gameController) {
+    if (gameController.isGameFinished(gameController.players)) {
+      // Passe a lista de jogadores como argumento
       gameController.returnCardsAndShuffle(deckId);
       gameController.currentRound = 0;
       for (var player in gameController.players) {
@@ -61,6 +63,7 @@ class _BoardViewState extends State<BoardView> {
     } else if (gameController.players[1].score == 12) {
       showGameWinnerToast(gameController.players[1].name);
     }
+    print('Caminho 1');
   }
 
   @override
@@ -69,6 +72,7 @@ class _BoardViewState extends State<BoardView> {
     // Começa a verificar os jogadores assim que o widget é inicializado
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _waitForPlayers();
+      print('Caminho 2');
     });
   }
 
@@ -77,38 +81,54 @@ class _BoardViewState extends State<BoardView> {
     games.doc(widget.gameId).snapshots().listen((DocumentSnapshot snapshot) {
       var data = snapshot.data() as Map<String, dynamic>;
       var players = data['players'] as List<dynamic>;
-      var gameController = Provider.of<GameControllerProvider>(context, listen: false);
+      var gameController =
+          Provider.of<GameControllerProvider>(context, listen: false);
 
       if (players.length == widget.totalPlayers && !isGameStarted) {
         isGameStarted = true;
         setState(() {
-          gameController.players = players.map((player) => PlayerModel.fromMap(player)).toList();
+          gameController.players =
+              players.map((player) => PlayerModel.fromMap(player)).toList();
         });
-        games.doc(widget.gameId).update({'gameStarted': true});
         startGameTransaction(widget.gameId, gameController);
       } else {
-        gameController.players =
-            players.map((player) => PlayerModel.fromMap(player)).toList();
+        setState(() {
+          gameController.players =
+              players.map((player) => PlayerModel.fromMap(player)).toList();
+        });
       }
     });
+    print('Caminho 3');
   }
 
-  Future<void> startGameTransaction(String roomId, GameControllerProvider gameController) async {
-  FirebaseFirestore.instance.runTransaction((transaction) async {
-    DocumentReference gameRef = FirebaseFirestore.instance.collection('games').doc(roomId);
-    DocumentSnapshot snapshot = await transaction.get(gameRef);
-    var data = snapshot.data() as Map<String, dynamic>;
-    var players = data['players'] as List<dynamic>;
-    var totalPlayers = data['totalPlayers'];
-    print('VALIDAÇÂO PARA INICAR JOGO ${!data.containsKey('gameStarted') || !data['gameStarted']}');
-    print('DATA DO GAME START -> ${data}');
-    if (!data.containsKey('gameStarted') || !data['gameStarted'] || players.length == totalPlayers) {
-      var gameData = await gameController.manageGame(roomId, false, widget.totalPlayers, true) as Map;
+  Future<void> startGameTransaction(
+      String roomId, GameControllerProvider gameController) async {
+    print('Caminho 56');
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentReference gameRef =
+          FirebaseFirestore.instance.collection('games').doc(roomId);
+      DocumentSnapshot snapshot = await transaction.get(gameRef);
+      var data = snapshot.data() as Map<String, dynamic>;
+
+      if (data.containsKey('gameStarted') && data['gameStarted']) {
+        print('Caminho 57');
+        setState(() {
+          deckId = data['deckId'];
+          manilha = CardModel.fromMap(data['manilha']);
+          turnModel = TurnModel(turnNumber: 0, players: gameController.players);
+          isLoading = false;
+        });
+        print('Caminho 57');
+        return;
+      }
+
+      var gameData = await gameController.manageGame(
+          roomId, false, widget.totalPlayers, true) as Map;
 
       transaction.update(gameRef, {
         'gameStarted': true,
         'deckId': gameData['deckId'],
-        'manilha': gameData['manilha'],
+        'manilha': (gameData['manilha'] as CardModel).toMap(),
         'cards': gameData['cards'],
       });
 
@@ -120,9 +140,9 @@ class _BoardViewState extends State<BoardView> {
         turnModel = TurnModel(turnNumber: 0, players: gameController.players);
         isLoading = false;
       });
-    }
-  });
-}
+    });
+    print('Caminho 4');
+  }
 
   void onCardTap(CardModel card, PlayerModel player,
       GameControllerProvider gameController) {
@@ -160,6 +180,7 @@ class _BoardViewState extends State<BoardView> {
       selectedCard = null;
       showPlayPrompt = false;
     });
+    print('Caminho 5');
   }
 
   void processRoundEnd(GameControllerProvider gameController) {
@@ -183,10 +204,12 @@ class _BoardViewState extends State<BoardView> {
     setState(() {
       showPlayPrompt = false;
     });
+    print('Caminho 6');
   }
 
   bool isNumberOfCardEqualNumbersOfPlayers(
       GameControllerProvider gameController) {
+    print('Caminho 8');
     return playedCards.length == gameController.players.length;
   }
 

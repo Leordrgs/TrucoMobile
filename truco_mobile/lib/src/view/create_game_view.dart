@@ -48,7 +48,9 @@ class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
         'cards': drawCards['cards'].map((item) => CardModel.fromMap(item).toMap()),
       };
       gameDatabaseManager.createTrucoGame(_gameName, _isPaulista, _totalPlayers, deckObj);
+      print('Create Truco Game DECK_ID: $deckId');
     }
+    print('Caminho 7');
   }
 
   PreferredSizeWidget _buildAppBar() {
@@ -153,46 +155,48 @@ class _MyCreateNewGamePageState extends State<MyCreateNewGamePage> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const Text(
-              'Configure a partida',
-              style: TextStyle(color: Colors.white, fontSize: 24),
-              textAlign: TextAlign.left,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Tipo de jogo:',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            _buildGameTypeButton(),
-            const SizedBox(height: 20),
-            const Text(
-              'Nome da sala:',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            _buildTextField(),
-            const SizedBox(height: 20),
-            const Text(
-              'Total de jogadores:',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            _buildRadioButtons(),
-            const SizedBox(height: 20),
-            Center(
-              child: CustomButton(
-                onPressed: _createGame,
-                text: 'Criar sala',
-                width: 200,
-                height: 50,
-                fontSize: 16,
-                color: Colors.white,
-                textColor: Colors.black,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text(
+                'Configure a partida',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+                textAlign: TextAlign.left,
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              const Text(
+                'Tipo de jogo:',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              _buildGameTypeButton(),
+              const SizedBox(height: 20),
+              const Text(
+                'Nome da sala:',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              _buildTextField(),
+              const SizedBox(height: 20),
+              const Text(
+                'Total de jogadores:',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+              _buildRadioButtons(),
+              const SizedBox(height: 20),
+              Center(
+                child: CustomButton(
+                  onPressed: _createGame,
+                  text: 'Criar sala',
+                  width: 200,
+                  height: 50,
+                  fontSize: 16,
+                  color: Colors.white,
+                  textColor: Colors.black,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

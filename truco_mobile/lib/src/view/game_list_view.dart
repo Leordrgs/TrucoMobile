@@ -74,46 +74,53 @@ class _GameListViewState extends State<GameListView> {
   }
 
   Future<void> _joinGameRoom(String gameId, List<PlayerModel> players, int totalPlayers) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    var result  = await gameDatabaseManager.getGameCards(gameId);
-    List<CardModel> hand = [];
-    if (result is List) {
-      hand = result.map((item) => CardModel.fromMap(item)).take(3).toList();
-      result.removeRange(0, 3);
-      await gameDatabaseManager.updateGameCards(gameId, result);
-    }
-    if (user != null) {
-      
-      PlayerModel newPlayer = PlayerModel(
-        id: user.uid,
-        name: user.displayName ?? 'Anônimo',
-        hand: hand,
-      );
+  User? user = FirebaseAuth.instance.currentUser;
+  var result = await gameDatabaseManager.getGameCards(gameId);
+  List<CardModel> hand = [];
 
-      gameDatabaseManager.joinGame(gameId, newPlayer);
+  if (result is List) {
+    // Verifica se cada item da lista é um Map antes de converter
+    hand = result.where((item) => item is Map<String, dynamic>)
+                 .map((item) => CardModel.fromMap(item as Map<String, dynamic>))
+                 .take(3)
+                 .toList();
 
-      GameControllerProvider gameController = GameControllerProvider(players: players);
+    result = result.skip(3).toList(); // Remove os primeiros 3 itens
+    await gameDatabaseManager.updateGameCards(gameId, result);
+  }
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MultiProvider(
-            providers: [
-              ChangeNotifierProvider<GameControllerProvider>.value(
-                value: gameController,
-              ),
-            ],
-            child: BoardView(
-              gameId: gameId,
-              totalPlayers: totalPlayers,
+  if (user != null) {
+    PlayerModel newPlayer = PlayerModel(
+      id: user.uid,
+      name: user.displayName ?? 'Anônimo',
+      hand: hand,
+    );
+
+    await gameDatabaseManager.joinGame(gameId, newPlayer);
+
+    GameControllerProvider gameController = GameControllerProvider(players: players);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider<GameControllerProvider>.value(
+              value: gameController,
             ),
+          ],
+          child: BoardView(
+            gameId: gameId,
+            totalPlayers: totalPlayers,
           ),
         ),
-      );
-    } else {
-      print('Usuário não autenticado');
-    }
+      ),
+    );
+  } else {
+    print('Usuário não autenticado');
   }
+}
+
 
   Widget _buildSearchBar() {
     return Container(
